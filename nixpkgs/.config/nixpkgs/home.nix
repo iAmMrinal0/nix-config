@@ -3,6 +3,12 @@
 let
   rescuetime-overlay = import ./overlays/rescuetime.nix;
   wallpaper = import ./scripts/wallpaper.nix { inherit pkgs config; };
+  easyPS = import (pkgs.fetchFromGitHub {
+    owner = "justinwoo";
+    repo = "easy-purescript-nix";
+    rev = "bad807ade1314420a52c589dbc3d64d3c9b38480";
+    sha256 = "099dpxrpch8cgy310svrpdcad2y1qdl6l782mjpcgn3rqgj62vsf";
+  });
 in
 with pkgs;
 rec {
@@ -86,7 +92,11 @@ rec {
     nodejs-10_x
     python36
     stack
-  ] ++ [ # Build tools and other dependencies + rarely used
+  ] ++ (with easyPS.inputs; [
+    psc-package
+    purescript
+    spago
+  ]) ++ [ # Build tools and other dependencies + rarely used
     fzf
     gnumake
     imagemagick
