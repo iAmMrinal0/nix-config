@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 
+with pkgs;
+
 let
   rescuetime-overlay = import ./overlays/rescuetime.nix;
   wallpaper = import ./scripts/wallpaper.nix { inherit pkgs config; };
@@ -9,8 +11,21 @@ let
     rev = "bad807ade1314420a52c589dbc3d64d3c9b38480";
     sha256 = "099dpxrpch8cgy310svrpdcad2y1qdl6l782mjpcgn3rqgj62vsf";
   });
+
+  fonts = [
+    cantarell-fonts
+    dejavu_fonts
+    fira-code
+    font-awesome-ttf
+    font-awesome_5
+    google-fonts
+    hack-font
+    hasklig
+    hermit
+    iosevka
+    noto-fonts
+  ];
 in
-with pkgs;
 rec {
   nixpkgs.overlays = [
     rescuetime-overlay
@@ -46,19 +61,7 @@ rec {
   # TODO manage fonts properly
   # TODO Git config
   # TODO Migrate the configs in the dotfiles repo to nix
-  home.packages = [ # Fonts
-    cantarell-fonts
-    dejavu_fonts
-    fira-code
-    font-awesome-ttf
-    font-awesome_5
-    google-fonts
-    hack-font
-    hasklig
-    hermit
-    iosevka
-    noto-fonts
-  ] ++ [ # Themes and icons
+  home.packages = fonts ++ [ # Themes and icons
     lxappearance
     arc-theme
     gnome3.defaultIconTheme
