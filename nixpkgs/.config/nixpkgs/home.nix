@@ -56,6 +56,13 @@ rec {
     keybindings = import ./config/feh.nix;
   };
 
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.zsh = import ./config/zsh.nix { inherit pkgs; };
+
   # TODO zsh setup and icons in notifications
   # TODO see if there's a better heirarchy for packages
   # TODO manage fonts properly
