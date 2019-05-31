@@ -55,11 +55,13 @@ rec {
     enable = true;
     keybindings = import ./config/feh.nix;
   };
+  programs.rofi = import ./config/rofi.nix;
 
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
   };
+
 
   programs.zsh = import ./config/zsh.nix { inherit pkgs; };
 
