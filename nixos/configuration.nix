@@ -36,9 +36,11 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    coreutils-full
     git
     ntfs3g
     stow
+    usbutils
     vim
   ];
 
@@ -108,6 +110,7 @@
   users.users.iammrinal0 = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    shell = pkgs.zsh;
   };
 
   # This value determines the NixOS release with which your system is to be
