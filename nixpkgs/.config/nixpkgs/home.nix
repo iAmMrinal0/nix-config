@@ -130,6 +130,7 @@ rec {
     jq
     neofetch
     rofi
+    ripgrep
     screenfetch
     scrot
     stow
