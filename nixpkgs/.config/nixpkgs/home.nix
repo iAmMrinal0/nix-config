@@ -51,19 +51,16 @@ rec {
     iconTheme.name = "Numix Circle";
   };
 
-  programs.feh = {
-    enable = true;
-    keybindings = import ./config/feh.nix;
-  };
+  programs.chromium = import ./config/chromium.nix;
+  programs.feh = import ./config/feh.nix;
   programs.rofi = import ./config/rofi.nix;
+  programs.zsh = import ./config/zsh.nix { inherit pkgs; };
 
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
   };
 
-
-  programs.zsh = import ./config/zsh.nix { inherit pkgs; };
 
   # TODO zsh setup and icons in notifications
   # TODO see if there's a better heirarchy for packages
