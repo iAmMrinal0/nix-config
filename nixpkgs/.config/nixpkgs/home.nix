@@ -61,6 +61,10 @@ rec {
     enableZshIntegration = true;
   };
 
+  services.udiskie = {
+    enable = true;
+    notify = false;
+  };
 
   # TODO zsh setup and icons in notifications
   # TODO see if there's a better heirarchy for packages
@@ -130,5 +134,6 @@ rec {
     scrot
     stow
     tmux
+    udiskie
   ];
 }
