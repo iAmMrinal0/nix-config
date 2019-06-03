@@ -44,12 +44,7 @@ rec {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  services.dunst = {
-    enable = true;
-    settings = import ./config/dunstrc.nix;
-    iconTheme.package = pkgs.numix-icon-theme-circle;
-    iconTheme.name = "Numix Circle";
-  };
+  services.dunst = import ./config/dunstrc.nix { inherit pkgs; } ;
 
   programs.chromium = import ./config/chromium.nix;
   programs.feh = import ./config/feh.nix;
