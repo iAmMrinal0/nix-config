@@ -4,7 +4,7 @@ with pkgs;
 
 let
   rescuetime-overlay = import ./overlays/rescuetime.nix;
-  wallpaper = import ./scripts/wallpaper.nix { inherit pkgs config; };
+  wallpaper = import ./scripts/wallpaper.nix { inherit pkgs; };
   easyPS = import (pkgs.fetchFromGitHub {
     owner = "justinwoo";
     repo = "easy-purescript-nix";
