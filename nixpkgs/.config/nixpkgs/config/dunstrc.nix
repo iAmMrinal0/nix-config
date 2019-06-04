@@ -7,7 +7,7 @@
   settings = {
     global = {
       font                 = "SourceCodePro 12";
-      allow_markup         = "yes";
+      markup               = "yes";
       plain_text           = "no";
       format               = "<b>%s</b>\\n%b";
       transparency         = "10";
@@ -33,12 +33,9 @@
       sticky_history       = "false";
       history_length       = "20";
       icon_position        = "left";
-      startup_notification = "false";
-    };
-
-    frame = {
-      width = 1;
-      color = "#333333";
+      startup_notification = "true";
+      frame_width          = "1";
+      frame_color          = "#333333";
     };
 
     shortcuts = {
