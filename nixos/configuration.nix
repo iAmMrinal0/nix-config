@@ -75,6 +75,7 @@
   fonts.fonts = with pkgs; [
     source-code-pro
     iosevka
+    hasklig
   ];
 
   services.xserver = {
