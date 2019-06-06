@@ -3,6 +3,8 @@
 with pkgs;
 
 let
+  brotab = callPackages ./pkgs/brotab { };
+  keepmenu = callPackages ./pkgs/keepmenu { };
   rescuetime-overlay = import ./overlays/rescuetime.nix;
   wallpaper = import ./scripts/wallpaper.nix { inherit pkgs; };
   easyPS = import (pkgs.fetchFromGitHub {
@@ -119,6 +121,8 @@ rec {
   ] ++ [ # Bit more frequently used
     ag
     arandr
+    brotab
+    keepmenu
     drive
     dunst
     htop
