@@ -42,6 +42,11 @@
     stow
     usbutils
     vim
+    yubikey-personalization
+  ];
+
+  services.udev.packages = with pkgs; [
+    yubikey-personalization
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
