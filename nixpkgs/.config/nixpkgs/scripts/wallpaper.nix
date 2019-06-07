@@ -1,4 +1,4 @@
-{ pkgs, config }:
+{ pkgs, ... }:
 
 with pkgs;
 let wallpaper = fetchurl {
