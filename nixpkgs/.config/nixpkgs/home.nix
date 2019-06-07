@@ -3,6 +3,7 @@
 with pkgs;
 
 let
+  mozilla-pkgs = import (fetchTarball https://github.com/mozilla/nixpkgs-mozilla/tarball/507efc7f62427ded829b770a06dd0e30db0a24fe);
   brotab = callPackages ./pkgs/brotab { };
   keepmenu = callPackages ./pkgs/keepmenu { };
   rescuetime-overlay = import ./overlays/rescuetime.nix;
@@ -31,6 +32,7 @@ in
 rec {
   nixpkgs.overlays = [
     rescuetime-overlay
+    mozilla-pkgs
   ];
 
   imports = [
@@ -85,6 +87,7 @@ rec {
     playerctl
   ] ++ [ # GUI
     chromium
+    latest.firefox-beta-bin
     gnome3.gnome-screenshot
     keepassxc
     keybase
