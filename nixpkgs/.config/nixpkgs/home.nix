@@ -129,6 +129,7 @@ rec {
     keepmenu
     drive
     dunst
+    gnome3.dconf
     htop
     jq
     neofetch
