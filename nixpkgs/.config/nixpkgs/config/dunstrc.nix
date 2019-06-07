@@ -2,8 +2,9 @@
 
 {
   enable = true;
-  iconTheme.package = pkgs.papirus-icon-theme;
-  iconTheme.name = "Papirus";
+  iconTheme.package = pkgs.numix-icon-theme;
+  iconTheme.name = "Numix";
+  iconTheme.size = "48";
   settings = {
     global = {
       font                 = "SourceCodePro 12";
