@@ -41,7 +41,8 @@ rec {
 
   xsession = {
     enable = true;
-    initExtra = lib.readFile wallpaper;
+    initExtra = lib.readFile wallpaper + ''
+      export QT_STYLE_OVERRIDE=gtk2'';
     windowManager.command = "i3";
   };
 
@@ -115,6 +116,7 @@ rec {
     gnumake
     imagemagick
     libnotify # To use dunst
+    libsForQt5.qtstyleplugins
     nmap
     scrot
     unzip
