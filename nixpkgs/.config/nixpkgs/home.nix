@@ -18,14 +18,9 @@ let
   fonts = [
     cantarell-fonts
     dejavu_fonts
-    fira-code
     font-awesome-ttf
     font-awesome_5
     google-fonts
-    hack-font
-    hasklig
-    hermit
-    iosevka
     noto-fonts
   ];
 in
