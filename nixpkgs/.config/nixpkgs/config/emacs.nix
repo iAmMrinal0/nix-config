@@ -1,9 +1,8 @@
 { pkgs, ... }:
 
-let
-  package = pkgs.emacs;
-  emacsPackages = pkgs.emacsPackagesNgGen package;
-  emacsWithPackages = emacsPackages.emacsWithPackages (epkgs: (with epkgs.elpaPackages; [
+{
+  enable = true;
+  extraPackages = epkgs: (with epkgs.elpaPackages; [
     rainbow-mode
   ]) ++ (with epkgs.melpaPackages; [
     ace-window
@@ -55,6 +54,5 @@ let
     yaml-mode
     yasnippet
     zop-to-char
-  ]));
-
-in { home.packages = [emacsWithPackages]; }
+  ]);
+}

@@ -45,9 +45,11 @@ rec {
   programs.home-manager.enable = true;
 
   services.dunst = import ./config/dunstrc.nix { inherit pkgs; } ;
+  services.emacs.enable = true;
 
   gtk = import ./config/gtk.nix { inherit pkgs; };
   programs.chromium = import ./config/chromium.nix;
+  programs.emacs = import ./config/emacs.nix { inherit pkgs; };
   programs.feh = import ./config/feh.nix;
   programs.rofi = import ./config/rofi.nix;
   programs.zsh = import ./config/zsh.nix { inherit pkgs; };
