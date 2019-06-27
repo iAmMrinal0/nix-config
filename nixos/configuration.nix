@@ -36,6 +36,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    avahi
+    binutils
     coreutils-full
     git
     ntfs3g
@@ -44,6 +46,11 @@
     vim
     yubikey-personalization
   ];
+
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
+  services.avahi.publish.enable = true;
+  services.avahi.publish.addresses = true;
 
   services.udev.packages = with pkgs; [
     yubikey-personalization
