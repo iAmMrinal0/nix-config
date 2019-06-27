@@ -28,10 +28,6 @@ rec {
     rescuetime-overlay
   ];
 
-  imports = [
-    ./config/emacs.nix
-  ];
-
   xsession = {
     enable = true;
     initExtra = lib.readFile wallpaper + ''

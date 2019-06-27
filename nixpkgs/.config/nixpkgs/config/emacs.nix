@@ -11,6 +11,7 @@
     anzu
     avy
     bind-key
+    dante
     diminish
     direnv
     elpy
@@ -27,7 +28,6 @@
     hindent
     hungry-delete
     hydra
-    intero
     jedi
     js2-mode
     js2-refactor
