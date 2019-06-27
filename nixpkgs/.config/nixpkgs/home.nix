@@ -89,7 +89,11 @@ rec {
     xfce.thunar
     zathura
   ] ++ [ # Languages
+    cabal-install
+    cabal2nix
     ghc
+    haskellPackages.ghcid
+    haskellPackages.hlint
     nodePackages.node2nix
     nodePackages_10_x.bower
     nodePackages_10_x.bower2nix
