@@ -10,7 +10,7 @@ buildPythonApplication rec {
     owner = "balta2ar";
     repo = "brotab";
     rev = "6f95713ffb8296e3317187af2e7f802bf46c3178";
-    sha256 = "014slk92687f226vkgsr9pl5x7gs7y6ljbid90dw3p5kw014dqxy";
+    sha256 = "1z11x28q1ab3vhfif437h5r41qp88xmk1v1cbvgd4sg8na10sgcx";
   };
 
   propagatedBuildInputs = [ requests psutil flask ipython ];
