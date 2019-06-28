@@ -95,6 +95,7 @@ rec {
     slack
     terminator
     vscode
+    xarchiver
     xfce.thunar
     zathura
   ] ++ haskellTools ++ [ # Languages
@@ -122,17 +123,22 @@ rec {
     xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
     xsel
   ] ++ [ # Bit more frequently used
+    acpi
     ag
     arandr
+    autorandr
+    awscli
+    bc
     brotab
-    keepmenu
+    direnv
     drive
     dunst
     gnome3.dconf
+    gnome3.nautilus
     htop
     jq
+    keepmenu
     neofetch
-    rofi
     ripgrep
     screenfetch
     scrot
