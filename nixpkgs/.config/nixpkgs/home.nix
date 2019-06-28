@@ -22,6 +22,15 @@ let
     google-fonts
     noto-fonts
   ];
+
+  haskellTools = [
+    cabal-install
+    cabal2nix
+    ghc
+    haskellPackages.ghcid
+    haskellPackages.hlint
+    stack
+  ];
 in
 rec {
   nixpkgs.overlays = [
@@ -88,19 +97,13 @@ rec {
     vscode
     xfce.thunar
     zathura
-  ] ++ [ # Languages
-    cabal-install
-    cabal2nix
-    ghc
-    haskellPackages.ghcid
-    haskellPackages.hlint
+  ] ++ haskellTools ++ [ # Languages
     nodePackages.node2nix
     nodePackages_10_x.bower
     nodePackages_10_x.bower2nix
     nodePackages_10_x.pulp
     nodejs-10_x
     python36
-    stack
   ] ++ (with easyPS.inputs; [
     psc-package
     purescript
