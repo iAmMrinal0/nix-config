@@ -10,6 +10,7 @@ with pkgs;
   history.extended = true;
   shellAliases = {
     proc = "ps aux | ${ripgrep}/bin/rg $1";
+    tmuxnew = "${tmux}/bin/tmux -u attach -t play || ${tmux}/bin/tmux -u new -s play";
   };
   oh-my-zsh = {
     enable = true;
