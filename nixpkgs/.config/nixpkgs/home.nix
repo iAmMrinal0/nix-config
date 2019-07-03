@@ -135,6 +135,7 @@ rec {
     dunst
     gnome3.dconf
     gnome3.nautilus
+    google-drive-ocamlfuse
     htop
     jq
     keepmenu
