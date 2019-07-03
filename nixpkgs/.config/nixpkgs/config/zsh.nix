@@ -8,6 +8,7 @@ with pkgs;
   defaultKeymap = "emacs";
   history.expireDuplicatesFirst = true;
   history.extended = true;
+  initExtra = ''eval "$(${direnv}/bin/direnv hook zsh)"'';
   shellAliases = {
     proc = "ps aux | ${ripgrep}/bin/rg $1";
     tmuxnew = "${tmux}/bin/tmux -u attach -t play || ${tmux}/bin/tmux -u new -s play";
