@@ -120,7 +120,7 @@
   # services.xserver.xkbOptions = "eurosign:e";
 
   # Enable touchpad support.
-  # services.xserver.libinput.enable = true;
+  services.xserver.libinput.enable = true;
 
   # Enable the KDE Desktop Environment.
   # services.xserver.enable = true;
