@@ -3,7 +3,7 @@
 
 {
   imports =
-    [ # Add hardware configuration for Carbon from machine later
+    [ ../hardware/carbon.nix
       ../base.nix
     ];
 
