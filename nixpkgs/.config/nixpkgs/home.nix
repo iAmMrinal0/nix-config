@@ -14,6 +14,8 @@ let
     sha256 = "099dpxrpch8cgy310svrpdcad2y1qdl6l782mjpcgn3rqgj62vsf";
   });
 
+  ghcide = (import (builtins.fetchTarball "https://github.com/hercules-ci/ghcide-nix/tarball/master") {}).ghcide-ghc865;
+
   fonts = [
     cantarell-fonts
     dejavu_fonts
@@ -29,7 +31,8 @@ let
     ghc
     haskellPackages.ghcid
     haskellPackages.hlint
-    stack
+    haskellPackages.stylish-haskell
+    ghcide
   ];
 in
 rec {
