@@ -14,6 +14,7 @@ with pkgs;
     ${tmux}/bin/tmux new-session -As $dir_name
   }
   eval "$(${direnv}/bin/direnv hook zsh)"
+  source <(${kubectl}/bin/kubectl completion zsh)
   '';
   shellAliases = {
     proc = "ps aux | ${ripgrep}/bin/rg $1";
@@ -22,7 +23,7 @@ with pkgs;
   };
   oh-my-zsh = {
     enable = true;
-    plugins = ["docker" "extract" "git" "sudo"];
+    plugins = ["docker" "extract" "git" "kubectl" "sudo"];
     theme = "mod_steeef";
     custom = "\$HOME/.oh-my-zsh/custom";
   };

@@ -112,7 +112,11 @@ rec {
     psc-package
     purescript
     spago
-  ]) ++ [ # Build tools and other dependencies + rarely used
+  ]) ++ [
+    kubectx
+    kubernetes
+    stern
+  ] ++ [ # Build tools and other dependencies + rarely used
     fzf
     gnumake
     imagemagick
