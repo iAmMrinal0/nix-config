@@ -34,6 +34,7 @@
       sticky_history       = "false";
       history_length       = "20";
       icon_position        = "left";
+      max_icon_size        = 65;
       startup_notification = "true";
       frame_width          = "1";
       frame_color          = "#333333";
