@@ -5,7 +5,6 @@ with pkgs;
 let
   brotab = callPackages ./pkgs/brotab { };
   keepmenu = callPackages ./pkgs/keepmenu { };
-  rescuetime-overlay = import ./overlays/rescuetime.nix;
   wallpaper = import ./scripts/wallpaper.nix { inherit pkgs; };
   easyPS = import (pkgs.fetchFromGitHub {
     owner = "justinwoo";
@@ -19,8 +18,8 @@ let
   fonts = [
     cantarell-fonts
     dejavu_fonts
-    font-awesome-ttf
-    font-awesome_5
+    emacs-all-the-icons-fonts
+    font-awesome_4
     google-fonts
     noto-fonts
   ];
@@ -34,11 +33,7 @@ let
     haskellPackages.stylish-haskell
     ghcide
   ];
-in
-rec {
-  nixpkgs.overlays = [
-    rescuetime-overlay
-  ];
+in {
 
   xsession = {
     enable = true;
@@ -111,7 +106,6 @@ rec {
     kubernetes
     stern
   ] ++ [ # Build tools and other dependencies + rarely used
-    fzf
     gnumake
     imagemagick
     libnotify # To use dunst
@@ -122,6 +116,9 @@ rec {
     xclip
     xdotool
     xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
+    xfce.thunar-volman
+    xfce.thunar-archive-plugin
+    xfce.xfconf # For saving preferences of Thunar.
     xsel
   ] ++ [ # Bit more frequently used
     acpi
@@ -143,9 +140,7 @@ rec {
     neofetch
     ripgrep
     screenfetch
-    scrot
     stow
     tmux
-    udiskie
   ];
 }
