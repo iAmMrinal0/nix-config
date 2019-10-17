@@ -34,21 +34,32 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    atop
+    android-file-transfer
     avahi
     binutils
+    blueman
     coreutils-full
     git
     ntfs3g
+    ncdu
+    openjdk
     stow
+    tcpdump
+    traceroute
     usbutils
     vim
     yubikey-personalization
   ];
 
-  services.avahi.enable = true;
-  services.avahi.nssmdns = true;
-  services.avahi.publish.enable = true;
-  services.avahi.publish.addresses = true;
+  services.avahi = {
+    enable = true;
+    nssmdns = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
 
   services.udev.packages = with pkgs; [
     yubikey-personalization
