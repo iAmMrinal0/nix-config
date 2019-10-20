@@ -1,36 +1,46 @@
-{ stdenv, python3, fetchFromGitHub }:
+{ stdenv, python36Packages, fetchFromGitHub }:
 
-with python3.pkgs;
+let pyuserinput = python36Packages.buildPythonPackage rec {
+      pname = "PyUserInput";
+      version = "0.1.11";
+      src = python36Packages.fetchPypi {
+        inherit pname version;
+        sha256 = "0azvlzfczrxhpxi15r37cbqkbbn5ip5y28bj5kmywh7pdk85wsq0";
+      };
 
-let pyuserinput = buildPythonPackage rec {
-  pname = "PyUserInput";
-  version = "0.1.11";
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "0azvlzfczrxhpxi15r37cbqkbbn5ip5y28bj5kmywh7pdk85wsq0";
-  };
+      doCheck = false;
 
-  doCheck = false;
+      propagatedBuildInputs = [ python36Packages.xlib ];
 
-  propagatedBuildInputs = [ xlib ];
+      meta = {
+        homepage = https://github.com/PyUserInput/PyUserInput/;
+        description = "A module for cross-platform control of the mouse and keyboard in python that is simple to use.";
+      };
+    };
 
-  meta = {
-    homepage = https://github.com/PyUserInput/PyUserInput/;
-    description = "A module for cross-platform control of the mouse and keyboard in python that is simple to use.";
-  };
-};
+    pykeepass = python36Packages.buildPythonPackage rec {
+      pname = "pykeepass";
+      version = "3.0.4";
+      src = fetchFromGitHub {
+        owner = "libkeepass";
+        repo = pname;
+        rev = "91999edb607a635387e2e825397f0760286c231f";
+        sha256 = "0i24sa4drxa3d6k15f988l01gdj2j97im0dixn2qnqi4li389asr";
+      };
 
-in
+      doCheck = false;
+      propagatedBuildInputs = with python36Packages; [ lxml pycryptodome construct argon2_cffi python-dateutil future ];
+    };
 
-buildPythonApplication rec {
+in python36Packages.buildPythonApplication rec {
   pname = "keepmenu";
-  version = "0.5.7";
+  version = "0.5.9";
 
   src = fetchFromGitHub {
     owner = "firecat53";
     repo = pname;
-    rev = version;
-    sha256 = "1by4536s4h81d2snrkpbl1fx70lyvadx0ia44sswrnsfiyxiahkr";
+    rev = "d7622ca2bcf7cc9c774e3d930508a7748337e8bb";
+    sha256 = "1k92bnqhykg1avr1ny4fq0v22y4k53gy8bq4p8chsnqjv0p2mprq";
   };
 
   propagatedBuildInputs = [ pykeepass pyuserinput ];
