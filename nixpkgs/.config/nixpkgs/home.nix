@@ -54,6 +54,7 @@ in {
   programs.feh = import ./config/feh.nix;
   programs.rofi = import ./config/rofi.nix;
   programs.zsh = import ./config/zsh.nix { inherit pkgs; };
+  programs.tmux = import ./config/tmux.nix { inherit pkgs; };
 
   programs.fzf = {
     enable = true;
@@ -141,6 +142,5 @@ in {
     ripgrep
     screenfetch
     stow
-    tmux
   ];
 }
