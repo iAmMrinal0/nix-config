@@ -45,7 +45,8 @@ in {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  services.dunst = import ./config/dunstrc.nix { inherit pkgs; } ;
+  services.compton = import ./config/compton.nix { inherit pkgs; };
+  services.dunst = import ./config/dunstrc.nix { inherit pkgs; };
   services.emacs.enable = true;
 
   gtk = import ./config/gtk.nix { inherit pkgs; };
