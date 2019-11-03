@@ -39,7 +39,7 @@ in {
     enable = true;
     initExtra = lib.readFile wallpaper + ''
       export QT_STYLE_OVERRIDE=gtk2'';
-    windowManager.command = "i3";
+    windowManager.i3 = import ./config/i3config.nix { inherit pkgs keepmenu; };
   };
 
   # Let Home Manager install and manage itself.
