@@ -53,6 +53,7 @@ in {
   programs.chromium = import ./config/chromium.nix;
   programs.emacs = import ./config/emacs.nix { inherit pkgs; };
   programs.feh = import ./config/feh.nix;
+  programs.git = import ./config/git.nix;
   programs.rofi = import ./config/rofi.nix;
   programs.zsh = import ./config/zsh.nix { inherit pkgs; };
   programs.tmux = import ./config/tmux.nix { inherit pkgs; };
@@ -64,7 +65,6 @@ in {
 
   # TODO see if there's a better heirarchy for packages
   # TODO manage fonts properly
-  # TODO Git config
   # TODO Migrate the configs in the dotfiles repo to nix
   home.packages = fonts ++ [ # Themes and icons
     lxappearance
