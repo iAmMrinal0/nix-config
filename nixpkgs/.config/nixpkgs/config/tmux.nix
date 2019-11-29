@@ -43,7 +43,7 @@ set-option -g pane-border-style fg=colour237 #bg1
 set-option -g message-style bg=colour239,fg=colour223 # bg=bg2, fg=fg1
 
 # writing commands inactive
-set-option -g message-command-style bg=colour239, fg=colour223 # bg=fg3, fg=bg1
+set-option -g message-command-style bg=colour239,fg=colour223 # bg=fg3, fg=bg1
 
 # pane number display
 set-option -g display-panes-active-colour colour250 #fg2
@@ -59,7 +59,7 @@ set-window-option -g window-status-bell-style fg=colour235,bg=colour167 # bg=red
 set-option -g status-justify "left"
 set-option -g status-left-style none
 set-option -g status-left-length "80"
-set-option -g status-right-status none
+set-option -g status-right-style none
 set-option -g status-right-length "80"
 set-window-option -g window-status-separator ""
 
@@ -112,6 +112,8 @@ bind - split-window -v -c "#{pane_current_path}"
 bind '"' split-window -c "#{pane_current_path}"
 bind % split-window -h -c "#{pane_current_path}"
 bind c new-window -c "#{pane_current_path}"
+
+bind-key -n M-s split-window -v "${tmux}/bin/tmux list-sessions | sed -E 's/:.*$//' | grep -v \"^$(${tmux}/bin/tmux display-message -p '#S')\$\" | ${fzf}/bin/fzf --reverse | ${findutils}/bin/xargs ${tmux}/bin/tmux switch-client -t"
 
 # Send the same command to all panes/windows/sessions
 bind E command-prompt -p "Command:" \
