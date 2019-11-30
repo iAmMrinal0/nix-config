@@ -80,6 +80,7 @@ in {
     pavucontrol
     playerctl
   ] ++ [ # GUI
+    xorg.xdpyinfo
     firefox-beta-bin
     gnome3.gnome-screenshot
     keepassxc
@@ -90,6 +91,7 @@ in {
     vscode
     xarchiver
     xfce.thunar
+    xfce.thunar-volman
     zathura
   ] ++ haskellTools ++ [ # Languages
     nodePackages.node2nix
@@ -142,5 +144,7 @@ in {
     ripgrep
     screenfetch
     stow
+    transmission-gtk
+    xfce.xfconf
   ];
 }
