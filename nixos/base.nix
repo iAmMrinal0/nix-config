@@ -75,6 +75,7 @@
   # programs.gnupg.agent = { enable = true; enableSSHSupport = true; };
 
   # List services that you want to enable:
+  programs.light.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
@@ -135,7 +136,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.iammrinal0 = {
     isNormalUser = true;
-    extraGroups = [ "docker" "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "docker" "video" "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
 
