@@ -16,4 +16,5 @@
   };
   services.dbus.packages = [ pkgs.blueman ];
 
+  services.xserver.resolutions = [ { x = 1920; y = 1080; } ];
 }
