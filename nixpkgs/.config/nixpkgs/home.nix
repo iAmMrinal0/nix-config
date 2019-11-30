@@ -37,8 +37,7 @@ in {
 
   xsession = {
     enable = true;
-    initExtra = lib.readFile wallpaper + ''
-      export QT_STYLE_OVERRIDE=gtk2'';
+    initExtra = lib.readFile wallpaper;
     windowManager.i3 = import ./config/i3config.nix { inherit pkgs keepmenu; };
   };
 
