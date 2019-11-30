@@ -1,5 +1,5 @@
 # NixOS config for ThinkPad X1 Carbon
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports =
@@ -19,4 +19,8 @@
   services.xserver.resolutions = [ { x = 1920; y = 1080; } ];
 
   networking.nameservers = [ "8.8.8.8" "8.8.4.4" ];
+
+  environment.variables = {
+    QT_AUTO_SCREEN_SCALE_FACTOR = lib.mkDefault "1";
+  };
 }
