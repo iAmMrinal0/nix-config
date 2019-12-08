@@ -155,7 +155,7 @@ bind-key -n C-y run "${xclip}/bin/xclip -o | ${tmux}/bin/tmux load-buffer - ; ${
 ##########
 
 set -g update-environment "DISPLAY SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY SSH_AUTH_SOCK"
-set-environment -g SSH_AUTH_SOCK $HOME/.ssh/ssh-auth-sock.$HOSTNAME
+set-environment -g SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent
 
 '';
 }

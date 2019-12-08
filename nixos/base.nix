@@ -77,6 +77,7 @@
   # started in user sessions.
   # programs.mtr.enable = true;
   # programs.gnupg.agent = { enable = true; enableSSHSupport = true; };
+  programs.ssh.startAgent = true;
   programs.light.enable = true;
   programs.adb.enable = true;
   # List services that you want to enable:
