@@ -6,19 +6,12 @@ with pkgs;
   enable = true;
   baseIndex = 1;
   clock24 = true;
-  historyLimit = 50000;
+  historyLimit = 100000;
   terminal = "screen-256color";
   plugins = with tmuxPlugins; [
-    {
-      plugin = resurrect;
-    }
-    {
-      plugin = continuum;
-      extraConfig = "set -g @continuum-restore 'on'";
-    }
-    {
-      plugin = copycat;
-    }
+    { plugin = resurrect; }
+    { plugin = continuum; extraConfig = "set -g @continuum-restore 'on'"; }
+    { plugin = copycat; }
   ];
   extraConfig = ''
 ## COLORSCHEME: gruvbox dark
@@ -154,7 +147,7 @@ bind-key -n C-y run "${xclip}/bin/xclip -o | ${tmux}/bin/tmux load-buffer - ; ${
 #
 ##########
 
-set -g update-environment "DISPLAY SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY SSH_AUTH_SOCK"
+set -g update-environment "DISPLAY SHELL SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY SSH_AUTH_SOCK"
 set-environment -g SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent
 
 '';
