@@ -20,12 +20,12 @@ let pyuserinput = python36Packages.buildPythonPackage rec {
 
     pykeepass = python36Packages.buildPythonPackage rec {
       pname = "pykeepass";
-      version = "3.0.4";
+      version = "3.1.2";
       src = fetchFromGitHub {
         owner = "libkeepass";
         repo = pname;
-        rev = "91999edb607a635387e2e825397f0760286c231f";
-        sha256 = "0i24sa4drxa3d6k15f988l01gdj2j97im0dixn2qnqi4li389asr";
+        rev = "253b66aab4ea9cceb3d11a60ad1ec4784fc31e2b";
+        sha256 = "1d4xsaghxnp3zrnqvkfxgc4bgdriyl20y4raydmdivvqmygjh24f";
       };
 
       doCheck = false;
