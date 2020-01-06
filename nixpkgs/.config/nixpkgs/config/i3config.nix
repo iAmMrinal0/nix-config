@@ -5,8 +5,8 @@ with pkgs;
 let
   lock = import ../scripts/lock.nix { inherit pkgs; };
   shutdownMenu = import ../scripts/shutdownMenu.nix { inherit pkgs lock; };
-  workspaces = [" term" " code" " web" "♪ music" " avoid" "scratch" "scratch" "scratch" " bg"];
   fontSize = "13px";
+  workspaces = [" term" " code" " web" "♪ music" " avoid" "scratch" "scratch" "scratch" " bg"];
   fonts = [ "FontAwesome ${fontSize}" "Source Code Pro Medium ${fontSize}" ];
   numbers = map toString (lib.range 1 9);
   workspaceNumbers = lib.zipListsWith (x: y: x + " " + y) numbers workspaces ;
