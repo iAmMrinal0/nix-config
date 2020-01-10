@@ -4,16 +4,16 @@ with python3.pkgs;
 
 buildPythonApplication rec {
   pname = "brotab";
-  version = "2018-10-25";
+  version = "1.1.0";
 
   src = fetchFromGitHub {
     owner = "balta2ar";
     repo = "brotab";
-    rev = "6f95713ffb8296e3317187af2e7f802bf46c3178";
-    sha256 = "1z11x28q1ab3vhfif437h5r41qp88xmk1v1cbvgd4sg8na10sgcx";
+    rev = version;
+    sha256 = "17yj5i8p28a7zmixdfa1i4gfc7c2fmdkxlymazasar58dz8m68mw";
   };
 
-  propagatedBuildInputs = [ requests psutil flask ipython ];
+  propagatedBuildInputs = [ requests psutil flask setuptools ];
   checkInputs = [ pytest ];
 
   meta = with stdenv.lib; {
