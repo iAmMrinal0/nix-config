@@ -47,6 +47,8 @@ in {
   services.compton = import ./config/compton.nix { inherit pkgs; };
   services.dunst = import ./config/dunstrc.nix { inherit pkgs; };
   services.emacs.enable = true;
+  services.lorri.enable = true;
+  services.udiskie.enable = true;
 
   gtk = import ./config/gtk.nix { inherit pkgs; };
   programs.chromium = import ./config/chromium.nix;
