@@ -25,10 +25,6 @@ let
   ];
 
   haskellTools = [
-    cabal-install
-    cabal2nix
-    ghc
-    haskellPackages.ghcid
     haskellPackages.hlint
     haskellPackages.stylish-haskell
     ghcide
@@ -96,18 +92,17 @@ in {
     xfce.thunar-volman
     zathura
   ] ++ haskellTools ++ [ # Languages
-    nodePackages.node2nix
-    nodePackages_10_x.bower
-    nodePackages_10_x.bower2nix
-    nodePackages_10_x.pulp
-    nodejs-10_x
+    # nodePackages.node2nix
+    # nodePackages_10_x.bower
+    # nodePackages_10_x.bower2nix
+    # nodePackages_10_x.pulp
+    # nodejs-10_x
     python36
   ] ++ (with easyPS.inputs; [
-    psc-package
-    purescript
-    spago
+    # psc-package
+    # purescript
+    # spago
   ]) ++ [
-    kubectx
     kubernetes
     stern
   ] ++ [ # Build tools and other dependencies + rarely used
