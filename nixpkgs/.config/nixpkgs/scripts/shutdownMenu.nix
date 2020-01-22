@@ -54,7 +54,7 @@ menu=(
   [Logout]="i3-msg exit"
   [Cancel]=""
 )
-menu_nrows=$'' + ''{#menu[@]}
+menu_nrows=''${#menu[@]}
 
 # Menu entries that may trigger a confirmation message
 menu_confirm="Shutdown Reboot Hibernate Suspend Halt Logout"
@@ -62,7 +62,7 @@ menu_confirm="Shutdown Reboot Hibernate Suspend Halt Logout"
 rofi_colors="-bc $BORDER_COLOR -bg $BG_COLOR -fg $FG_COLOR -hlfg $HLFG_COLOR -hlbg $HLBG_COLOR"
 
 launcher="${rofi}/bin/rofi -dmenu -i -lines $menu_nrows -p $ROFI_TEXT $rofi_colors $ROFI_OPTIONS"
-selection="$(printf '%s\n' "$''+''{!menu[@]}" | sort | $launcher)"
+selection="$(printf '%s\n' "''${!menu[@]}" | sort | $launcher)"
 
 function ask_confirmation() {
     confirmed=$(echo -e "Yes\nNo" | ${rofi}/bin/rofi -dmenu -i -lines 2 -p "$selection?" \
@@ -70,7 +70,7 @@ function ask_confirmation() {
     [ "$confirmed" == "Yes" ] && confirmed=0
 
   if [ "$confirmed" == 0 ]; then
-    i3-msg -q "exec $'' + ''{menu[$''+''{selection}]}"
+    i3-msg -q "exec ''${menu[''${selection}]}"
   fi
 }
 
@@ -79,7 +79,7 @@ if [[ $? -eq 0 && ! -z $selection ]]; then
         $menu_confirm =~ (^|[[:space:]])"$selection"($|[[:space:]]) ]]; then
     ask_confirmation
   else
-    i3-msg -q "exec $'' + ''{menu[$''+''{selection}]}"
+    i3-msg -q "exec ''${menu[''${selection}]}"
   fi
 fi
 '')
