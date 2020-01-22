@@ -137,11 +137,14 @@ in {
     htop
     jq
     keepmenu
+    lsof
     neofetch
+    pv
     ripgrep
     screenfetch
     stow
     transmission-gtk
     xfce.xfconf
+    xorg.xkill
   ];
 }
