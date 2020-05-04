@@ -5,6 +5,7 @@ with pkgs;
 let
   brotab = callPackages ./pkgs/brotab { };
   keepmenu = callPackages ./pkgs/keepmenu { };
+  rofimoji = callPackages ./pkgs/rofimoji { };
   wallpaper = import ./scripts/wallpaper.nix { inherit pkgs; };
   easyPS = import (pkgs.fetchFromGitHub {
     owner = "justinwoo";
@@ -34,7 +35,7 @@ in {
   xsession = {
     enable = true;
     initExtra = lib.readFile wallpaper;
-    windowManager.i3 = import ./config/i3config.nix { inherit pkgs keepmenu; };
+    windowManager.i3 = import ./config/i3config.nix { inherit pkgs keepmenu rofimoji; };
   };
 
   # Let Home Manager install and manage itself.

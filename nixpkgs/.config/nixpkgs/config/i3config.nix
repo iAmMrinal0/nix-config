@@ -1,4 +1,4 @@
-{ pkgs, keepmenu, ... }:
+{ pkgs, keepmenu, rofimoji, ... }:
 
 with pkgs;
 
@@ -120,6 +120,7 @@ in
       "Shift+Return" = "exec ${terminator}/bin/terminator -e tmux";
       "g" = ''exec ${wmfocus}/bin/wmfocus --fill -c asdf --textcolor red'';
       "Control+k" = "exec ${keepmenu}/bin/keepmenu";
+      "Control+p" = "exec ${rofimoji}/bin/rofimoji -p";
       "t" = ''exec ${libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%U`"'';
       "a" = "focus child";
       "Control+Down" = "move workspace to output down";
