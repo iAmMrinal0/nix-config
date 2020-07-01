@@ -21,7 +21,7 @@ in
     assigns = {
       "\"${lib.elemAt workspaceNumbers 1}\"" = [{ class = "Emacs"; }];
       "\"${lib.elemAt workspaceNumbers 3}\"" = [{ class = "Vlc"; }];
-      "\"${lib.elemAt workspaceNumbers 4}\"" = [{ class = "Slack"; }];
+      "\"${lib.elemAt workspaceNumbers 4}\"" = [{ class = "Slack"; } {class = "discord";}];
     };
     bars = [{
       inherit fonts;
@@ -116,8 +116,8 @@ in
       "Control+mod1+Up" = "exec ${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
       "Control+mod1+Down" = "exec ${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
       "Control+mod1+m" = "exec ${pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
-      "Return" = "exec ${terminator}/bin/terminator";
-      "Shift+Return" = "exec ${terminator}/bin/terminator -e tmux";
+      "Return" = "exec ${kitty}/bin/kitty";
+      "Shift+Return" = "exec ${kitty}/bin/kitty tmux";
       "g" = ''exec ${wmfocus}/bin/wmfocus --fill -c asdf --textcolor red'';
       "Control+k" = "exec ${keepmenu}/bin/keepmenu";
       "Control+p" = "exec ${rofimoji}/bin/rofimoji -p";
