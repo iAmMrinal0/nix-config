@@ -52,6 +52,7 @@ in {
   programs.emacs = import ./config/emacs.nix { inherit pkgs; };
   programs.feh = import ./config/feh.nix;
   programs.git = import ./config/git.nix;
+  programs.kitty = import ./config/kitty.nix { inherit pkgs; };
   programs.rofi = import ./config/rofi.nix;
   programs.zsh = import ./config/zsh.nix { inherit pkgs; };
   programs.tmux = import ./config/tmux.nix { inherit pkgs; };
