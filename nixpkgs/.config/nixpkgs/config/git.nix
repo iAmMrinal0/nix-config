@@ -6,6 +6,8 @@
     contents = {
       user.name = "Mrinal Purohit";
       user.email = "mrinal.purohit@juspay.in";
+      pull.rebase = true;
+      rebase.autostash = true;
     };
     condition = "gitdir:~/play/";
   }];
