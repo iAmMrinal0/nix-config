@@ -14,6 +14,8 @@ let
     sha256 = "099dpxrpch8cgy310svrpdcad2y1qdl6l782mjpcgn3rqgj62vsf";
   });
 
+  i3blocksConf = import ./config/i3blocks.nix { inherit pkgs; };
+
   ghcide = (import (builtins.fetchTarball "https://github.com/hercules-ci/ghcide-nix/tarball/master") {}).ghcide-ghc865;
 
   fonts = [
@@ -35,7 +37,7 @@ in {
   xsession = {
     enable = true;
     initExtra = lib.readFile wallpaper;
-    windowManager.i3 = import ./config/i3config.nix { inherit pkgs keepmenu rofimoji; };
+    windowManager.i3 = import ./config/i3config.nix { inherit pkgs i3blocksConf keepmenu rofimoji; };
   };
 
   # Let Home Manager install and manage itself.

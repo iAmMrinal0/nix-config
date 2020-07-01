@@ -1,4 +1,4 @@
-{ pkgs, keepmenu, rofimoji, ... }:
+{ pkgs, i3blocksConf, keepmenu, rofimoji, ... }:
 
 with pkgs;
 
@@ -27,7 +27,7 @@ in
       inherit fonts;
       position = "top";
       trayOutput = "primary";
-      statusCommand = "${i3blocks}/bin/i3blocks";
+      statusCommand = "${i3blocks}/bin/i3blocks -c ${i3blocksConf}";
       colors = {
         background = "#1d2021";
         statusline ="#ebdbb2";
