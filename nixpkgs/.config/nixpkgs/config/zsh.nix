@@ -27,24 +27,19 @@ with pkgs;
     theme = "mod_steeef";
     custom = "\$HOME/.oh-my-zsh/custom";
   };
-  plugins = [
-    {
-      name = "zsh-autosuggestions";
-      src = fetchFromGitHub {
-        owner = "zsh-users";
-        repo = "zsh-autosuggestions";
-        rev = "v0.5.2";
-        sha256 = "1xhrdv6cgmq9qslb476rcs8ifw8i2vf43yvmmscjcmpz0jac4sbx";
-      };
-    }
-    {
-      name = "nix-zsh-completions";
-      src = fetchFromGitHub {
-        owner = "spwhitt";
-        repo = "nix-zsh-completions";
-        rev = "0.4.3";
-        sha256 = "0fq1zlnsj1bb7byli7mwlz7nm2yszwmyx43ccczcv51mjjfivyp3";
-      };
-    }
-  ];
+  plugins = [{
+    name = "zsh-autosuggestions";
+    src = fetchFromGitHub {
+      owner = "zsh-users";
+      repo = "zsh-autosuggestions";
+      rev = "v0.6.4";
+      sha256 = "0h52p2waggzfshvy1wvhj4hf06fmzd44bv6j18k3l9rcx6aixzn6";
+    };} {
+    name = "nix-zsh-completions";
+    src = fetchFromGitHub {
+      owner = "spwhitt";
+      repo = "nix-zsh-completions";
+      rev = "0.4.4";
+      sha256 = "1n9whlys95k4wc57cnz3n07p7zpkv796qkmn68a50ygkx6h3afqf";
+    };}];
 }
