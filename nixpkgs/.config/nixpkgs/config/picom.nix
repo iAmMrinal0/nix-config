@@ -4,7 +4,7 @@ with pkgs;
 
 {
   enable = true;
-  vSync = "opengl-swc";
+  # vSync = "opengl-swc";
   shadowOpacity = "0.5";
   shadow = true;
   shadowOffsets = [ (-5) (-5) ];
@@ -41,15 +41,12 @@ glx-no-stencil = true;
 
 glx-copy-from-front = false;
 
-glx-swap-method = "undefined";
-
 shadow-radius = 5;
 
 shadow-ignore-shaped = false;
 
 frame-opacity = 1;
 inactive-opacity-override = false;
-alpha-step = 0.06;
 
 blur-background-fixed = false;
 
@@ -70,19 +67,19 @@ focus-exclude = [ ];
 detect-transient = true;
 detect-client-leader = true;
 
-wintypes:
-{
-    tooltip =
-    {
-        # fade: Fade the particular type of windows.
-        fade = true;
-        # shadow: Give those windows shadow
-        shadow = false;
-        # opacity: Default opacity for the type of windows.
-        opacity = 0.85;
-        # focus: Whether to always consider windows of this type focused.
-        focus = true;
-    };
-};
+# wintypes:
+# {
+#     tooltip =
+#     {
+#         # fade: Fade the particular type of windows.
+#         fade = true;
+#         # shadow: Give those windows shadow
+#         shadow = false;
+#         # opacity: Default opacity for the type of windows.
+#         opacity = 0.85;
+#         # focus: Whether to always consider windows of this type focused.
+#         focus = true;
+#     };
+# };
 '';
 }

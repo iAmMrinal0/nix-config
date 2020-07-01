@@ -41,8 +41,8 @@ in {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  services.compton = import ./config/compton.nix { inherit pkgs; };
   services.dunst = import ./config/dunstrc.nix { inherit pkgs; };
+  services.picom = import ./config/picom.nix { inherit pkgs; };
   services.emacs.enable = true;
   services.lorri.enable = true;
   services.udiskie.enable = true;
