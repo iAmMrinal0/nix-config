@@ -89,11 +89,13 @@ in {
     keybase
     rescuetime
     slack
-    terminator
     vscode
     xarchiver
     xfce.thunar
     xfce.thunar-volman
+    xfce.thunar-archive-plugin
+    xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
+    xfce.xfconf # For saving preferences of Thunar.
     zathura
   ] ++ haskellTools ++ [ # Languages
     # nodePackages.node2nix
@@ -111,18 +113,18 @@ in {
     stern
   ] ++ [ # Build tools and other dependencies + rarely used
     gnumake
+    google-cloud-sdk
     imagemagick
     libnotify # To use dunst
     libsForQt5.qtstyleplugins
+    lshw
     nmap
-    scrot
+    pciutils
+    python36Packages.virtualenv
+    python36Packages.pip
     unzip
     xclip
     xdotool
-    xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
-    xfce.thunar-volman
-    xfce.thunar-archive-plugin
-    xfce.xfconf # For saving preferences of Thunar.
     xsel
   ] ++ [ # Bit more frequently used
     acpi
@@ -133,8 +135,10 @@ in {
     bc
     brotab
     direnv
+    discord
     drive
     dunst
+    glow
     gnome3.dconf
     gnome3.nautilus
     google-drive-ocamlfuse
@@ -146,6 +150,7 @@ in {
     pv
     ripgrep
     screenfetch
+    shellcheck
     stow
     transmission-gtk
     xfce.xfconf
