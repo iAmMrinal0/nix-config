@@ -69,6 +69,18 @@
     yubikey-personalization
   ];
 
+  services.dbus.packages = [ pkgs.blueman ];
+  services.blueman.enable = true;
+
+  hardware.bluetooth = {
+    enable = true;
+    config = {
+      General = {
+        Enable = "Source,Sink,Media,Socket";
+      };
+    };
+  };
+
   hardware.u2f.enable = true;
 
   virtualisation.docker.enable = true;
