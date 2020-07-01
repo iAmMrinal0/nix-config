@@ -122,11 +122,12 @@
 
   services.xserver = {
     enable = true;
+    exportConfiguration = true;
     displayManager = {
       lightdm.enable = true;
+      defaultSession = "none+i3";
     };
     desktopManager = {
-      default = "none";
       xterm.enable = false;
     };
     libinput.enable = true;
