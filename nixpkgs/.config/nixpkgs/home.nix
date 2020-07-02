@@ -134,6 +134,7 @@ in {
     keepmenu
     lsof
     neofetch
+    nix-diff
     pv
     ripgrep
     screenfetch
