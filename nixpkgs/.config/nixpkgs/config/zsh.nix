@@ -13,7 +13,6 @@ with pkgs;
     dir_name=$(echo `basename $PWD` | tr '.' '-')
     ${tmux}/bin/tmux new-session -As $dir_name
   }
-  eval "$(${direnv}/bin/direnv hook zsh)"
   source <(${kubectl}/bin/kubectl completion zsh)
   '';
   shellAliases = {

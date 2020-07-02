@@ -53,6 +53,10 @@ in {
   gtk = import ./config/gtk.nix { inherit pkgs; };
   programs.chromium = import ./config/chromium.nix;
   programs.emacs = import ./config/emacs.nix { inherit pkgs; };
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
   programs.feh = import ./config/feh.nix;
   programs.git = import ./config/git.nix;
   programs.kitty = import ./config/kitty.nix { inherit pkgs; };
@@ -135,7 +139,6 @@ in {
     awscli
     bc
     brotab
-    direnv
     discord
     drive
     dunst
