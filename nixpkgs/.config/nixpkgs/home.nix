@@ -7,17 +7,11 @@ let
   keepmenu = callPackages ./pkgs/keepmenu { };
   rofimoji = callPackages ./pkgs/rofimoji { };
   wallpaper = import ./scripts/wallpaper.nix { inherit pkgs; };
-  easyPS = import (pkgs.fetchFromGitHub {
-    owner = "justinwoo";
-    repo = "easy-purescript-nix";
-    rev = "bad807ade1314420a52c589dbc3d64d3c9b38480";
-    sha256 = "099dpxrpch8cgy310svrpdcad2y1qdl6l782mjpcgn3rqgj62vsf";
-  });
 
   i3blocksConf = import ./config/i3blocks.nix { inherit pkgs; };
   zshCustom = import ./config/modSteeefZsh.nix { inherit pkgs; };
 
-  ghcide = (import (builtins.fetchTarball "https://github.com/hercules-ci/ghcide-nix/tarball/master") {}).ghcide-ghc865;
+  ghcide = (import (builtins.fetchTarball "https://github.com/cachix/ghcide-nix/tarball/master") {}).ghcide-ghc883;
 
   fonts = [
     cantarell-fonts
@@ -102,18 +96,7 @@ in {
     xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
     xfce.xfconf # For saving preferences of Thunar.
     zathura
-  ] ++ haskellTools ++ [ # Languages
-    # nodePackages.node2nix
-    # nodePackages_10_x.bower
-    # nodePackages_10_x.bower2nix
-    # nodePackages_10_x.pulp
-    # nodejs-10_x
-    python36
-  ] ++ (with easyPS.inputs; [
-    # psc-package
-    # purescript
-    # spago
-  ]) ++ [
+  ] ++ haskellTools ++ [
     kubernetes
     stern
   ] ++ [ # Build tools and other dependencies + rarely used
