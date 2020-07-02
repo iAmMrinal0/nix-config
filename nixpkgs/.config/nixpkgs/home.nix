@@ -15,6 +15,7 @@ let
   });
 
   i3blocksConf = import ./config/i3blocks.nix { inherit pkgs; };
+  zshCustom = import ./config/modSteeefZsh.nix { inherit pkgs; };
 
   ghcide = (import (builtins.fetchTarball "https://github.com/hercules-ci/ghcide-nix/tarball/master") {}).ghcide-ghc865;
 
@@ -56,7 +57,7 @@ in {
   programs.git = import ./config/git.nix;
   programs.kitty = import ./config/kitty.nix { inherit pkgs; };
   programs.rofi = import ./config/rofi.nix;
-  programs.zsh = import ./config/zsh.nix { inherit pkgs; };
+  programs.zsh = import ./config/zsh.nix { inherit pkgs zshCustom; };
   programs.tmux = import ./config/tmux.nix { inherit pkgs; };
 
   programs.fzf = {

@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, zshCustom, ... }:
 
 with pkgs;
 
@@ -25,7 +25,7 @@ with pkgs;
     enable = true;
     plugins = ["docker" "extract" "git" "kubectl" "sudo"];
     theme = "mod_steeef";
-    custom = "\$HOME/.oh-my-zsh/custom";
+    custom = "${zshCustom}";
   };
   plugins = [{
     name = "zsh-autosuggestions";
