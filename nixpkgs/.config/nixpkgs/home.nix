@@ -28,6 +28,11 @@ let
     ghcide
   ];
 in {
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowBroken = true;
+    chromium = { enableWideVine = true; };
+  };
 
   xsession = {
     enable = true;
