@@ -13,19 +13,19 @@ let pyuserinput = python36Packages.buildPythonPackage rec {
       propagatedBuildInputs = [ python36Packages.xlib ];
 
       meta = {
-        homepage = https://github.com/PyUserInput/PyUserInput/;
+        homepage = "https://github.com/PyUserInput/PyUserInput/";
         description = "A module for cross-platform control of the mouse and keyboard in python that is simple to use.";
       };
     };
 
     pykeepass = python36Packages.buildPythonPackage rec {
       pname = "pykeepass";
-      version = "3.1.2";
+      version = "3.2.0";
       src = fetchFromGitHub {
         owner = "libkeepass";
         repo = pname;
-        rev = "253b66aab4ea9cceb3d11a60ad1ec4784fc31e2b";
-        sha256 = "1d4xsaghxnp3zrnqvkfxgc4bgdriyl20y4raydmdivvqmygjh24f";
+        rev = "fd290bf5218e65c043eeba6860bc07434dc1119c";
+        sha256 = "1wxbfpy7467mlnfsvmh685fhfnq4fki9y7yc9cylp30r5n3hisaj";
       };
 
       doCheck = false;
@@ -34,20 +34,20 @@ let pyuserinput = python36Packages.buildPythonPackage rec {
 
 in python36Packages.buildPythonApplication rec {
   pname = "keepmenu";
-  version = "0.5.9";
+  version = "0.6.1";
 
   src = fetchFromGitHub {
     owner = "firecat53";
     repo = pname;
-    rev = "d7622ca2bcf7cc9c774e3d930508a7748337e8bb";
-    sha256 = "1k92bnqhykg1avr1ny4fq0v22y4k53gy8bq4p8chsnqjv0p2mprq";
+    rev = "21b2fd29a4a36bbf8645e5570f3fa1e74453982a";
+    sha256 = "0459nca0fkzchagl4zyazhiajgy1fkmyvyd127rzl2x5q2dlidca";
   };
 
   propagatedBuildInputs = [ pykeepass pyuserinput ];
 
   meta = with stdenv.lib; {
     description = "Fully featured Dmenu/Rofi frontend for managing Keepass databases.";
-    homepage = https://github.com/firecat53/keepmenu;
+    homepage = "https://github.com/firecat53/keepmenu";
     license = licenses.gpl3;
   };
 }
