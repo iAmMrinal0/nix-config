@@ -54,6 +54,7 @@
     ncdu
     openjdk
     stow
+    tailscale
     tcpdump
     traceroute
     usbutils
@@ -80,6 +81,8 @@
 
   services.dbus.packages = [ pkgs.blueman ];
   services.blueman.enable = true;
+
+  services.tailscale.enable = true;
 
   hardware.bluetooth = {
     enable = true;
