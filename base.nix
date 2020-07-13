@@ -14,11 +14,17 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.pulseaudio = true;
+
   nix.extraOptions = ''
     keep-outputs = true
   '';
 
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  # Cloudflare DNS servers
+  networking.nameservers = [ "1.1.1.1" "1.0.0.1" ];
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -115,6 +121,7 @@
     enable = true;
     extraModules = [ pkgs.pulseaudio-modules-bt ];
     package = pkgs.pulseaudioFull;
+    support32Bit = true;
   };
 
   fonts.fonts = with pkgs; [
