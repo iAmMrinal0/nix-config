@@ -5,7 +5,10 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [ ./cache.nix ];
+  imports = [
+    (import "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-20.03.tar.gz}/nixos")
+    ./cache.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -152,6 +155,7 @@
     extraGroups = [ "adbusers" "docker" "video" "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
+  home-manager.users.iammrinal0 = ./home.nix;
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
