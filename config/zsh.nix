@@ -38,20 +38,28 @@ with pkgs;
     }
     {
       name = "nix-zsh-completions";
+      src = "${nix-zsh-completions}/share/zsh/site-functions";
+    }
+    {
+      name = "fast-syntax-highlighting";
+      src = "${zsh-fast-syntax-highlighting}/share/zsh/site-functions";
+    }
+    {
+      name = "you-should-use";
       src = fetchFromGitHub {
-        owner = "spwhitt";
-        repo = "nix-zsh-completions";
-        rev = "0.4.4";
-        sha256 = "1n9whlys95k4wc57cnz3n07p7zpkv796qkmn68a50ygkx6h3afqf";
+        owner = "MichaelAquilina";
+        repo = "zsh-you-should-use";
+        rev = "1.7.0";
+        sha256 = "1gcxm08ragwrh242ahlq3bpfg5yma2cshwdlj8nrwnd4qwrsflgq";
       };
     }
     {
-      name = "zsh-syntax-highlighting";
+      name = "zsh-history-substring-search";
       src = fetchFromGitHub {
         owner = "zsh-users";
-        repo = "zsh-syntax-highlighting";
-        rev = "0.7.1";
-        sha256 = "03r6hpb5fy4yaakqm3lbf4xcvd408r44jgpv4lnzl9asp4sb9qc0";
+        repo = "zsh-history-substring-search";
+        rev = "0f80b8eb3368b46e5e573c1d91ae69eb095db3fb";
+        sha256 = "0y8va5kc2ram38hbk2cibkk64ffrabfv1sh4xm7pjspsba9n5p1y";
       };
     }
   ];
