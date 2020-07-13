@@ -162,7 +162,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.iammrinal0 = {
     isNormalUser = true;
-    extraGroups = [ "adbusers" "docker" "video" "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "audio" "adbusers" "docker" "video" "plugdev" "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
   home-manager.users.iammrinal0 = ./home.nix;
