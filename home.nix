@@ -111,6 +111,7 @@ in {
     libnotify # To use dunst
     libsForQt5.qtstyleplugins
     lshw
+    nix-review
     nmap
     pciutils
     python36Packages.virtualenv
@@ -146,6 +147,7 @@ in {
     shellcheck
     stow
     transmission-gtk
+    tree
     xfce.xfconf
     xorg.xkill
   ];
