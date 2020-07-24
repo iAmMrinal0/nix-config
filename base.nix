@@ -14,8 +14,11 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.pulseaudio = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    pulseaudio = true;
+    chromium = { enableWideVine = true; };
+  };
 
   nix.extraOptions = ''
     keep-outputs = true
@@ -166,6 +169,7 @@
     shell = pkgs.zsh;
   };
   home-manager.users.iammrinal0 = ./home.nix;
+  home-manager.useGlobalPkgs = true;
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
