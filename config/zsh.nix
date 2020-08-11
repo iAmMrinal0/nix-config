@@ -9,6 +9,7 @@ with pkgs;
   history.expireDuplicatesFirst = true;
   history.extended = true;
   initExtra = ''
+  setopt HIST_IGNORE_ALL_DUPS
   function new-tmux-from-dir-name {
     dir_name=$(echo `basename $PWD` | tr '.' '-')
     ${tmux}/bin/tmux new-session -As $dir_name
