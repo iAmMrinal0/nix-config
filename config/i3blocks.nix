@@ -3,6 +3,7 @@
 with pkgs;
 
 let currentTrack = import ../scripts/currentTrack.nix { inherit pkgs; };
+    dunstNotifToggle = import ../scripts/dunstNotifToggle.nix { inherit pkgs; };
     # using this fork because few scripts have hardcoded shebangs
     # and the user has a patch PR open in the source repo
     i3blocks-contrib = fetchFromGitHub {
@@ -78,5 +79,9 @@ interval=1
 [battery]
 label=⚡
 interval=15
+
+[dunst]
+command=${dunstNotifToggle}
+interval=1
 '';
 }
