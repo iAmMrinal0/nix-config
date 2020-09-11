@@ -54,7 +54,7 @@ in {
   programs.feh = import ./config/feh.nix;
   programs.git = import ./config/git.nix;
   programs.kitty = import ./config/kitty.nix { inherit pkgs; };
-  programs.rofi = import ./config/rofi.nix;
+  programs.rofi = import ./config/rofi.nix { inherit pkgs; };
   programs.zsh = import ./config/zsh.nix { inherit pkgs zshCustom; };
   programs.tmux = import ./config/tmux.nix { inherit pkgs; };
 

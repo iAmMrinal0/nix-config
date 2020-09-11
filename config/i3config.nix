@@ -133,6 +133,7 @@ in
       "d" = "exec ${rofi}/bin/rofi -show run";
       "Control+d" = "exec i3-dmenu-desktop --dmenu 'rofi -dmenu'";
       "Control+w" = "exec ${rofi}/bin/rofi -show window";
+      "Control+s" = "exec ${rofi}/bin/rofi -show ssh";
       "p" = "exec ${rofiAutorandr}";
       "e" = "layout toggle stacking tabbed splith splitv";
       "f" = "fullscreen toggle";
