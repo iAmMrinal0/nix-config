@@ -5,6 +5,7 @@ with pkgs;
 let
   lock = import ../scripts/lock.nix { inherit pkgs; };
   shutdownMenu = import ../scripts/shutdownMenu.nix { inherit pkgs lock; };
+  rofiAutorandr = import ../scripts/rofiAutorandr.nix { inherit pkgs; };
   fontSize = "13px";
   workspaces = [" term" " code" " web" "♪ music" " avoid" "scratch" "scratch" "scratch" " bg"];
   fonts = [ "FontAwesome ${fontSize}" "Source Code Pro Medium ${fontSize}" ];
@@ -132,6 +133,7 @@ in
       "d" = "exec ${rofi}/bin/rofi -show run";
       "Control+d" = "exec i3-dmenu-desktop --dmenu 'rofi -dmenu'";
       "Control+w" = "exec ${rofi}/bin/rofi -show window";
+      "p" = "exec ${rofiAutorandr}";
       "e" = "layout toggle stacking tabbed splith splitv";
       "f" = "fullscreen toggle";
       "Tab" = "workspace back_and_forth";
