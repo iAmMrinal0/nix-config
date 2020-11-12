@@ -12,6 +12,7 @@
     condition = "gitdir:~/play/";
   }];
   extraConfig = {
+    fetch = { prune = true; };
     core = { editor = "emacs"; };
     merge = { conflictstyle = "diff3"; tool = "ediff"; renormalize = true; };
     status = { showUntrackedFiles = "all"; };
