@@ -7,7 +7,9 @@
   borderWidth = 1;
   separator = "none";
   rowHeight = 2;
-  extraConfig = "rofi.matching: fuzzy";
+  extraConfig = {
+    matching = "fuzzy";
+  };
   scrollbar = false;
   terminal = "${pkgs.kitty}/bin/kitty";
   theme = "gruvbox-dark-hard";
