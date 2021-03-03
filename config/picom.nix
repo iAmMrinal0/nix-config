@@ -24,7 +24,7 @@ with pkgs;
     "name = 'Kupfer'"
     "name = 'xfce4-notifyd'"
     "name *= 'VLC'"
-    "name *= 'compton'"
+    "name *= 'picom'"
     "name *= 'Chromium'"
     "name *= 'Chrome'"
     "name *= 'Firefox'"
