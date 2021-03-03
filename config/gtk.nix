@@ -37,4 +37,14 @@ with pkgs;
     gtk-xft-hintstyle="hintfull";
     gtk-xft-rgba="rgb";
   };
+  gtk3.extraCss = ''
+    window decoration {
+      margin: 0;
+      border: none;
+    }
+    /* regular thunar toolbar icons */
+    .thunar {
+      -gtk-icon-style: regular;
+    }
+    '';
 }
