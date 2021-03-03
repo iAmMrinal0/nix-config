@@ -45,7 +45,7 @@ markup=pango
 
 [song]
 command=${currentTrack}
-label=
+# label=
 interval=1
 color=#87AFAF
 
