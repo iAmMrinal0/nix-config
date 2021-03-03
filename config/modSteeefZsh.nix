@@ -1,8 +1,6 @@
 { pkgs, ... }:
 
-with pkgs;
-
-writeTextDir "themes/mod_steeef.zsh-theme" ''
+pkgs.writeTextDir "themes/mod_steeef.zsh-theme" ''
 # prompt style and colors based on Steve Losh's Prose theme:
 # http://github.com/sjl/oh-my-zsh/blob/master/themes/prose.zsh-theme
 #
@@ -13,6 +11,15 @@ writeTextDir "themes/mod_steeef.zsh-theme" ''
 # http://briancarper.net/blog/570/git-info-in-your-zsh-prompt
 
 export VIRTUAL_ENV_DISABLE_PROMPT=1
+
+function k8s_info {
+  if [ -f ~/.kube/config ]; then
+    k8s_context=$(cat ~/.kube/config | grep "current-context:" | sed "s/current-context: //")
+    if [ ! -z $k8s_context ]; then
+      echo ' ('%F{purple}`echo $k8s_context`%f') '
+    fi
+  fi
+}
 
 function virtualenv_info {
     [ $VIRTUAL_ENV ] && echo '('%F{blue}`basename $VIRTUAL_ENV`%f') '
@@ -66,12 +73,12 @@ zstyle ':vcs_info:*:prompt:*' formats       "''${FMT_BRANCH}"
 zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
 
 function nix_shell {
-  [ $IN_NIX_SHELL ] && echo '('%F{green}`echo $IN_NIX_SHELL`%f') '
+  [ $IN_NIX_SHELL ] && echo ' ('%F{green}`echo $IN_NIX_SHELL`%f')'
 }
 
 function steeef_precmd {
     # check for untracked files or updated submodules, since vcs_info doesn't
-    if git ls-files --other --exclude-standard 2> /dev/null | grep -q "."; then
+    if ${pkgs.git}/bin/git ls-files --other --exclude-standard 2> /dev/null | grep -q "."; then
         PR_GIT_UPDATE=1
         FMT_BRANCH="(%{$turquoise%}%b%u%c%{$hotpink%}●''${PR_RST})"
     else
@@ -87,7 +94,7 @@ add-zsh-hook precmd steeef_precmd
 pr_24h_clock=' %*'
 
 PROMPT=$'
-%{$purple%}%n''${PR_RST} at %{$orange%}%m''${PR_RST} in %{$limegreen%}%~''${PR_RST} at%{$hotpink%}$pr_24h_clock''${PR_RST}$vcs_info_msg_0_$(virtualenv_info)$(nix_shell)
+%{$purple%}%n''${PR_RST} at %{$orange%}%m''${PR_RST} in %{$limegreen%}%~''${PR_RST} at%{$hotpink%}$pr_24h_clock''${PR_RST}$vcs_info_msg_0_$(virtualenv_info)$(nix_shell)$(k8s_info)
 $ '
 
 ''
