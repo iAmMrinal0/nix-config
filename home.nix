@@ -1,60 +1,87 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 with pkgs;
 
 let
-  brotab = callPackages ./pkgs/brotab { };
-  keepmenu = callPackages ./pkgs/keepmenu { };
-  rofimoji = callPackages ./pkgs/rofimoji { };
-  wallpaper = import ./scripts/wallpaper.nix { inherit pkgs; };
+  # brotab = callPackage ./pkgs/brotab { };
+  keepmenu = callPackage ./pkgs/keepmenu { };
+  rofimoji = callPackage ./pkgs/rofimoji { };
 
-  i3blocksConf = import ./config/i3blocks.nix { inherit pkgs; };
-  zshCustom = import ./config/modSteeefZsh.nix { inherit pkgs; };
+  wallpaper = callPackage ./scripts/wallpaper.nix { };
+  lock = callPackage ./scripts/lock.nix { };
 
-  ghcide = (import (builtins.fetchTarball "https://github.com/cachix/ghcide-nix/tarball/master") {}).ghcide-ghc883;
-
-  fonts = [
-    cantarell-fonts
-    dejavu_fonts
-    emacs-all-the-icons-fonts
-    font-awesome_4
-    google-fonts
-    noto-fonts
-  ];
+  i3blocksConf = callPackage ./config/i3blocks.nix { };
+  zshCustom = callPackage ./config/modSteeefZsh.nix { };
 
   haskellTools = [
     haskellPackages.hlint
+    haskellPackages.haskell-language-server
     haskellPackages.stylish-haskell
-    ghcide
   ];
 in {
 
   xsession = {
     enable = true;
     initExtra = lib.readFile wallpaper;
-    windowManager.i3 = import ./config/i3config.nix { inherit pkgs i3blocksConf keepmenu rofimoji; };
+    windowManager.i3 = import ./config/i3config.nix { inherit pkgs lib i3blocksConf keepmenu rofimoji; };
   };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  services.blueman-applet.enable = true;
   services.dunst = import ./config/dunstrc.nix { inherit pkgs; };
+  services.gpg-agent.enable = true;
   services.picom = import ./config/picom.nix { inherit pkgs; };
-  services.emacs.enable = true;
+  services.kdeconnect = {
+    enable = true;
+    indicator = true;
+  };
+  services.keybase.enable = true;
+  services.pasystray.enable = true;
+  services.screen-locker = {
+    enable = true;
+    enableDetectSleep = true;
+    inactiveInterval = 15;
+    lockCmd = "${lock}";
+  };
+  # services.emacs = {
+  #   enable = true;
+  #   package = pkgs.emacsGcc;
+  #   socketActivation.enable = true;
+  #   client = {
+  #     enable = true;
+  #     arguments = ["-a" "\"\"" "-c"];
+  #   };
+  # };
   services.lorri.enable = true;
   services.udiskie.enable = true;
 
   gtk = import ./config/gtk.nix { inherit pkgs; };
+
+  programs.autorandr = {
+    enable = true;
+    hooks = {
+      postswitch = {
+        "change-background" = lib.readFile wallpaper;
+      };
+    };
+  };
   programs.chromium = import ./config/chromium.nix;
-  programs.emacs = import ./config/emacs.nix { inherit pkgs; };
+  programs.command-not-found.enable = true;
   programs.direnv = {
     enable = true;
     enableZshIntegration = true;
   };
   programs.feh = import ./config/feh.nix;
+  programs.gpg.enable = true;
   programs.git = import ./config/git.nix;
   programs.kitty = import ./config/kitty.nix { inherit pkgs; };
   programs.rofi = import ./config/rofi.nix { inherit pkgs; };
+  qt = {
+    enable = true;
+    platformTheme = "gtk";
+  };
   programs.zsh = import ./config/zsh.nix { inherit pkgs zshCustom; };
   programs.tmux = import ./config/tmux.nix { inherit pkgs; };
 
@@ -64,12 +91,13 @@ in {
   };
 
   # TODO see if there's a better heirarchy for packages
-  # TODO manage fonts properly
   # TODO Migrate the configs in the dotfiles repo to nix
-  home.packages = fonts ++ [ # Themes and icons
+  home.packages = [ # Themes and icons
     lxappearance
     arc-theme
     gnome3.defaultIconTheme
+    capitaine-cursors
+    papirus-icon-theme
     hicolor_icon_theme
     material-icons
     paper-icon-theme
@@ -81,14 +109,14 @@ in {
     pavucontrol
     playerctl
   ] ++ [ # GUI
+    authy
     xorg.xdpyinfo
-    firefox-beta-bin
+    firefox
     gnome3.gnome-screenshot
     keepassxc
     keybase
     rescuetime
     slack
-    vscode
     xarchiver
     xfce.thunar
     xfce.thunar-volman
@@ -100,33 +128,39 @@ in {
     kubernetes
     stern
   ] ++ [ # Build tools and other dependencies + rarely used
+    cachix
     gnumake
     google-cloud-sdk
     imagemagick
+    kafkacat
     libnotify # To use dunst
     libsForQt5.qtstyleplugins
     lshw
     nix-review
     nmap
     pciutils
+    perl # for i3blocks scripts
     python36Packages.virtualenv
     python36Packages.pip
+    qt5ct
     unzip
     xclip
     xdotool
+    aspellDicts.en
+    aspellDicts.en-computers
+    aspell
     xsel
   ] ++ [ # Bit more frequently used
     acpi
     ag
     arandr
-    autorandr
     awscli
     bc
-    brotab
     discord
+    dnsutils
+    nodejs-12_x
     drive
     dunst
-    glow
     gnome3.dconf
     gnome3.nautilus
     google-drive-ocamlfuse
@@ -135,7 +169,11 @@ in {
     keepmenu
     lsof
     neofetch
+    netcat-gnu
+    niv
     nix-diff
+    nix-prefetch-github
+    nixfmt
     pv
     ripgrep
     screenfetch
@@ -146,4 +184,33 @@ in {
     xfce.xfconf
     xorg.xkill
   ];
+
+  systemd.user.services = {
+    mpris-proxy = {
+      Unit.Description = "Mpris proxy";
+      Unit.After = [ "network.target" "sound.target" ];
+      Service.ExecStart = "${pkgs.bluez}/bin/mpris-proxy";
+      Install.WantedBy = [ "default.target" ];
+    };
+    rescuetime = {
+      Unit = {
+        Description = "Rescuetime Systemd Service";
+        After = [ "graphical-session-pre.target" ];
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        Environment =
+          let toolPaths = lib.makeBinPath [ pkgs.coreutils-full pkgs.gnugrep pkgs.xorg.xprop pkgs.procps pkgs.gawk pkgs.nettools ];
+          in [ "PATH=${toolPaths}" ];
+        ExecStart = "${pkgs.rescuetime}/bin/rescuetime";
+        Restart = "on-failure";
+      };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
+    };
+  };
+
+  systemd.user.startServices = true;
+
 }
