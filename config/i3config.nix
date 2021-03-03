@@ -1,4 +1,4 @@
-{ pkgs, i3blocksConf, keepmenu, rofimoji, ... }:
+{ lib, pkgs, i3blocksConf, keepmenu, rofimoji, ... }:
 
 with pkgs;
 
@@ -8,7 +8,7 @@ let
   rofiAutorandr = import ../scripts/rofiAutorandr.nix { inherit pkgs; };
   fontSize = "13px";
   workspaces = [" term" " code" " web" "♪ music" " avoid" "scratch" "scratch" "scratch" " bg"];
-  fonts = [ "FontAwesome ${fontSize}" "Source Code Pro Medium ${fontSize}" ];
+  fonts = [ "Font Awesome 5 Free ${fontSize}" "Source Code Pro Medium ${fontSize}" ];
   numbers = map toString (lib.range 1 9);
   workspaceNumbers = lib.zipListsWith (x: y: x + " " + y) numbers workspaces ;
   useWithModifier = mod: lib.mapAttrs' (k: v: lib.nameValuePair (mod + "+" + k) v);
@@ -44,14 +44,16 @@ in
       commands = [
         { command = "border pixel 0"; criteria = { class = "^.*"; }; }
         { command = "move to workspace \"${lib.elemAt workspaceNumbers 3}\""; criteria = { class = "Spotify"; }; }
+        { command = "sticky enable"; criteria = { title = "Picture-in-Picture";}; }
       ];
     };
     startup = [
       { command = "${xorg.xset}/bin/xset -b"; }
       { command = "${transmission-gtk}/bin/transmission-gtk --minimized"; }
-      { command = "${rescuetime}/bin/rescuetime"; }
+      { command = "${kdeconnect}/bin/kdeconnect-indicator"; }
       { command = "${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ 25%"; }
       { command = "${numlockx}/bin/numlockx on"; }
+      { command = "${keepassxc}/bin/keepassxc"; }
     ];
     modes = {
       resize = {
@@ -162,9 +164,11 @@ in
       "Shift+Up" = "move up";
       "Shift+Right" = "move right";
       "Shift+space" = "floating toggle";
+      "Shift+m" = "exec ${pulseaudio}/bin/pactl set-source-mute 1 toggle";
       "s" = "layout stacking";
       "space" = "focus mode_toggle";
       "w" = "layout tabbed";
+      "Shift+x" = "[urgent=latest] focus";
     } //
     lib.foldl (x: y: x // y) {}
       (lib.zipListsWith
@@ -185,6 +189,8 @@ in
 
       "XF86MonBrightnessUp" = "${light}/bin/light -A 10";
       "XF86MonBrightnessDown" = "${light}/bin/light -U 10";
+
+      "XF86AudioMicMute" = "${pulseaudio}/bin/pactl set-source-mute 1 toggle";
 
       "Print" = "${gnome3.gnome-screenshot}/bin/gnome-screenshot -i";
 
