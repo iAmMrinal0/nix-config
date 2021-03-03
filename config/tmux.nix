@@ -106,7 +106,9 @@ bind '"' split-window -c "#{pane_current_path}"
 bind % split-window -h -c "#{pane_current_path}"
 bind c new-window -c "#{pane_current_path}"
 
-bind-key -n M-s split-window -v "${tmux}/bin/tmux list-sessions | sed -E 's/:.*$//' | grep -v \"^$(${tmux}/bin/tmux display-message -p '#S')\$\" | ${fzf}/bin/fzf --reverse | ${findutils}/bin/xargs ${tmux}/bin/tmux switch-client -t"
+bind-key -n M-z resize-pane -Z
+
+bind-key -n M-s split-window -v "${tmux}/bin/tmux list-sessions | grep -v '(attached)$' | sed -E 's/:.*$//' | ${fzf}/bin/fzf --reverse | ${findutils}/bin/xargs ${tmux}/bin/tmux switch-client -t"
 
 # Send the same command to all panes/windows/sessions
 bind E command-prompt -p "Command:" \
