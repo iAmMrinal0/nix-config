@@ -7,22 +7,23 @@
   history.expireDuplicatesFirst = true;
   history.extended = true;
   initExtra = ''
-  setopt HIST_IGNORE_ALL_DUPS
-  function new-tmux-from-dir-name {
-    dir_name=$(echo `basename $PWD` | tr '.' '-')
-    ${pkgs.tmux}/bin/tmux new-session -As $dir_name
-  }
-  source <(${pkgs.kubectl}/bin/kubectl completion zsh)
+    setopt HIST_IGNORE_ALL_DUPS
+    function new-tmux-from-dir-name {
+      dir_name=$(echo `basename $PWD` | tr '.' '-')
+      ${pkgs.tmux}/bin/tmux new-session -As $dir_name
+    }
+    source <(${pkgs.kubectl}/bin/kubectl completion zsh)
   '';
   shellAliases = {
     proc = "ps aux | ${pkgs.ripgrep}/bin/rg $1";
-    tmuxnew = "${pkgs.tmux}/bin/tmux -u attach -t play || ${pkgs.tmux}/bin/tmux -u new -s play";
+    tmuxnew =
+      "${pkgs.tmux}/bin/tmux -u attach -t play || ${pkgs.tmux}/bin/tmux -u new -s play";
     tmuxdir = "new-tmux-from-dir-name";
     br = "${pkgs.broot}/bin/broot";
   };
   oh-my-zsh = {
     enable = true;
-    plugins = ["command-not-found" "docker" "extract" "git" "kubectl" "sudo"];
+    plugins = [ "command-not-found" "docker" "extract" "git" "kubectl" "sudo" ];
     theme = "mod_steeef";
     custom = "${zshCustom}";
   };
