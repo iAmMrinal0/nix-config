@@ -1,7 +1,5 @@
 { pkgs, zshCustom, ... }:
 
-with pkgs;
-
 {
   enable = true;
   enableCompletion = true;
@@ -12,14 +10,15 @@ with pkgs;
   setopt HIST_IGNORE_ALL_DUPS
   function new-tmux-from-dir-name {
     dir_name=$(echo `basename $PWD` | tr '.' '-')
-    ${tmux}/bin/tmux new-session -As $dir_name
+    ${pkgs.tmux}/bin/tmux new-session -As $dir_name
   }
-  source <(${kubectl}/bin/kubectl completion zsh)
+  source <(${pkgs.kubectl}/bin/kubectl completion zsh)
   '';
   shellAliases = {
-    proc = "ps aux | ${ripgrep}/bin/rg $1";
-    tmuxnew = "${tmux}/bin/tmux -u attach -t play || ${tmux}/bin/tmux -u new -s play";
+    proc = "ps aux | ${pkgs.ripgrep}/bin/rg $1";
+    tmuxnew = "${pkgs.tmux}/bin/tmux -u attach -t play || ${pkgs.tmux}/bin/tmux -u new -s play";
     tmuxdir = "new-tmux-from-dir-name";
+    br = "${pkgs.broot}/bin/broot";
   };
   oh-my-zsh = {
     enable = true;
@@ -30,7 +29,7 @@ with pkgs;
   plugins = [
     {
       name = "zsh-autosuggestions";
-      src = fetchFromGitHub {
+      src = pkgs.fetchFromGitHub {
         owner = "zsh-users";
         repo = "zsh-autosuggestions";
         rev = "v0.6.4";
@@ -39,15 +38,15 @@ with pkgs;
     }
     {
       name = "nix-zsh-completions";
-      src = "${nix-zsh-completions}/share/zsh/site-functions";
+      src = "${pkgs.nix-zsh-completions}/share/zsh/site-functions";
     }
     {
       name = "fast-syntax-highlighting";
-      src = "${zsh-fast-syntax-highlighting}/share/zsh/site-functions";
+      src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
     }
     {
       name = "you-should-use";
-      src = fetchFromGitHub {
+      src = pkgs.fetchFromGitHub {
         owner = "MichaelAquilina";
         repo = "zsh-you-should-use";
         rev = "1.7.0";
@@ -56,7 +55,7 @@ with pkgs;
     }
     {
       name = "zsh-history-substring-search";
-      src = fetchFromGitHub {
+      src = pkgs.fetchFromGitHub {
         owner = "zsh-users";
         repo = "zsh-history-substring-search";
         rev = "0f80b8eb3368b46e5e573c1d91ae69eb095db3fb";
@@ -69,8 +68,8 @@ with pkgs;
       src = pkgs.fetchFromGitHub {
         owner = "chisui";
         repo = "zsh-nix-shell";
-        rev = "v0.1.0";
-        sha256 = "0snhch9hfy83d4amkyxx33izvkhbwmindy0zjjk28hih1a9l2jmx";
+        rev = "v0.2.0";
+        sha256 = "1gfyrgn23zpwv1vj37gf28hf5z0ka0w5qm6286a7qixwv7ijnrx9";
       };
     }
   ];
