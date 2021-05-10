@@ -1,6 +1,6 @@
-{ lib, python36Packages, fetchFromGitHub }:
+{ lib, python37Packages, fetchFromGitHub }:
 
-python36Packages.buildPythonApplication rec {
+python37Packages.buildPythonApplication rec {
   pname = "keepmenu";
   version = "0.6.2";
 
@@ -11,7 +11,7 @@ python36Packages.buildPythonApplication rec {
     sha256 = "150xjdyb1qzkvhsv8zx7ddvllx918m0gpjaxydckqlji91yimfz3";
   };
 
-  propagatedBuildInputs = [ python36Packages.pykeepass python36Packages.pynput ];
+  propagatedBuildInputs = [ python37Packages.pykeepass python37Packages.pynput ];
 
   meta = with lib; {
     description = "Fully featured Dmenu/Rofi frontend for managing Keepass databases.";
