@@ -6,9 +6,9 @@ let
   lock = import ../scripts/lock.nix { inherit pkgs; };
   shutdownMenu = import ../scripts/shutdownMenu.nix { inherit pkgs lock; };
   rofiAutorandr = import ../scripts/rofiAutorandr.nix { inherit pkgs; };
-  fontSize = "13px";
+  fontSize = 10.8;
   workspaces = [" term" " code" " web" "♪ music" " avoid" "scratch" "scratch" "scratch" " bg"];
-  fonts = [ "Font Awesome 5 Free ${fontSize}" "Source Code Pro Medium ${fontSize}" ];
+  fonts =  { names = ["Font Awesome 5 Free" "Source Code Pro"]; style = "Medium"; size = fontSize; };
   numbers = map toString (lib.range 1 9);
   workspaceNumbers = lib.zipListsWith (x: y: x + " " + y) numbers workspaces ;
   useWithModifier = mod: lib.mapAttrs' (k: v: lib.nameValuePair (mod + "+" + k) v);
