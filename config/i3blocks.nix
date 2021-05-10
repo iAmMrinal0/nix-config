@@ -50,7 +50,7 @@ interval=1
 color=#87AFAF
 
 [volume]
-label=
+label= 
 instance=Master
 #instance=PCM
 interval=1
@@ -62,8 +62,7 @@ color=#87AF87
 interval=10
 
 [wifi]
-label=
-command=${wirelesstools}/bin/iwgetid -r
+command=echo " $(${wirelesstools}/bin/iwgetid -r)"
 color=#00FF00
 interval=10
 
@@ -74,15 +73,14 @@ interval=10
 #separator=false
 
 [load_average]
-label=
+label= 
 interval=1
 
 [battery]
-label=⚡
+label=⚡ 
 interval=15
 
 [bluetooth]
-label=
 command=${bluetooth_battery}
 interval=30
 
