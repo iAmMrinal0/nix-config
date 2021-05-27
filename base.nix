@@ -140,9 +140,7 @@ in {
   programs.light.enable = true;
   programs.nm-applet.enable = true;
   programs.ssh.startAgent = true;
-  # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
   # Open ports in the firewall.
@@ -150,13 +148,7 @@ in {
   networking.firewall.allowedUDPPortRanges = [ { from=1714; to=1764; } ]; # KDE Connect Ports
   networking.firewall.allowedTCPPorts = [ 24800 ];
   networking.firewall.allowedUDPPorts = [ 24800 1194 ]; # AWS Client VPN
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
   sound.enable = true;
   hardware.pulseaudio = {
     enable = true;
@@ -170,7 +162,6 @@ in {
       cantarell-fonts
       dejavu_fonts
       emacs-all-the-icons-fonts
-      # font-awesome_4
       font-awesome
       google-fonts
       hasklig
