@@ -50,8 +50,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "MichaelAquilina";
         repo = "zsh-you-should-use";
-        rev = "1.7.0";
-        sha256 = "1gcxm08ragwrh242ahlq3bpfg5yma2cshwdlj8nrwnd4qwrsflgq";
+        rev = "1.7.3";
+        sha256 = "1dz48rd66priqhxx7byndqhbmlwxi1nfw8ik25k0z5k7k754brgy";
       };
     }
     {
