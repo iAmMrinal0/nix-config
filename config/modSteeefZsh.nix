@@ -16,13 +16,13 @@ function k8s_info {
   if [ -f ~/.kube/config ]; then
     k8s_context=$(cat ~/.kube/config | grep "current-context:" | sed "s/current-context: //")
     if [ ! -z $k8s_context ]; then
-      echo ' ('%F{purple}`echo $k8s_context`%f') '
+      echo ' ('%F{purple}`echo $k8s_context`%f')'
     fi
   fi
 }
 
 function virtualenv_info {
-    [ $VIRTUAL_ENV ] && echo '('%F{blue}`basename $VIRTUAL_ENV`%f') '
+    [ $VIRTUAL_ENV ] && echo ' ('%F{blue}`basename $VIRTUAL_ENV`%f')'
 }
 PR_GIT_UPDATE=1
 
