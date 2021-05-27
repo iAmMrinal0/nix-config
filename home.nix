@@ -37,8 +37,6 @@ in {
     windowManager.i3 = import ./config/i3config.nix { inherit pkgs lib i3blocksConf keepmenu rofimoji; };
   };
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
 
   services.blueman-applet.enable = true;
   services.dunst = import ./config/dunstrc.nix { inherit pkgs; };
@@ -55,21 +53,27 @@ in {
 
   gtk = import ./config/gtk.nix { inherit pkgs; };
 
-  programs.autorandr = import ./config/autorandr.nix { inherit lib wallpaper; };
-  programs.broot.enable = true;
-  programs.chromium = import ./config/chromium.nix;
-  programs.command-not-found.enable = true;
-  programs.direnv = {
-    enable = true;
-    enableZshIntegration = true;
+  programs = {
+    autorandr = import ./config/autorandr.nix { inherit lib wallpaper; };
+    broot = { enable = true; };
+    chromium = import ./config/chromium.nix;
+    command-not-found.enable = true;
+    direnv = { enable = true; enableZshIntegration = true; };
+    feh = import ./config/feh.nix;
+    firefox = import ./config/firefox.nix { inherit pkgs; };
+    fzf = { enable = true; enableZshIntegration = true; };
+    git = import ./config/git.nix;
+    gpg = { enable = true; };
+    home-manager = { enable = true; };
+    htop = import ./config/htop.nix;
+    jq = { enable = true; };
+    kitty = import ./config/kitty.nix { inherit pkgs; };
+    rofi = import ./config/rofi.nix { inherit pkgs; };
+    tmux = import ./config/tmux.nix { inherit pkgs; };
+    zathura = { enable = true; };
+    zsh = import ./config/zsh.nix { inherit pkgs zshCustom; };
   };
-  programs.feh = import ./config/feh.nix;
-  programs.firefox = import ./config/firefox.nix { inherit pkgs; };
-  programs.gpg.enable = true;
-  programs.git = import ./config/git.nix;
-  programs.htop = import ./config/htop.nix;
-  programs.kitty = import ./config/kitty.nix { inherit pkgs; };
-  programs.rofi = import ./config/rofi.nix { inherit pkgs; };
+
   qt = {
     enable = true;
     platformTheme = "gnome";
@@ -77,13 +81,6 @@ in {
       package = adwaita-qt;
       name = "adwaita-dark";
     };
-  };
-  programs.zsh = import ./config/zsh.nix { inherit pkgs zshCustom; };
-  programs.tmux = import ./config/tmux.nix { inherit pkgs; };
-
-  programs.fzf = {
-    enable = true;
-    enableZshIntegration = true;
   };
 
   home.packages = themes ++ [ # Media
@@ -108,7 +105,6 @@ in {
     xfce.thunar-archive-plugin
     xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
     xfce.xfconf # For saving preferences of Thunar.
-    zathura
   ] ++ haskellTools ++ [
     kube-score
     kubernetes
@@ -153,7 +149,6 @@ in {
     gnome3.dconf
     gnome3.nautilus
     google-drive-ocamlfuse
-    jq
     keepmenu
     lsof
     neofetch
