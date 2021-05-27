@@ -18,8 +18,19 @@ let
     haskellPackages.haskell-language-server
     haskellPackages.stylish-haskell
   ];
-in {
 
+  themes = [
+    lxappearance
+    arc-theme
+    gnome3.defaultIconTheme
+    capitaine-cursors
+    papirus-icon-theme
+    hicolor_icon_theme
+    material-icons
+    paper-icon-theme
+  ];
+
+in {
   xsession = {
     enable = true;
     initExtra = lib.readFile wallpaper;
@@ -91,18 +102,7 @@ in {
     enableZshIntegration = true;
   };
 
-  # TODO see if there's a better heirarchy for packages
-  # TODO Migrate the configs in the dotfiles repo to nix
-  home.packages = [ # Themes and icons
-    lxappearance
-    arc-theme
-    gnome3.defaultIconTheme
-    capitaine-cursors
-    papirus-icon-theme
-    hicolor_icon_theme
-    material-icons
-    paper-icon-theme
-  ] ++ [ # Media
+  home.packages = themes ++ [ # Media
     spotify
     vlc
   ] ++ [ # Media in terminal
