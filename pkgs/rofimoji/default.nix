@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchFromGitHub, rofi, xdotool
+{ lib, stdenv, pkgs, fetchFromGitHub, rofi, xdotool
 , xsel, python3, makeWrapper }:
 
 stdenv.mkDerivation rec {
@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
       --prefix PATH : ${lib.makeBinPath [ xdotool xsel rofi ]}
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = "https://github.com/fdw/rofimoji";
     description = "A simple emoji picker for rofi";
     license = licenses.mit;
