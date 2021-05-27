@@ -7,7 +7,7 @@ let
   keepmenu = callPackage ./pkgs/keepmenu { };
   rofimoji = callPackage ./pkgs/rofimoji { };
 
-  wallpaper = callPackage ./scripts/wallpaper.nix { };
+  wallpaper = lib.readFile (callPackage ./scripts/wallpaper.nix { });
   lock = callPackage ./scripts/lock.nix { };
 
   i3blocksConf = callPackage ./config/i3blocks.nix { };
@@ -33,7 +33,7 @@ let
 in {
   xsession = {
     enable = true;
-    initExtra = lib.readFile wallpaper;
+    initExtra = wallpaper;
     windowManager.i3 = import ./config/i3config.nix { inherit pkgs lib i3blocksConf keepmenu rofimoji; };
   };
 
@@ -55,14 +55,7 @@ in {
 
   gtk = import ./config/gtk.nix { inherit pkgs; };
 
-  programs.autorandr = {
-    enable = true;
-    hooks = {
-      postswitch = {
-        "change-background" = lib.readFile wallpaper;
-      };
-    };
-  };
+  programs.autorandr = import ./config/autorandr.nix { inherit lib wallpaper; };
   programs.broot.enable = true;
   programs.chromium = import ./config/chromium.nix;
   programs.command-not-found.enable = true;
