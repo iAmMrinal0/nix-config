@@ -74,6 +74,7 @@ in {
     enableZshIntegration = true;
   };
   programs.feh = import ./config/feh.nix;
+  programs.firefox = import ./config/firefox.nix { inherit pkgs; };
   programs.gpg.enable = true;
   programs.git = import ./config/git.nix;
   programs.kitty = import ./config/kitty.nix { inherit pkgs; };
@@ -111,7 +112,6 @@ in {
   ] ++ [ # GUI
     authy
     xorg.xdpyinfo
-    firefox
     gnome3.gnome-screenshot
     keepassxc
     keybase
