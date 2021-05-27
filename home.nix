@@ -74,6 +74,7 @@ in {
   programs.firefox = import ./config/firefox.nix { inherit pkgs; };
   programs.gpg.enable = true;
   programs.git = import ./config/git.nix;
+  programs.htop = import ./config/htop.nix;
   programs.kitty = import ./config/kitty.nix { inherit pkgs; };
   programs.rofi = import ./config/rofi.nix { inherit pkgs; };
   qt = {
@@ -159,7 +160,6 @@ in {
     gnome3.dconf
     gnome3.nautilus
     google-drive-ocamlfuse
-    htop
     jq
     keepmenu
     lsof
