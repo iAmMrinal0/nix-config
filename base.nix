@@ -5,6 +5,7 @@
 { lib, pkgs, ... }:
 
 let aws_client_vpn = pkgs.callPackage ./pkgs/aws_client_vpn { };
+    emacsConfig = import ./config/emacs.nix { inherit pkgs; };
 
 in {
   imports = [
@@ -85,66 +86,7 @@ in {
     usbutils
     vim
     yubikey-personalization
-    (emacsWithPackagesFromUsePackage {
-      config = "${pkgs.fetchFromGitHub {
-        owner = "iammrinal0";
-        repo = ".emacs.d";
-        rev = "2532f617ab297678c9a582cdd425037ba3421375";
-        sha256 = "0a9dm7zhda8yv61r5is69knazbycircbg4jq3l5zingpn6wdhl0m";
-      }}/init.el";
-      package = pkgs.emacsGcc;
-      extraEmacsPackages = epkgs: (with epkgs; [
-        ace-window
-        ag
-        all-the-icons
-        anzu
-        avy
-        bind-key
-        dhall-mode
-        diminish
-        direnv
-        editorconfig
-        etcdctl
-        exec-path-from-shell
-        expand-region
-        flycheck
-        free-keys
-        git-gutter
-        groovy-mode
-        gruvbox-theme
-        haskell-mode
-        hasky-extensions
-        helm
-        helm-ag
-        helm-projectile
-        hungry-delete
-        hydra
-        keychain-environment
-        keyfreq
-        lsp-haskell
-        lsp-mode
-        lsp-ui
-        magit
-        markdown-mode
-        multiple-cursors
-        nix-buffer
-        nix-mode
-        org-bullets
-        pdf-tools
-        projectile
-        rainbow-delimiters
-        rainbow-mode
-        smart-mode-line
-        smartparens
-        use-package
-        web-mode
-        which-key
-        yaml-mode
-        yasnippet
-        zerodark-theme
-        zop-to-char
-      ]);
-    })
+    (emacsWithPackagesFromUsePackage emacsConfig)
   ];
 
   environment.variables = {
