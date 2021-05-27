@@ -37,19 +37,18 @@ in {
     windowManager.i3 = import ./config/i3config.nix { inherit pkgs lib i3blocksConf keepmenu rofimoji; };
   };
 
-
-  services.blueman-applet.enable = true;
-  services.dunst = import ./config/dunstrc.nix { inherit pkgs; };
-  services.gpg-agent.enable = true;
-  services.picom = import ./config/picom.nix { inherit pkgs; };
-  services.kdeconnect = {
-    enable = true;
-    indicator = true;
+  services = {
+    blueman-applet = { enable = true; };
+    dunst = import ./config/dunstrc.nix { inherit pkgs; };
+    gpg-agent = { enable = true; };
+    kdeconnect = { enable = true; indicator = true; };
+    keybase = { enable = true; };
+    lorri = { enable = true; };
+    pasystray = { enable = true; };
+    picom = import ./config/picom.nix { inherit pkgs; };
+    playerctld = { enable = true; };
+    udiskie = { enable = true; };
   };
-  services.keybase.enable = true;
-  services.pasystray.enable = true;
-  services.lorri.enable = true;
-  services.udiskie.enable = true;
 
   gtk = import ./config/gtk.nix { inherit pkgs; };
 
