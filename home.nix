@@ -50,21 +50,6 @@ in {
   };
   services.keybase.enable = true;
   services.pasystray.enable = true;
-  services.screen-locker = {
-    enable = true;
-    enableDetectSleep = true;
-    inactiveInterval = 15;
-    lockCmd = "${lock}";
-  };
-  # services.emacs = {
-  #   enable = true;
-  #   package = pkgs.emacsGcc;
-  #   socketActivation.enable = true;
-  #   client = {
-  #     enable = true;
-  #     arguments = ["-a" "\"\"" "-c"];
-  #   };
-  # };
   services.lorri.enable = true;
   services.udiskie.enable = true;
 
@@ -78,6 +63,7 @@ in {
       };
     };
   };
+  programs.broot.enable = true;
   programs.chromium = import ./config/chromium.nix;
   programs.command-not-found.enable = true;
   programs.direnv = {
@@ -116,6 +102,7 @@ in {
   ] ++ [ # GUI
     authy
     xorg.xdpyinfo
+    element-desktop
     gnome3.gnome-screenshot
     keepassxc
     keybase
@@ -129,8 +116,15 @@ in {
     xfce.xfconf # For saving preferences of Thunar.
     zathura
   ] ++ haskellTools ++ [
+    kube-score
     kubernetes
+    kubeval
     stern
+  ] ++ [
+    dhall
+    dhall-json
+    dhall-lsp-server
+    haskellPackages.dhall-yaml
   ] ++ [ # Build tools and other dependencies + rarely used
     cachix
     gnumake
@@ -143,9 +137,6 @@ in {
     nix-review
     nmap
     pciutils
-    perl # for i3blocks scripts
-    python36Packages.virtualenv
-    python36Packages.pip
     qt5ct
     unzip
     xclip
@@ -187,6 +178,7 @@ in {
     tree
     xfce.xfconf
     xorg.xkill
+    yq
   ];
 
   systemd.user.services = {
