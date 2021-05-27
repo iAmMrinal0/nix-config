@@ -92,7 +92,11 @@ in {
   programs.rofi = import ./config/rofi.nix { inherit pkgs; };
   qt = {
     enable = true;
-    platformTheme = "gtk";
+    platformTheme = "gnome";
+    style = {
+      package = adwaita-qt;
+      name = "adwaita-dark";
+    };
   };
   programs.zsh = import ./config/zsh.nix { inherit pkgs zshCustom; };
   programs.tmux = import ./config/tmux.nix { inherit pkgs; };

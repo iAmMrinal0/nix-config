@@ -8,8 +8,7 @@ with pkgs;
   font.name = "Cantarell 11";
   iconTheme.package = paper-icon-theme;
   iconTheme.name = "Paper";
-  theme.package = shades-of-gray-theme;
-  theme.name = "Shades-of-gray-Firebrick";
+  theme.name = "Adwaita-dark";
   gtk2.extraConfig = ''
     gtk-cursor-theme-size=0
     gtk-toolbar-style=GTK_TOOLBAR_BOTH
