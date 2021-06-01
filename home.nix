@@ -23,7 +23,6 @@ let
     lxappearance
     arc-theme
     gnome3.defaultIconTheme
-    capitaine-cursors
     papirus-icon-theme
     hicolor_icon_theme
     material-icons
@@ -85,7 +84,6 @@ in {
   home.packages = themes ++ [ # Media
     spotify
     vlc
-  ] ++ [ # Media in terminal
     ffmpeg-full
     pavucontrol
     playerctl
@@ -104,12 +102,12 @@ in {
     xfce.thunar-archive-plugin
     xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
     xfce.xfconf # For saving preferences of Thunar.
-  ] ++ haskellTools ++ [
+  ] ++ haskellTools ++ [ # Kubernetes
     kube-score
     kubernetes
     kubeval
     stern
-  ] ++ [
+  ] ++ [ # Dhall
     dhall
     dhall-json
     dhall-lsp-server
@@ -156,10 +154,12 @@ in {
     nix-diff
     nix-prefetch-github
     nixfmt
+    pgp-tools
     pv
     ripgrep
     screenfetch
     shellcheck
+    ssh-to-pgp
     stow
     transmission-gtk
     tree
