@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let VPN_HOST="cvpn-endpoint-010604241ce5b8f84.prod.clientvpn.ap-south-1.amazonaws.com";
     goScript = "${pkgs.fetchFromGitHub {
       owner = "samm-git";
@@ -6,7 +6,7 @@ let VPN_HOST="cvpn-endpoint-010604241ce5b8f84.prod.clientvpn.ap-south-1.amazonaw
       rev = "263479f5fc0fde860e5b463bbc15ab3806f861c9";
       sha256 = "10agwhs59mjcjsmfnvj0gzmc5yz42br39gdjdk0b3xwr0dncgf34";
     }}/server.go";
-    OVPN_CONF= pkgs.writeText "vpn.conf" (lib.readFile ./vpn.conf); # Private until further information
+    OVPN_CONF= import ./vpn.nix { inherit config pkgs; };
     PORT="1194";
     PROTO="udp";
 in pkgs.writeShellScriptBin "aws_client_vpn_connect" ''
@@ -50,8 +50,6 @@ wait_file "/tmp/saml-response.txt" 30 || {
 
 # get SID from the reply
 VPN_SID=$(echo "$OVPN_OUT" | awk -F : '{print $7}')
-
-echo "Running OpenVPN with sudo. Enter password if requested"
 
 printf "%s\n%s\n" "N/A" "CRV1::''${VPN_SID}::$(cat /tmp/saml-response.txt)" > /tmp/creds
 

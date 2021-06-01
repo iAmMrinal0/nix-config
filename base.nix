@@ -2,14 +2,24 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ lib, pkgs, ... }:
+{ lib, config, pkgs, ... }:
 
-let aws_client_vpn = pkgs.callPackage ./pkgs/aws_client_vpn { };
+let aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
     emacsConfig = import ./config/emacs.nix { inherit pkgs; };
+    secrets = [ "aws-vpn-ca" ];
+    defaultPermissions = secret: {
+    ${secret} = {
+      mode = "0440";
+      owner = config.users.users.iammrinal0.name;
+      group = config.users.users.iammrinal0.group;
+    };
+  };
+
 
 in {
   imports = [
-    (import "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos")
+    (import "${builtins.fetchTarball "https://github.com/rycee/home-manager/archive/master.tar.gz"}/nixos")
+    (import "${builtins.fetchTarball "https://github.com/Mic92/sops-nix/archive/master.tar.gz"}/modules/sops")
     ./cache.nix
   ];
 
@@ -19,6 +29,11 @@ in {
     }))
     (import ./overlays.nix)
   ];
+
+  sops = {
+    defaultSopsFile = ./sops/secrets.yaml;
+    secrets = lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
+  };
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -78,8 +93,10 @@ in {
     ntfs3g
     openjdk
     openssl
+    openvpn_aws
     pptp
     razergenie
+    sops
     stow
     tcpdump
     traceroute
@@ -201,7 +218,7 @@ in {
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.iammrinal0 = {
     isNormalUser = true;
-    extraGroups = [ "adbusers" "audio" "docker" "networkmanager" "plugdev" "video" "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "adbusers" "audio" "docker" "keys" "networkmanager" "plugdev" "video" "wheel" ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
 
