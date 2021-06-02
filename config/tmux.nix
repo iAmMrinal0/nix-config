@@ -1,17 +1,15 @@
 { pkgs, ... }:
 
-with pkgs;
-
 {
   enable = true;
   baseIndex = 1;
   clock24 = true;
   historyLimit = 100000;
   terminal = "screen-256color";
-  plugins = with tmuxPlugins; [
-    { plugin = resurrect; }
-    { plugin = continuum; extraConfig = "set -g @continuum-restore 'on'"; }
-    { plugin = copycat; }
+  plugins = [
+    { plugin = pkgs.tmuxPlugins.resurrect; }
+    { plugin = pkgs.tmuxPlugins.continuum; extraConfig = "set -g @continuum-restore 'on'"; }
+    { plugin = pkgs.tmuxPlugins.copycat; }
   ];
   extraConfig = ''
 ## COLORSCHEME: gruvbox dark
@@ -108,12 +106,12 @@ bind c new-window -c "#{pane_current_path}"
 
 bind-key -n M-z resize-pane -Z
 
-bind-key -n M-s split-window -v "${tmux}/bin/tmux list-sessions | grep -v '(attached)$' | sed -E 's/:.*$//' | ${fzf}/bin/fzf --reverse | ${findutils}/bin/xargs ${tmux}/bin/tmux switch-client -t"
+bind-key -n M-s split-window -v "${pkgs.tmux}/bin/tmux list-sessions | grep -v '(attached)$' | sed -E 's/:.*$//' | ${pkgs.fzf}/bin/fzf --reverse | ${pkgs.findutils}/bin/xargs ${pkgs.tmux}/bin/tmux switch-client -t"
 
 # Send the same command to all panes/windows/sessions
 bind E command-prompt -p "Command:" \
-       "run \"${tmux}/bin/tmux list-panes -a -F '##{session_name}:##{window_index}.##{pane_index}' \
-              | xargs -I PANE ${tmux}/bin/tmux send-keys -t PANE '%1' Enter\""
+       "run \"${pkgs.tmux}/bin/tmux list-panes -a -F '##{session_name}:##{window_index}.##{pane_index}' \
+              | xargs -I PANE ${pkgs.tmux}/bin/tmux send-keys -t PANE '%1' Enter\""
 
 set-window-option -g visual-bell on
 set-window-option -g bell-action other
@@ -141,10 +139,10 @@ set-window-option -g bell-action other
 #
 # Copy paste with Emacs bindings for Linux
 #
-bind-key -n -T copy-mode 'C-w' send -X copy-pipe-and-cancel "${xclip}/bin/xclip -i -sel p -f | ${xclip}/bin/xclip -i -sel c "
-bind-key -n -T copy-mode 'M-w' send -X copy-pipe-and-cancel "${xclip}/bin/xclip -i -sel p -f | ${xclip}/bin/xclip -i -sel c "
-bind-key -n -T copy-mode Enter send -X copy-pipe-and-cancel "${xclip}/bin/xclip -i -sel p -f | ${xclip}/bin/xclip -i -sel c "
-bind-key -n C-y run "${xclip}/bin/xclip -o | ${tmux}/bin/tmux load-buffer - ; ${tmux}/bin/tmux paste-buffer"
+bind-key -n -T copy-mode 'C-w' send -X copy-pipe-and-cancel "${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c "
+bind-key -n -T copy-mode 'M-w' send -X copy-pipe-and-cancel "${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c "
+bind-key -n -T copy-mode Enter send -X copy-pipe-and-cancel "${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c "
+bind-key -n C-y run "${pkgs.xclip}/bin/xclip -o | ${pkgs.tmux}/bin/tmux load-buffer - ; ${pkgs.tmux}/bin/tmux paste-buffer"
 #
 #
 ##########

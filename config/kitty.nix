@@ -1,11 +1,9 @@
 {pkgs, ...}:
 
-with pkgs;
-
 {
   enable = true;
   font = {
-    package = source-code-pro;
+    package = pkgs.source-code-pro;
     name = "Source Code Pro Semi-Bold";
   };
   settings = {

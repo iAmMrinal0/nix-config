@@ -1,12 +1,10 @@
 {pkgs, ...}:
 
-with pkgs;
-
 {
   enable = true;
-  font.package = cantarell-fonts;
+  font.package = pkgs.cantarell-fonts;
   font.name = "Cantarell 11";
-  iconTheme.package = paper-icon-theme;
+  iconTheme.package = pkgs.paper-icon-theme;
   iconTheme.name = "Paper";
   theme.name = "Adwaita-dark";
   gtk2.extraConfig = ''

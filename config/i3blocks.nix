@@ -1,19 +1,17 @@
 { pkgs, ... }:
 
-with pkgs;
-
 let currentTrack = import ../scripts/currentTrack.nix { inherit pkgs; };
     dunstNotifToggle = import ../scripts/dunstNotifToggle.nix { inherit pkgs; };
     bluetooth_battery = import ../scripts/bluetooth_battery.nix { inherit pkgs; };
     # using this fork because few scripts have hardcoded shebangs
     # and the user has a patch PR open in the source repo
-    i3blocks-contrib = fetchFromGitHub {
+    i3blocks-contrib = pkgs.fetchFromGitHub {
       owner = "CreativeCactus";
       repo = "i3blocks-contrib";
       rev = "b7871d7809b0bcd0ce1c574e4d967d546ebe2f8a";
       sha256 = "070vpf3nfw4b4cblacr0c5xfs3h6asbbzclcj911skyli3wjrmid";
     };
-in writeTextFile {
+in pkgs.writeTextFile {
   name = "i3blocksconfig";
   text = ''
 # i3blocks config file
@@ -62,7 +60,7 @@ color=#87AF87
 interval=10
 
 [wifi]
-command=echo " $(${wirelesstools}/bin/iwgetid -r)"
+command=echo " $(${pkgs.wirelesstools}/bin/iwgetid -r)"
 color=#00FF00
 interval=10
 

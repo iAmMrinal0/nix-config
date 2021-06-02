@@ -1,7 +1,5 @@
 { pkgs, ... }:
 
-with pkgs;
-
 {
   enable = true;
   # vSync = "opengl-swc";

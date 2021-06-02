@@ -1,8 +1,6 @@
 { pkgs, ... }:
 
-with pkgs;
-
-writeShellScript "rofiAutorandr" ''
-layout=$(${autorandr}/bin/autorandr | rofi -dmenu -p "Layout")
-${autorandr}/bin/autorandr --load $layout
+pkgs.writeShellScript "rofiAutorandr" ''
+layout=$(${pkgs.autorandr}/bin/autorandr | rofi -dmenu -p "Layout")
+${pkgs.autorandr}/bin/autorandr --load $layout
 ''

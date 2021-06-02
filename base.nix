@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { lib, config, pkgs, ... }:
 
 let aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
@@ -15,7 +11,6 @@ let aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
     };
   };
 
-
 in {
   imports = [
     (import "${builtins.fetchTarball "https://github.com/rycee/home-manager/archive/master.tar.gz"}/nixos")
@@ -24,9 +19,7 @@ in {
   ];
 
   nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-    }))
+    (import (builtins.fetchTarball "https://github.com/nix-community/emacs-overlay/archive/master.tar.gz"))
     (import ./overlays.nix)
   ];
 
@@ -36,7 +29,7 @@ in {
   };
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot = { enable = true; };
   boot.loader.efi.canTouchEfiVariables = true;
 
   nixpkgs.config = {
@@ -68,8 +61,97 @@ in {
     trustedUsers = [ "root" "iammrinal0" ];
   };
 
-  # Cloudflare DNS servers
+  time.timeZone = "Asia/Kolkata";
+
+  environment = {
+    systemPackages = [
+      pkgs.atop
+      pkgs.android-file-transfer
+      aws_client_vpn
+      pkgs.binutils
+      pkgs.coreutils-full
+      pkgs.git
+      pkgs.ncdu
+      pkgs.ntfs3g
+      pkgs.openjdk
+      pkgs.openssl
+      pkgs.openvpn_aws
+      pkgs.pptp
+      pkgs.razergenie
+      pkgs.sops
+      pkgs.stow
+      pkgs.tcpdump
+      pkgs.traceroute
+      pkgs.usbutils
+      pkgs.vim
+      pkgs.yubikey-personalization
+      (pkgs.emacsWithPackagesFromUsePackage emacsConfig)
+    ];
+    variables = {
+      QT_STYLE_OVERRIDE = lib.mkDefault "gtk2";
+    };
+  };
+
+  services = {
+    avahi = {
+      enable = true;
+      nssmdns = true;
+      publish = {
+        enable = true;
+        addresses = true;
+      };
+    };
+    udev.packages = [
+      pkgs.yubikey-personalization
+    ];
+    dbus.packages = [ pkgs.blueman ];
+    dnsmasq = { enable = true; };
+    emacs = {
+      enable = true;
+      package = pkgs.emacsGcc;
+      defaultEditor = true;
+      install = true;
+    };
+    blueman = { enable = true; };
+    openssh = { enable = true; };
+    upower = { enable = true; };
+    fwupd = { enable = true; };
+    xserver = import ./services/xserver.nix { inherit pkgs; };
+  };
+
+  hardware = {
+    bluetooth = {
+      enable = true;
+      settings = {
+        General = {
+          Enable = "Source,Sink,Media,Socket";
+        };
+      };
+      package = pkgs.bluezFull;
+    };
+    openrazer = { enable = true; };
+    pulseaudio = {
+      enable = true;
+      extraModules = [ pkgs.pulseaudio-modules-bt ];
+      package = pkgs.pulseaudioFull;
+      support32Bit = true;
+    };
+  };
+
+  virtualisation.docker = { enable = true; };
+
+  programs = {
+    adb = { enable = true; };
+    light = { enable = true; };
+    nm-applet = { enable = true; };
+    ssh.startAgent = true;
+  };
+
   networking = {
+    firewall.allowedTCPPortRanges = [ { from=1714; to=1764; } ]; # KDE Connect Ports
+    firewall.allowedUDPPortRanges = [ { from=1714; to=1764; } ]; # KDE Connect Ports
+    firewall.allowedTCPPorts = [ 24800 ];
+    firewall.allowedUDPPorts = [ 24800 1194 ]; # AWS Client VPN
     networkmanager = {
       enable = true;
       wifi.macAddress = "random";
@@ -78,139 +160,21 @@ in {
     nameservers = [ "1.1.1.1" "1.0.0.1" ];
   };
 
-  time.timeZone = "Asia/Kolkata";
-
-  environment.systemPackages = with pkgs; [
-    atop
-    android-file-transfer
-    aws_client_vpn
-    binutils
-    coreutils-full
-    git
-    ncdu
-    ntfs3g
-    openjdk
-    openssl
-    openvpn_aws
-    pptp
-    razergenie
-    sops
-    stow
-    tcpdump
-    traceroute
-    usbutils
-    vim
-    yubikey-personalization
-    (emacsWithPackagesFromUsePackage emacsConfig)
-  ];
-
-  environment.variables = {
-    QT_STYLE_OVERRIDE = lib.mkDefault "gtk2";
-  };
-
-  services.avahi = {
-    enable = true;
-    nssmdns = true;
-    publish = {
-      enable = true;
-      addresses = true;
-    };
-  };
-
-  services.udev.packages = with pkgs; [
-    yubikey-personalization
-  ];
-
-  services.dbus.packages = [ pkgs.blueman ];
-  services.dnsmasq.enable = true;
-  services.emacs = {
-    enable = true;
-    package = pkgs.emacsGcc;
-    defaultEditor = true;
-    install = true;
-  };
-  services.etcd.enable = true;
-  services.blueman.enable = true;
-  services.upower.enable = true;
-
-  hardware.bluetooth = {
-    enable = true;
-    settings = {
-      General = {
-        Enable = "Source,Sink,Media,Socket";
-      };
-    };
-    package = pkgs.bluezFull;
-  };
-
-  hardware.openrazer.enable = true;
-
-  virtualisation.docker.enable = true;
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = { enable = true; enableSSHSupport = true; };
-  programs.adb.enable = true;
-  programs.light.enable = true;
-  programs.nm-applet.enable = true;
-  programs.ssh.startAgent = true;
-
-  services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  networking.firewall.allowedTCPPortRanges = [ { from=1714; to=1764; } ]; # KDE Connect Ports
-  networking.firewall.allowedUDPPortRanges = [ { from=1714; to=1764; } ]; # KDE Connect Ports
-  networking.firewall.allowedTCPPorts = [ 24800 ];
-  networking.firewall.allowedUDPPorts = [ 24800 1194 ]; # AWS Client VPN
-
-  sound.enable = true;
-  hardware.pulseaudio = {
-    enable = true;
-    extraModules = [ pkgs.pulseaudio-modules-bt ];
-    package = pkgs.pulseaudioFull;
-    support32Bit = true;
-  };
+  sound = { enable = true; };
 
   fonts = {
-    fonts = with pkgs; [
-      cantarell-fonts
-      dejavu_fonts
-      emacs-all-the-icons-fonts
-      font-awesome
-      google-fonts
-      hasklig
-      iosevka
-      noto-fonts
-      source-code-pro
+    fonts = [
+      pkgs.cantarell-fonts
+      pkgs.dejavu_fonts
+      pkgs.emacs-all-the-icons-fonts
+      pkgs.font-awesome
+      pkgs.google-fonts
+      pkgs.hasklig
+      pkgs.iosevka
+      pkgs.noto-fonts
+      pkgs.source-code-pro
     ];
-    fontconfig.enable = true;
-  };
-
-  services.fwupd.enable = true;
-
-  services.xserver = {
-    enable = true;
-    exportConfiguration = true;
-    displayManager = {
-      lightdm.enable = true;
-      defaultSession = "none+i3";
-    };
-    desktopManager = {
-      xterm.enable = false;
-    };
-    libinput.enable = true;
-
-    windowManager.i3 = {
-      enable = true;
-      extraPackages = with pkgs; [
-        dmenu
-        rofi
-        i3status
-        i3lock
-        i3blocks
-      ];
-    };
+    fontconfig = { enable = true; };
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -220,22 +184,28 @@ in {
     shell = pkgs.zsh;
   };
 
-  security.sudo.extraRules = [
-    { users = ["iammrinal0"];
-      commands = [
-        {command = "${aws_client_vpn}/bin/aws_client_vpn_connect"; options = ["NOPASSWD"]; }
-        {command = "${pkgs.openvpn_aws}/bin/openvpn"; options = ["NOPASSWD"]; }
-      ];
-    }
-  ];
+  security.sudo.extraRules = [{
+    users = ["iammrinal0"];
+    commands = [{
+      command = "${aws_client_vpn}/bin/aws_client_vpn_connect";
+      options = ["NOPASSWD"];
+    } {
+      command = "${pkgs.openvpn_aws}/bin/openvpn";
+      options = ["NOPASSWD"];
+    }];
+  }];
 
-  home-manager.users.iammrinal0 = ./home.nix;
-  home-manager.useGlobalPkgs = true;
+  home-manager = {
+    users = {
+      iammrinal0 = ./home.nix;
+    };
+    useGlobalPkgs = true;
+  };
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
-  system.stateVersion = "19.09"; # Did you read the comment?
+  system.stateVersion = "20.09"; # Did you read the comment?
 
 }

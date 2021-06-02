@@ -1,32 +1,30 @@
 { config, pkgs, lib, ... }:
 
-with pkgs;
-
 let
   # brotab = callPackage ./pkgs/brotab { };
-  keepmenu = callPackage ./pkgs/keepmenu { };
-  rofimoji = callPackage ./pkgs/rofimoji { };
+  keepmenu = pkgs.callPackage ./pkgs/keepmenu { };
+  rofimoji = pkgs.callPackage ./pkgs/rofimoji { };
 
-  wallpaper = lib.readFile (callPackage ./scripts/wallpaper.nix { });
-  lock = callPackage ./scripts/lock.nix { };
+  wallpaper = lib.readFile (pkgs.callPackage ./scripts/wallpaper.nix { });
+  lock = pkgs.callPackage ./scripts/lock.nix { };
 
-  i3blocksConf = callPackage ./config/i3blocks.nix { };
-  zshCustom = callPackage ./config/modSteeefZsh.nix { };
+  i3blocksConf = pkgs.callPackage ./config/i3blocks.nix { };
+  zshCustom = pkgs.callPackage ./config/modSteeefZsh.nix { };
 
   haskellTools = [
-    haskellPackages.hlint
-    haskellPackages.haskell-language-server
-    haskellPackages.stylish-haskell
+    pkgs.haskellPackages.hlint
+    pkgs.haskellPackages.haskell-language-server
+    pkgs.haskellPackages.stylish-haskell
   ];
 
   themes = [
-    lxappearance
-    arc-theme
-    gnome3.defaultIconTheme
-    papirus-icon-theme
-    hicolor_icon_theme
-    material-icons
-    paper-icon-theme
+    pkgs.lxappearance
+    pkgs.arc-theme
+    pkgs.gnome3.defaultIconTheme
+    pkgs.papirus-icon-theme
+    pkgs.hicolor_icon_theme
+    pkgs.material-icons
+    pkgs.paper-icon-theme
   ];
 
 in {
@@ -76,96 +74,97 @@ in {
     enable = true;
     platformTheme = "gnome";
     style = {
-      package = adwaita-qt;
+      package = pkgs.adwaita-qt;
       name = "adwaita-dark";
     };
   };
 
   home.packages = themes ++ [ # Media
-    spotify
-    vlc
-    ffmpeg-full
-    pavucontrol
-    playerctl
+    pkgs.spotify
+    pkgs.vlc
+    pkgs.ffmpeg-full
+    pkgs.pavucontrol
+    pkgs.playerctl
   ] ++ [ # GUI
-    authy
-    xorg.xdpyinfo
-    element-desktop
-    gnome3.gnome-screenshot
-    keepassxc
-    keybase
-    rescuetime
-    slack
-    xarchiver
-    xfce.thunar
-    xfce.thunar-volman
-    xfce.thunar-archive-plugin
-    xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
-    xfce.xfconf # For saving preferences of Thunar.
+    pkgs.authy
+    pkgs.xorg.xdpyinfo
+    pkgs.element-desktop
+    pkgs.gnome3.gnome-screenshot
+    pkgs.keepassxc
+    pkgs.keybase
+    pkgs.rescuetime
+    pkgs.slack
+    pkgs.xarchiver
+    pkgs.xfce.thunar
+    pkgs.xfce.thunar-volman
+    pkgs.xfce.thunar-archive-plugin
+    pkgs.xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
+    pkgs.xfce.xfconf # For saving preferences of Thunar.
   ] ++ haskellTools ++ [ # Kubernetes
-    kube-score
-    kubernetes
-    kubeval
-    stern
+    pkgs.kube-score
+    pkgs.kubernetes
+    pkgs.kubeval
+    pkgs.stern
   ] ++ [ # Dhall
-    dhall
-    dhall-json
-    dhall-lsp-server
-    haskellPackages.dhall-yaml
+    pkgs.dhall
+    pkgs.dhall-json
+    pkgs.dhall-lsp-server
+    pkgs.haskellPackages.dhall-yaml
   ] ++ [ # Build tools and other dependencies + rarely used
-    cachix
-    gnumake
-    google-cloud-sdk
-    imagemagick
-    kafkacat
-    libnotify # To use dunst
-    libsForQt5.qtstyleplugins
-    lshw
-    nix-review
-    nmap
-    pciutils
-    qt5ct
-    unzip
-    xclip
-    xdotool
-    aspellDicts.en
-    aspellDicts.en-computers
-    aspell
-    xsel
+    pkgs.cachix
+    pkgs.gnumake
+    pkgs.google-cloud-sdk
+    pkgs.imagemagick
+    pkgs.kafkacat
+    pkgs.libnotify # To use dunst
+    pkgs.libsForQt5.qtstyleplugins
+    pkgs.lshw
+    pkgs.nix-review
+    pkgs.nmap
+    pkgs.pciutils
+    pkgs.qt5ct
+    pkgs.unzip
+    pkgs.xclip
+    pkgs.xdotool
+    pkgs.aspellDicts.en
+    pkgs.aspellDicts.en-computers
+    pkgs.aspell
+    pkgs.spago
+    pkgs.xsel
   ] ++ [ # Bit more frequently used
-    acpi
-    ag
-    arandr
-    awscli
-    bc
-    discord
-    dnsutils
-    nodejs-12_x
-    drive
-    dunst
-    gnome3.dconf
-    gnome3.nautilus
-    google-drive-ocamlfuse
+    pkgs.acpi
+    pkgs.ag
+    pkgs.arandr
+    pkgs.awscli
+    pkgs.bc
+    pkgs.discord
+    pkgs.dnsutils
+    pkgs.nodejs-12_x
+    pkgs.drive
+    pkgs.dunst
+    pkgs.gnome3.dconf
+    pkgs.gnome3.nautilus
+    pkgs.google-drive-ocamlfuse
     keepmenu
-    lsof
-    neofetch
-    netcat-gnu
-    niv
-    nix-diff
-    nix-prefetch-github
-    nixfmt
-    pgp-tools
-    pv
-    ripgrep
-    screenfetch
-    shellcheck
-    ssh-to-pgp
-    stow
-    transmission-gtk
-    tree
-    xfce.xfconf
-    xorg.xkill
-    yq
+    pkgs.lsof
+    pkgs.neofetch
+    pkgs.netcat-gnu
+    pkgs.niv
+    pkgs.nix-diff
+    pkgs.nix-prefetch-github
+    pkgs.nixfmt
+    pkgs.pgp-tools
+    pkgs.pv
+    pkgs.ripgrep
+    pkgs.screenfetch
+    pkgs.shellcheck
+    pkgs.ssh-to-pgp
+    pkgs.stow
+    pkgs.transmission-gtk
+    pkgs.tree
+    pkgs.xfce.xfconf
+    pkgs.xorg.xkill
+    pkgs.yq
   ];
 
   systemd.user.services = {

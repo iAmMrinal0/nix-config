@@ -1,8 +1,6 @@
 { pkgs, lock, ... }:
 
-with pkgs;
-
-writeShellScript "shutdownMenu" (''
+pkgs.writeShellScript "shutdownMenu" (''
 
 # Colors: FG (foreground), BG (background), HL (highlighted)
 FG_COLOR="#bbbbbb"
@@ -61,11 +59,11 @@ menu_confirm="Shutdown Reboot Hibernate Suspend Halt Logout"
 
 rofi_colors="-bc $BORDER_COLOR -bg $BG_COLOR -fg $FG_COLOR -hlfg $HLFG_COLOR -hlbg $HLBG_COLOR"
 
-launcher="${rofi}/bin/rofi -dmenu -i -lines $menu_nrows -p $ROFI_TEXT $rofi_colors $ROFI_OPTIONS"
+launcher="${pkgs.rofi}/bin/rofi -dmenu -i -lines $menu_nrows -p $ROFI_TEXT $rofi_colors $ROFI_OPTIONS"
 selection="$(printf '%s\n' "''${!menu[@]}" | sort | $launcher)"
 
 function ask_confirmation() {
-    confirmed=$(echo -e "Yes\nNo" | ${rofi}/bin/rofi -dmenu -i -lines 2 -p "$selection?" \
+    confirmed=$(echo -e "Yes\nNo" | ${pkgs.rofi}/bin/rofi -dmenu -i -lines 2 -p "$selection?" \
       $rofi_colors $ROFI_OPTIONS)
     [ "$confirmed" == "Yes" ] && confirmed=0
 

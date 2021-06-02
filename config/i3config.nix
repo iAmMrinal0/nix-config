@@ -1,7 +1,5 @@
 { lib, pkgs, i3blocksConf, keepmenu, rofimoji, ... }:
 
-with pkgs;
-
 let
   lock = import ../scripts/lock.nix { inherit pkgs; };
   shutdownMenu = import ../scripts/shutdownMenu.nix { inherit pkgs lock; };
@@ -28,7 +26,7 @@ in
       inherit fonts;
       position = "top";
       trayOutput = "primary";
-      statusCommand = "${i3blocks}/bin/i3blocks -c ${i3blocksConf}";
+      statusCommand = "${pkgs.i3blocks}/bin/i3blocks -c ${i3blocksConf}";
       colors = {
         background = "#1d2021";
         statusline ="#ebdbb2";
@@ -48,12 +46,12 @@ in
       ];
     };
     startup = [
-      { command = "${xorg.xset}/bin/xset -b"; }
-      { command = "${transmission-gtk}/bin/transmission-gtk --minimized"; }
-      { command = "${kdeconnect}/bin/kdeconnect-indicator"; }
-      { command = "${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ 25%"; }
-      { command = "${numlockx}/bin/numlockx on"; }
-      { command = "${keepassxc}/bin/keepassxc"; }
+      { command = "${pkgs.xorg.xset}/bin/xset -b"; }
+      { command = "${pkgs.transmission-gtk}/bin/transmission-gtk --minimized"; }
+      { command = "${pkgs.kdeconnect}/bin/kdeconnect-indicator"; }
+      { command = "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ 25%"; }
+      { command = "${pkgs.numlockx}/bin/numlockx on"; }
+      { command = "${pkgs.keepassxc}/bin/keepassxc"; }
     ];
     modes = {
       resize = {
@@ -112,19 +110,19 @@ in
     };
     keybindings = useWithModifier modifier ({
       "Control+l" = "exec ${shutdownMenu}";
-      "Control+e" = "exec ${emacs}/bin/emacsclient -a '' -c";
-      "Control+mod1+p" = "exec ${playerctl}/bin/playerctl play-pause";
-      "Control+mod1+Right" = "exec ${playerctl}/bin/playerctl next";
-      "Control+mod1+Left" = "exec ${playerctl}/bin/playerctl previous";
-      "Control+mod1+Up" = "exec ${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
-      "Control+mod1+Down" = "exec ${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
-      "Control+mod1+m" = "exec ${pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
-      "Return" = "exec ${kitty}/bin/kitty";
-      "Shift+Return" = "exec ${kitty}/bin/kitty tmux";
-      "g" = ''exec ${wmfocus}/bin/wmfocus --fill -c asdf --textcolor red'';
+      "Control+e" = "exec ${pkgs.emacs}/bin/emacsclient -a '' -c";
+      "Control+mod1+p" = "exec ${pkgs.playerctl}/bin/playerctl play-pause";
+      "Control+mod1+Right" = "exec ${pkgs.playerctl}/bin/playerctl next";
+      "Control+mod1+Left" = "exec ${pkgs.playerctl}/bin/playerctl previous";
+      "Control+mod1+Up" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
+      "Control+mod1+Down" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
+      "Control+mod1+m" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+      "Return" = "exec ${pkgs.kitty}/bin/kitty";
+      "Shift+Return" = "exec ${pkgs.kitty}/bin/kitty tmux";
+      "g" = ''exec ${pkgs.wmfocus}/bin/wmfocus --fill -c asdf --textcolor red'';
       "Control+k" = "exec ${keepmenu}/bin/keepmenu";
       "Control+p" = "exec ${rofimoji}/bin/rofimoji -p";
-      "t" = ''exec ${libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%U`"'';
+      "t" = ''exec ${pkgs.libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%U`"'';
       "a" = "focus child";
       "Control+Down" = "move workspace to output down";
       "Control+Up" = "move workspace to output up";
@@ -132,10 +130,10 @@ in
       "Control+Right" = "move workspace to output right";
       "Shift+c" = "reload";
       "Shift+r" = "restart";
-      "d" = "exec ${rofi}/bin/rofi -show run";
+      "d" = "exec ${pkgs.rofi}/bin/rofi -show run";
       "Control+d" = "exec i3-dmenu-desktop --dmenu 'rofi -dmenu'";
-      "Control+w" = "exec ${rofi}/bin/rofi -show window";
-      "Control+s" = "exec ${rofi}/bin/rofi -show ssh";
+      "Control+w" = "exec ${pkgs.rofi}/bin/rofi -show window";
+      "Control+s" = "exec ${pkgs.rofi}/bin/rofi -show ssh";
       "p" = "exec ${rofiAutorandr}";
       "e" = "layout toggle stacking tabbed splith splitv";
       "f" = "fullscreen toggle";
@@ -164,7 +162,7 @@ in
       "Shift+Up" = "move up";
       "Shift+Right" = "move right";
       "Shift+space" = "floating toggle";
-      "Shift+m" = "exec ${pulseaudio}/bin/pactl set-source-mute 1 toggle";
+      "Shift+m" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute 1 toggle";
       "s" = "layout stacking";
       "space" = "focus mode_toggle";
       "w" = "layout tabbed";
@@ -179,20 +177,20 @@ in
         numbers
         workspaceNumbers)
     ) // appendExecToCommand ({
-      "XF86AudioRaiseVolume" = "${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
-      "XF86AudioLowerVolume" = "${pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
-      "XF86AudioMute" = "${pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+      "XF86AudioRaiseVolume" = "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
+      "XF86AudioLowerVolume" = "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
+      "XF86AudioMute" = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
 
-      "XF86AudioPlay" = "${playerctl}/bin/playerctl play-pause";
-      "XF86AudioNext" = "${playerctl}/bin/playerctl next";
-      "XF86AudioPrev" = "${playerctl}/bin/playerctl previous";
+      "XF86AudioPlay" = "${pkgs.playerctl}/bin/playerctl play-pause";
+      "XF86AudioNext" = "${pkgs.playerctl}/bin/playerctl next";
+      "XF86AudioPrev" = "${pkgs.playerctl}/bin/playerctl previous";
 
-      "XF86MonBrightnessUp" = "${light}/bin/light -A 10";
-      "XF86MonBrightnessDown" = "${light}/bin/light -U 10";
+      "XF86MonBrightnessUp" = "${pkgs.light}/bin/light -A 10";
+      "XF86MonBrightnessDown" = "${pkgs.light}/bin/light -U 10";
 
-      "XF86AudioMicMute" = "${pulseaudio}/bin/pactl set-source-mute 1 toggle";
+      "XF86AudioMicMute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute 1 toggle";
 
-      "Print" = "${gnome3.gnome-screenshot}/bin/gnome-screenshot -i";
+      "Print" = "${pkgs.gnome3.gnome-screenshot}/bin/gnome-screenshot -i";
 
       "Control+mod1+l" = "${lock}";
     });

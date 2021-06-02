@@ -1,8 +1,6 @@
 { stdenv, python3, fetchFromGitHub }:
 
-with python3.pkgs;
-
-buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "brotab";
   version = "1.1.0";
 
@@ -13,12 +11,12 @@ buildPythonApplication rec {
     sha256 = "17yj5i8p28a7zmixdfa1i4gfc7c2fmdkxlymazasar58dz8m68mw";
   };
 
-  propagatedBuildInputs = [ requests psutil flask setuptools ];
-  checkInputs = [ pytest ];
+  propagatedBuildInputs = [ python3.pkgs.requests python3.pkgs.psutil python3.pkgs.flask python3.pkgs.setuptools ];
+  checkInputs = [ python3.pkgs.pytest ];
 
   meta = with stdenv.lib; {
     description = "Control your browser's tabs from the command line";
-    homepage = https://github.com/balta2ar/brotab;
+    homepage = "https://github.com/balta2ar/brotab";
     license = licenses.mit;
   };
 }

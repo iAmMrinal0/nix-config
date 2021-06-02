@@ -1,11 +1,9 @@
 { pkgs, ... }:
 
-with pkgs;
-
-writeShellScript "dunstNotifToggle" ''
+pkgs.writeShellScript "dunstNotifToggle" ''
 
 toggle() {
-  status=$(${dunst}/bin/dunstctl is-paused)
+  status=$(${pkgs.dunst}/bin/dunstctl is-paused)
   if [ "$status" = "true" ]
     then echo 
   else
@@ -14,7 +12,7 @@ toggle() {
 }
 
 case $BLOCK_BUTTON in
-    3) ${dunst}/bin/dunstctl set-paused toggle ;; # right click
+    3) ${pkgs.dunst}/bin/dunstctl set-paused toggle ;; # right click
     *) toggle ;;
 esac
 ''
