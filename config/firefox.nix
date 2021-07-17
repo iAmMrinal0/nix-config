@@ -1,7 +1,11 @@
-{ pkgs }:
+{ lib, pkgs, systems, ... }:
 
 {
   enable = true;
+  package = if builtins.currentSystem == systems.darwin then
+    pkgs.Firefox
+  else
+    pkgs.firefox;
   extensions = (with pkgs.nur.repos.rycee.firefox-addons; [
     darkreader
     privacy-badger
@@ -17,7 +21,7 @@
     bypass-paywalls
     pkgs.nur.repos.ethancedwards8.firefox-addons.enhancer-for-youtube
   ]);
-  profiles = {
+  profiles = lib.optionalAttrs (builtins.currentSystem == systems.linux) ({
     default.settings = {
       "browser.sessionstore.warnOnQuit" = true;
       "browser.aboutConfig.showWarning" = false;
@@ -32,5 +36,5 @@
       "signon.rememberSignons" = false;
       "signon.usage.hasEntry" = true;
     };
-  };
+  });
 }
