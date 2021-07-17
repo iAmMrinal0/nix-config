@@ -22,6 +22,7 @@
     selection_foreground = "#655b53";
     selection_background = "#ebdbb2";
     url_color = "#d65c0d";
+    macos_option_as_alt = "yes";
     # black
     color0 = "#272727";
     color8 = "#928373";

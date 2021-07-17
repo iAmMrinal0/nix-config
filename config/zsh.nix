@@ -1,12 +1,19 @@
-{ pkgs, zshCustom, ... }:
+{ lib, pkgs, systems, zshCustom, ... }:
 
-{
+let
+  darwinInit = lib.optionalString (builtins.currentSystem == systems.darwin) ''
+    export PATH=$PATH:/usr/local/bin:/usr/sbin
+    . $HOME/.nix-profile/etc/profile.d/nix.sh
+  '';
+in {
   enable = true;
   enableCompletion = true;
   defaultKeymap = "emacs";
   history.expireDuplicatesFirst = true;
   history.extended = true;
+
   initExtra = ''
+    ${darwinInit}
     setopt HIST_IGNORE_ALL_DUPS
     function new-tmux-from-dir-name {
       dir_name=$(echo `basename $PWD` | tr '.' '-')
