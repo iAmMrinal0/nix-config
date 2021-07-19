@@ -5,7 +5,7 @@
   package = if builtins.currentSystem == systems.darwin then
     pkgs.Firefox
   else
-    pkgs.firefox;
+    pkgs.firefox-unwrapped;
   extensions = (with pkgs.nur.repos.rycee.firefox-addons; [
     darkreader
     privacy-badger
