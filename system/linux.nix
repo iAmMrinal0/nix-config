@@ -2,7 +2,6 @@
 
 let
   keepmenu = pkgs.callPackage ../pkgs/keepmenu { };
-  rofimoji = pkgs.callPackage ../pkgs/rofimoji { };
 
   wallpaper = lib.readFile (pkgs.callPackage ../scripts/wallpaper.nix { });
 
@@ -125,7 +124,7 @@ in {
     enable = true;
     initExtra = wallpaper;
     windowManager.i3 = import ../config/i3config.nix {
-      inherit pkgs lib i3blocksConf keepmenu rofimoji;
+      inherit pkgs lib i3blocksConf keepmenu;
     };
   };
   qt = {

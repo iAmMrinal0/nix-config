@@ -1,4 +1,4 @@
-{ lib, pkgs, i3blocksConf, keepmenu, rofimoji, ... }:
+{ lib, pkgs, i3blocksConf, keepmenu, ... }:
 
 let
   lock = import ../scripts/lock.nix { inherit pkgs; };
@@ -121,7 +121,7 @@ in
       "Shift+Return" = "exec ${pkgs.kitty}/bin/kitty tmux";
       "g" = ''exec ${pkgs.wmfocus}/bin/wmfocus --fill -c asdf --textcolor red'';
       "Control+k" = "exec ${keepmenu}/bin/keepmenu";
-      "Control+p" = "exec ${rofimoji}/bin/rofimoji -p";
+      "Control+p" = "exec ${pkgs.rofimoji}/bin/rofimoji --action copy";
       "t" = ''exec ${pkgs.libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%U`"'';
       "a" = "focus child";
       "Control+Down" = "move workspace to output down";
