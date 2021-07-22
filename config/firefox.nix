@@ -18,12 +18,11 @@
     octotree
     refined-github
     sponsorblock
-    bypass-paywalls
     pkgs.nur.repos.ethancedwards8.firefox-addons.enhancer-for-youtube
   ]);
   profiles = lib.optionalAttrs (builtins.currentSystem == systems.linux) ({
     default.settings = {
-      "browser.sessionstore.warnOnQuit" = true;
+      "browser.sessionstore.warnOnQuit" = false;
       "browser.aboutConfig.showWarning" = false;
       "browser.ctrlTab.recentlyUsedOrder" = false;
       "browser.download.panel.shown" = true;
