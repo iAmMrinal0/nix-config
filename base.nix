@@ -11,15 +11,36 @@ let aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
     };
   };
 
+    home-manager = builtins.fetchGit {
+      url = "https://github.com/nix-community/home-manager.git";
+      rev = "41101d0e62fe3cdb76e8e64349a2650da1433dd4";
+      ref = "master";
+    };
+
+    sops-nix = builtins.fetchTarball {
+      url = "https://github.com/Mic92/sops-nix/archive/ec2800174de5a7be8ec5b144819af2c7de77abe2.tar.gz";
+      sha256 = "1s430ml7p6aa950xsm6rblk0cgkb0a0adgk73mjyhqmb68hnbb2k";
+    };
+
+    emacs-overlay = builtins.fetchTarball {
+      url = "https://github.com/nix-community/emacs-overlay/archive/40e6376f2d3fe4911122ae78569243aa929888b2.tar.gz";
+      sha256 = "11jjx97vp2xyndkajyl743plf1dg2i8d91wbv82kxv7ak0c3z3r2";
+    };
+
+    nur = builtins.fetchTarball {
+      url = "https://github.com/nix-community/NUR/archive/6c4a43390829ad08bc310f41700c95dfdbbe78e6.tar.gz";
+      sha256 = "14pbhsnfm9gmwb60h80f9ji23cgqgbqimslgnw22h0aamsybgznp";
+    };
+
 in {
   imports = [
-    (import "${builtins.fetchTarball "https://github.com/rycee/home-manager/archive/master.tar.gz"}/nixos")
-    (import "${builtins.fetchTarball "https://github.com/Mic92/sops-nix/archive/master.tar.gz"}/modules/sops")
+    (import "${home-manager}/nixos")
+    (import "${sops-nix}/modules/sops")
     ./cache.nix
   ];
 
   nixpkgs.overlays = [
-    (import (builtins.fetchTarball "https://github.com/nix-community/emacs-overlay/archive/master.tar.gz"))
+    (import emacs-overlay)
     (import ./overlays.nix)
   ];
 
@@ -37,7 +58,7 @@ in {
     pulseaudio = true;
     chromium = { enableWideVine = true; };
     packageOverrides = pkgs: {
-      nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      nur = import nur {
         inherit pkgs;
       };
     };
