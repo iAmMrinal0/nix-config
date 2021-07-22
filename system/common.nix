@@ -1,10 +1,6 @@
 { lib, pkgs, ... }:
 
 let
-  systems = {
-    darwin = "x86_64-darwin";
-    linux = "x86_64-linux";
-  };
   linux = import ./linux.nix { inherit lib pkgs; };
   osx = import ./osx.nix { inherit pkgs; };
   zshCustom = pkgs.callPackage ../config/modSteeefZsh.nix { };
@@ -60,7 +56,7 @@ let
       enable = true;
       enableZshIntegration = true;
     };
-    firefox = import ../config/firefox.nix { inherit lib pkgs systems; };
+    firefox = import ../config/firefox.nix { inherit lib pkgs; };
     fzf = {
       enable = true;
       enableZshIntegration = true;
@@ -71,9 +67,9 @@ let
     htop = import ../config/htop.nix;
     jq = { enable = true; };
     kitty = import ../config/kitty.nix { inherit pkgs; };
-    tmux = import ../config/tmux.nix { inherit lib pkgs systems; };
+    tmux = import ../config/tmux.nix { inherit lib pkgs; };
     zathura = { enable = true; };
-    zsh = import ../config/zsh.nix { inherit lib pkgs systems zshCustom; };
+    zsh = import ../config/zsh.nix { inherit lib pkgs zshCustom; };
   };
 
   home = {
@@ -81,27 +77,22 @@ let
     sessionVariables = { };
   };
 in {
-  programs = pkgs.lib.recursiveUpdate (pkgs.lib.recursiveUpdate programs
-    (lib.optionalAttrs (builtins.currentSystem == systems.linux)
-      linux.programs))
-    (lib.optionalAttrs (builtins.currentSystem == systems.darwin) osx.programs);
+  programs = lib.recursiveUpdate (lib.recursiveUpdate programs
+    (lib.optionalAttrs pkgs.stdenv.isLinux linux.programs))
+    (lib.optionalAttrs pkgs.stdenv.isDarwin osx.programs);
   home = {
     packages = home.packages
-      ++ (lib.optionals (builtins.currentSystem == systems.linux)
-        linux.home.packages)
-      ++ (lib.optionals (builtins.currentSystem == systems.darwin)
-        osx.home.packages);
+      ++ (lib.optionals pkgs.stdenv.isLinux linux.home.packages)
+      ++ (lib.optionals pkgs.stdenv.isDarwin osx.home.packages);
     sessionVariables = pkgs.lib.recursiveUpdate home.sessionVariables
-      (lib.optionalAttrs (builtins.currentSystem == systems.darwin)
-        osx.home.sessionVariables);
+      (lib.optionalAttrs pkgs.stdenv.isDarwin osx.home.sessionVariables);
   };
-  extras = (lib.optionalAttrs (builtins.currentSystem == systems.darwin) {
-    nixpkgs = osx.nixpkgs;
-  }) // (lib.optionalAttrs (builtins.currentSystem == systems.linux) {
-    gtk = linux.gtk;
-    xsession = linux.xsession;
-    qt = linux.qt;
-    services = linux.services;
-    systemd = linux.systemd;
-  });
+  extras = (lib.optionalAttrs pkgs.stdenv.isDarwin { nixpkgs = osx.nixpkgs; })
+    // (lib.optionalAttrs pkgs.stdenv.isLinux {
+      services = linux.services;
+      systemd = linux.systemd;
+      gtk = linux.gtk;
+      qt = linux.qt;
+      xsession = linux.xsession;
+    });
 }

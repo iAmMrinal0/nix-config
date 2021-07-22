@@ -1,8 +1,8 @@
-{ lib, pkgs, systems, ... }:
+{ lib, pkgs, ... }:
 
 let
   darwinShell =
-    lib.optionalString (builtins.currentSystem == systems.darwin) ''
+    lib.optionalString (pkgs.stdenv.isDarwin) ''
       set -g default-command "/bin/zsh"
     '';
 in {

@@ -1,7 +1,7 @@
-{ lib, pkgs, systems, zshCustom, ... }:
+{ lib, pkgs, zshCustom, ... }:
 
 let
-  darwinInit = lib.optionalString (builtins.currentSystem == systems.darwin) ''
+  darwinInit = lib.optionalString (pkgs.stdenv.isDarwin) ''
     export PATH=$PATH:/usr/local/bin:/usr/sbin
     . $HOME/.nix-profile/etc/profile.d/nix.sh
   '';

@@ -1,8 +1,8 @@
-{ lib, pkgs, systems, ... }:
+{ lib, pkgs, ... }:
 
 {
   enable = true;
-  package = if builtins.currentSystem == systems.darwin then
+  package = if pkgs.stdenv.isDarwin then
     pkgs.Firefox
   else
     pkgs.firefox-unwrapped;
@@ -21,7 +21,7 @@
     bypass-paywalls
     pkgs.nur.repos.ethancedwards8.firefox-addons.enhancer-for-youtube
   ]);
-  profiles = lib.optionalAttrs (builtins.currentSystem == systems.linux) ({
+  profiles = lib.optionalAttrs (pkgs.stdenv.isLinux) ({
     default.settings = {
       "browser.sessionstore.warnOnQuit" = true;
       "browser.aboutConfig.showWarning" = false;
