@@ -66,7 +66,9 @@ in {
 
   nix = {
     autoOptimiseStore = true;
+    package = pkgs.nixUnstable;
     extraOptions = ''
+    experimental-features = nix-command flakes ca-derivations ca-references
     keep-outputs = true
     keep-derivations = true
     '';
@@ -86,6 +88,9 @@ in {
 
   environment = {
     systemPackages = [
+      (pkgs.writeShellScriptBin "nixFlakes" ''
+        exec ${pkgs.nixUnstable}/bin/nix --experimental-features "nix-command flakes" "$@"
+      '')
       pkgs.atop
       pkgs.android-file-transfer
       aws_client_vpn
