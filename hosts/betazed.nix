@@ -3,10 +3,12 @@
 
 {
   imports =
-    [
-      ../hardware/betazed.nix
+    [ ../hardware/betazed.nix
       ../base.nix
     ];
 
-  networking.hostName = "betazed"; # Define your hostname.
+  networking.hostName = "betazed";
+
+  powerManagement.resumeCommands = "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
+
 }
