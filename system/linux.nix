@@ -123,9 +123,8 @@ in {
   xsession = {
     enable = true;
     initExtra = wallpaper;
-    windowManager.i3 = import ../config/i3config.nix {
-      inherit pkgs lib i3blocksConf keepmenu;
-    };
+    windowManager.i3 =
+      import ../config/i3config.nix { inherit pkgs lib i3blocksConf keepmenu; };
   };
   qt = {
     enable = true;

@@ -11,10 +11,12 @@ python37Packages.buildPythonApplication rec {
     sha256 = "150xjdyb1qzkvhsv8zx7ddvllx918m0gpjaxydckqlji91yimfz3";
   };
 
-  propagatedBuildInputs = [ python37Packages.pykeepass python37Packages.pynput ];
+  propagatedBuildInputs =
+    [ python37Packages.pykeepass python37Packages.pynput ];
 
   meta = with lib; {
-    description = "Fully featured Dmenu/Rofi frontend for managing Keepass databases.";
+    description =
+      "Fully featured Dmenu/Rofi frontend for managing Keepass databases.";
     homepage = "https://github.com/firecat53/keepmenu";
     license = licenses.gpl3;
   };

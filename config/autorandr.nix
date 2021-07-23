@@ -2,9 +2,5 @@
 
 {
   enable = true;
-  hooks = {
-    postswitch = {
-      "change-background" = wallpaper;
-    };
-  };
+  hooks = { postswitch = { "change-background" = wallpaper; }; };
 }

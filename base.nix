@@ -1,9 +1,10 @@
 { lib, config, pkgs, ... }:
 
-let aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
-    emacsConfig = import ./config/emacs.nix { inherit pkgs; };
-    secrets = [ "aws-vpn-ca" ];
-    defaultPermissions = secret: {
+let
+  aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
+  emacsConfig = import ./config/emacs.nix { inherit pkgs; };
+  secrets = [ "aws-vpn-ca" ];
+  defaultPermissions = secret: {
     ${secret} = {
       mode = "0440";
       owner = config.users.users.iammrinal0.name;
@@ -11,26 +12,29 @@ let aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
     };
   };
 
-    home-manager = builtins.fetchGit {
-      url = "https://github.com/nix-community/home-manager.git";
-      rev = "41101d0e62fe3cdb76e8e64349a2650da1433dd4";
-      ref = "master";
-    };
+  home-manager = builtins.fetchGit {
+    url = "https://github.com/nix-community/home-manager.git";
+    rev = "41101d0e62fe3cdb76e8e64349a2650da1433dd4";
+    ref = "master";
+  };
 
-    sops-nix = builtins.fetchTarball {
-      url = "https://github.com/Mic92/sops-nix/archive/ec2800174de5a7be8ec5b144819af2c7de77abe2.tar.gz";
-      sha256 = "1s430ml7p6aa950xsm6rblk0cgkb0a0adgk73mjyhqmb68hnbb2k";
-    };
+  sops-nix = builtins.fetchTarball {
+    url =
+      "https://github.com/Mic92/sops-nix/archive/ec2800174de5a7be8ec5b144819af2c7de77abe2.tar.gz";
+    sha256 = "1s430ml7p6aa950xsm6rblk0cgkb0a0adgk73mjyhqmb68hnbb2k";
+  };
 
-    emacs-overlay = builtins.fetchTarball {
-      url = "https://github.com/nix-community/emacs-overlay/archive/40e6376f2d3fe4911122ae78569243aa929888b2.tar.gz";
-      sha256 = "11jjx97vp2xyndkajyl743plf1dg2i8d91wbv82kxv7ak0c3z3r2";
-    };
+  emacs-overlay = builtins.fetchTarball {
+    url =
+      "https://github.com/nix-community/emacs-overlay/archive/40e6376f2d3fe4911122ae78569243aa929888b2.tar.gz";
+    sha256 = "11jjx97vp2xyndkajyl743plf1dg2i8d91wbv82kxv7ak0c3z3r2";
+  };
 
-    nur = builtins.fetchTarball {
-      url = "https://github.com/nix-community/NUR/archive/6c4a43390829ad08bc310f41700c95dfdbbe78e6.tar.gz";
-      sha256 = "14pbhsnfm9gmwb60h80f9ji23cgqgbqimslgnw22h0aamsybgznp";
-    };
+  nur = builtins.fetchTarball {
+    url =
+      "https://github.com/nix-community/NUR/archive/6c4a43390829ad08bc310f41700c95dfdbbe78e6.tar.gz";
+    sha256 = "14pbhsnfm9gmwb60h80f9ji23cgqgbqimslgnw22h0aamsybgznp";
+  };
 
 in {
   imports = [
@@ -39,14 +43,12 @@ in {
     ./cache.nix
   ];
 
-  nixpkgs.overlays = [
-    (import emacs-overlay)
-    (import ./overlays.nix)
-  ];
+  nixpkgs.overlays = [ (import emacs-overlay) (import ./overlays.nix) ];
 
   sops = {
     defaultSopsFile = ./sops/secrets.yaml;
-    secrets = lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
+    secrets =
+      lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
   };
 
   # Use the systemd-boot EFI boot loader.
@@ -57,20 +59,16 @@ in {
     allowUnfree = true;
     pulseaudio = true;
     chromium = { enableWideVine = true; };
-    packageOverrides = pkgs: {
-      nur = import nur {
-        inherit pkgs;
-      };
-    };
+    packageOverrides = pkgs: { nur = import nur { inherit pkgs; }; };
   };
 
   nix = {
     autoOptimiseStore = true;
     package = pkgs.nixUnstable;
     extraOptions = ''
-    experimental-features = nix-command flakes ca-derivations ca-references
-    keep-outputs = true
-    keep-derivations = true
+      experimental-features = nix-command flakes ca-derivations ca-references
+      keep-outputs = true
+      keep-derivations = true
     '';
     gc = {
       automatic = true;
@@ -113,9 +111,7 @@ in {
       pkgs.yubikey-personalization
       (pkgs.emacsWithPackagesFromUsePackage emacsConfig)
     ];
-    variables = {
-      QT_STYLE_OVERRIDE = lib.mkDefault "gtk2";
-    };
+    variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
   };
 
   services = {
@@ -127,9 +123,7 @@ in {
         addresses = true;
       };
     };
-    udev.packages = [
-      pkgs.yubikey-personalization
-    ];
+    udev.packages = [ pkgs.yubikey-personalization ];
     dbus.packages = [ pkgs.blueman ];
     dnsmasq = { enable = true; };
     emacs = {
@@ -148,11 +142,7 @@ in {
   hardware = {
     bluetooth = {
       enable = true;
-      settings = {
-        General = {
-          Enable = "Source,Sink,Media,Socket";
-        };
-      };
+      settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
       package = pkgs.bluezFull;
     };
     openrazer = { enable = true; };
@@ -174,8 +164,14 @@ in {
   };
 
   networking = {
-    firewall.allowedTCPPortRanges = [ { from=1714; to=1764; } ]; # KDE Connect Ports
-    firewall.allowedUDPPortRanges = [ { from=1714; to=1764; } ]; # KDE Connect Ports
+    firewall.allowedTCPPortRanges = [{
+      from = 1714;
+      to = 1764;
+    }]; # KDE Connect Ports
+    firewall.allowedUDPPortRanges = [{
+      from = 1714;
+      to = 1764;
+    }]; # KDE Connect Ports
     firewall.allowedTCPPorts = [ 24800 ];
     firewall.allowedUDPPorts = [ 24800 1194 ]; # AWS Client VPN
     networkmanager = {
@@ -206,25 +202,35 @@ in {
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.iammrinal0 = {
     isNormalUser = true;
-    extraGroups = [ "adbusers" "audio" "docker" "keys" "networkmanager" "plugdev" "video" "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [
+      "adbusers"
+      "audio"
+      "docker"
+      "keys"
+      "networkmanager"
+      "plugdev"
+      "video"
+      "wheel"
+    ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
 
   security.sudo.extraRules = [{
-    users = ["iammrinal0"];
-    commands = [{
-      command = "${aws_client_vpn}/bin/aws_client_vpn_connect";
-      options = ["NOPASSWD"];
-    } {
-      command = "${pkgs.openvpn_aws}/bin/openvpn";
-      options = ["NOPASSWD"];
-    }];
+    users = [ "iammrinal0" ];
+    commands = [
+      {
+        command = "${aws_client_vpn}/bin/aws_client_vpn_connect";
+        options = [ "NOPASSWD" ];
+      }
+      {
+        command = "${pkgs.openvpn_aws}/bin/openvpn";
+        options = [ "NOPASSWD" ];
+      }
+    ];
   }];
 
   home-manager = {
-    users = {
-      iammrinal0 = ./home.nix;
-    };
+    users = { iammrinal0 = ./home.nix; };
     useGlobalPkgs = true;
   };
 

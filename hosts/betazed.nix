@@ -2,13 +2,11 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ ../hardware/betazed.nix
-      ../base.nix
-    ];
+  imports = [ ../hardware/betazed.nix ../base.nix ];
 
   networking.hostName = "betazed";
 
-  powerManagement.resumeCommands = "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
+  powerManagement.resumeCommands =
+    "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
 
 }

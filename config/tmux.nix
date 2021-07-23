@@ -1,10 +1,9 @@
 { lib, pkgs, systems, ... }:
 
 let
-  darwinShell =
-    lib.optionalString (builtins.currentSystem == systems.darwin) ''
-      set -g default-command "/bin/zsh"
-    '';
+  darwinShell = lib.optionalString (builtins.currentSystem == systems.darwin) ''
+    set -g default-command "/bin/zsh"
+  '';
 in {
   enable = true;
   baseIndex = 1;

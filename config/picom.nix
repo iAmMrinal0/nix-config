@@ -10,10 +10,7 @@
   fadeSteps = [ "0.03" "0.03" ];
   fadeDelta = 4;
   blur = true;
-  blurExclude = [
-    "window_type = 'dock'"
-    "window_type = 'desktop'"
-  ];
+  blurExclude = [ "window_type = 'dock'" "window_type = 'desktop'" ];
   shadowExclude = [
     "! name~=''"
     "name = 'Notification'"
@@ -35,49 +32,49 @@
     "class_g ?= 'Xfce4-power-manager'"
   ];
   extraOptions = ''
-glx-no-stencil = true;
+    glx-no-stencil = true;
 
-glx-copy-from-front = false;
+    glx-copy-from-front = false;
 
-shadow-radius = 5;
+    shadow-radius = 5;
 
-shadow-ignore-shaped = false;
+    shadow-ignore-shaped = false;
 
-frame-opacity = 1;
-inactive-opacity-override = false;
+    frame-opacity = 1;
+    inactive-opacity-override = false;
 
-blur-background-fixed = false;
+    blur-background-fixed = false;
 
-mark-wmwin-focused = true;
-mark-ovredir-focused = true;
-use-ewmh-active-win = true;
-detect-rounded-corners = true;
+    mark-wmwin-focused = true;
+    mark-ovredir-focused = true;
+    use-ewmh-active-win = true;
+    detect-rounded-corners = true;
 
-detect-client-opacity = true;
+    detect-client-opacity = true;
 
-dbe = false;
-sw-opti = false;
+    dbe = false;
+    sw-opti = false;
 
-unredir-if-possible = true;
+    unredir-if-possible = true;
 
-focus-exclude = [ ];
+    focus-exclude = [ ];
 
-detect-transient = true;
-detect-client-leader = true;
+    detect-transient = true;
+    detect-client-leader = true;
 
-# wintypes:
-# {
-#     tooltip =
-#     {
-#         # fade: Fade the particular type of windows.
-#         fade = true;
-#         # shadow: Give those windows shadow
-#         shadow = false;
-#         # opacity: Default opacity for the type of windows.
-#         opacity = 0.85;
-#         # focus: Whether to always consider windows of this type focused.
-#         focus = true;
-#     };
-# };
-'';
+    # wintypes:
+    # {
+    #     tooltip =
+    #     {
+    #         # fade: Fade the particular type of windows.
+    #         fade = true;
+    #         # shadow: Give those windows shadow
+    #         shadow = false;
+    #         # opacity: Default opacity for the type of windows.
+    #         opacity = 0.85;
+    #         # focus: Whether to always consider windows of this type focused.
+    #         focus = true;
+    #     };
+    # };
+  '';
 }

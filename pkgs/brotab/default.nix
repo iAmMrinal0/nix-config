@@ -11,7 +11,12 @@ python3.pkgs.buildPythonApplication rec {
     sha256 = "17yj5i8p28a7zmixdfa1i4gfc7c2fmdkxlymazasar58dz8m68mw";
   };
 
-  propagatedBuildInputs = [ python3.pkgs.requests python3.pkgs.psutil python3.pkgs.flask python3.pkgs.setuptools ];
+  propagatedBuildInputs = [
+    python3.pkgs.requests
+    python3.pkgs.psutil
+    python3.pkgs.flask
+    python3.pkgs.setuptools
+  ];
   checkInputs = [ python3.pkgs.pytest ];
 
   meta = with stdenv.lib; {
