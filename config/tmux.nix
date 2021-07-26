@@ -1,10 +1,6 @@
-{ lib, pkgs, systems, ... }:
+{ lib, pkgs, ... }:
 
-let
-  darwinShell = lib.optionalString (builtins.currentSystem == systems.darwin) ''
-    set -g default-command "/bin/zsh"
-  '';
-in {
+{
   enable = true;
   baseIndex = 1;
   clock24 = true;
@@ -20,7 +16,6 @@ in {
   ];
 
   extraConfig = ''
-    ${darwinShell}
 
     ## COLORSCHEME: gruvbox dark
     set-option -g status "on"

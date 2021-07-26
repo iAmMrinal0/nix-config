@@ -41,6 +41,7 @@ let
     pkgs.netcat-gnu
     pkgs.nix-diff
     pkgs.nixfmt
+    pkgs.obs-studio
     pkgs.pgp-tools
     pkgs.screenfetch
     pkgs.ssh-to-pgp
