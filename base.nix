@@ -1,7 +1,6 @@
 { lib, config, pkgs, ... }:
 
 let
-  aws_client_vpn = import ./pkgs/aws_client_vpn { inherit config lib pkgs; };
   emacsConfig = import ./config/emacs.nix { inherit pkgs; };
   secrets = [ "aws-vpn-ca" ];
   defaultPermissions = secret: {
@@ -43,7 +42,7 @@ in {
     ./cache.nix
   ];
 
-  nixpkgs.overlays = [ (import emacs-overlay) (import ./overlays.nix) ];
+  nixpkgs.overlays = [ (import emacs-overlay) ];
 
   sops = {
     defaultSopsFile = ./sops/secrets.yaml;
@@ -91,7 +90,6 @@ in {
       '')
       pkgs.atop
       pkgs.android-file-transfer
-      aws_client_vpn
       pkgs.binutils
       pkgs.coreutils-full
       pkgs.git
@@ -99,7 +97,6 @@ in {
       pkgs.ntfs3g
       pkgs.openjdk
       pkgs.openssl
-      pkgs.openvpn_aws
       pkgs.pptp
       pkgs.razergenie
       pkgs.sops
@@ -173,7 +170,7 @@ in {
       to = 1764;
     }]; # KDE Connect Ports
     firewall.allowedTCPPorts = [ 24800 ];
-    firewall.allowedUDPPorts = [ 24800 1194 ]; # AWS Client VPN
+    firewall.allowedUDPPorts = [ 24800 ];
     networkmanager = {
       enable = true;
       wifi.macAddress = "random";
@@ -214,20 +211,6 @@ in {
     ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
-
-  security.sudo.extraRules = [{
-    users = [ "iammrinal0" ];
-    commands = [
-      {
-        command = "${aws_client_vpn}/bin/aws_client_vpn_connect";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "${pkgs.openvpn_aws}/bin/openvpn";
-        options = [ "NOPASSWD" ];
-      }
-    ];
-  }];
 
   home-manager = {
     users = { iammrinal0 = ./home.nix; };
