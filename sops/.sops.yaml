@@ -1,0 +1,8 @@
+keys:
+  - &iammrinal0 76f930ad05aaa18fb3c64fdd88024e24c8eb45d5
+  - &betazed d05d0f7e9c1aa2be12b7e8d4f9696e87829def1f
+creation_rules:
+  - key_groups:
+      - pgp:
+          - *iammrinal0
+          - *betazed
