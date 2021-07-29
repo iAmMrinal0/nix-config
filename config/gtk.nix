@@ -44,4 +44,12 @@
       -gtk-icon-style: regular;
     }
   '';
+  gtk3.bookmarks = [
+    "file:///home/iammrinal0/Documents"
+    "file:///home/iammrinal0/Downloads"
+    "file:///home/iammrinal0/Pictures"
+    "file:///home/iammrinal0/Videos"
+    "file:///home/iammrinal0/oss"
+    "file:///home/iammrinal0/play"
+  ];
 }
