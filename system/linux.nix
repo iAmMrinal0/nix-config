@@ -55,6 +55,8 @@ let
     pkgs.hicolor_icon_theme
     pkgs.material-icons
     pkgs.paper-icon-theme
+    pkgs.obs-studio
+    pkgs.ranger
   ];
   programs = {
     autorandr = import ../config/autorandr.nix { inherit wallpaper; };
