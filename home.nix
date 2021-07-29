@@ -82,4 +82,5 @@ in {
   qt = linux.qt;
   services = linux.services;
   systemd = linux.systemd;
+  xdg.configFile."keepassxc/keepassxc.ini".source = ./config/keepassxc.ini;
 }
