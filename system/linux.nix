@@ -57,7 +57,7 @@ let
     pkgs.paper-icon-theme
   ];
   programs = {
-    autorandr = import ../config/autorandr.nix { inherit lib wallpaper; };
+    autorandr = import ../config/autorandr.nix { inherit wallpaper; };
     chromium = import ../config/chromium.nix;
     command-not-found = { enable = true; };
     feh = import ../config/feh.nix;
