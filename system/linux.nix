@@ -5,7 +5,6 @@ let
 
   wallpaper = lib.readFile (pkgs.callPackage ../scripts/wallpaper.nix { });
 
-  i3blocksConf = pkgs.callPackage ../config/i3blocks.nix { };
   packages = [
     pkgs.authy
     pkgs.xorg.xdpyinfo
@@ -78,6 +77,7 @@ let
     pasystray = { enable = true; };
     picom = import ../config/picom.nix { inherit pkgs; };
     playerctld = { enable = true; };
+    polybar = import ../config/polybar.nix { inherit pkgs; };
     udiskie = { enable = true; };
   };
   systemd = {
@@ -127,7 +127,7 @@ in {
     enable = true;
     initExtra = wallpaper;
     windowManager.i3 =
-      import ../config/i3config.nix { inherit pkgs lib i3blocksConf keepmenu; };
+      import ../config/i3config.nix { inherit pkgs lib keepmenu; };
   };
   qt = {
     enable = true;

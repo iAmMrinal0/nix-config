@@ -1,18 +1,19 @@
 { pkgs, ... }:
 
 pkgs.writeShellScript "dunstNotifToggle" ''
+PARENT_BAR="bottom"
+PARENT_BAR_PID=$(${pkgs.procps}/bin/pgrep -a "polybar" | ${pkgs.gnugrep}/bin/grep "$PARENT_BAR" | ${pkgs.coreutils}/bin/cut -d" " -f1)
 
-  toggle() {
-    status=$(${pkgs.dunst}/bin/dunstctl is-paused)
-    if [ "$status" = "true" ]
-      then echo 
-    else
-      echo 
-    fi
-  }
+update_hooks() {
+    polybar-msg -p "$1" hook dunst "$2" 1>/tmp/error 2>&1
+}
 
-  case $BLOCK_BUTTON in
-      3) ${pkgs.dunst}/bin/dunstctl set-paused toggle ;; # right click
-      *) toggle ;;
-  esac
+if [ "$1" = "on" ];
+then
+    update_hooks "$PARENT_BAR_PID" 1
+    ${pkgs.psmisc}/bin/killall -SIGUSR2 .dunst-wrapped
+else
+    update_hooks "$PARENT_BAR_PID" 2
+    ${pkgs.psmisc}/bin/killall -SIGUSR1 .dunst-wrapped
+fi
 ''

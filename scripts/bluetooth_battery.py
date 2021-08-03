@@ -10,16 +10,21 @@ Source: https://github.com/TheWeirdDev/Bluetooth_Headset_Battery_Level
 # Author: @TheWeirdDev
 # 29 Sept 2019
 
-import errno
-import bluetooth
 import sys
+import bluetooth
 
 
 def send(sock, message):
+    """
+    This function sends a message through a bluetooth socket
+    """
     sock.send(b"\r\n" + message + b"\r\n")
 
 
-def getATCommand(sock, line, device):
+def get_at_command(sock, line, device):
+    """
+    Will try to get and print the battery level of supported devices
+    """
     blevel = -1
 
     if b"BRSF" in line:
@@ -41,7 +46,7 @@ def getATCommand(sock, line, device):
         send(sock, b"+BIND: 2,1")
         send(sock, b"OK")
     elif b"XAPL=" in line:
-        send(sock, b"+XAPL: iPhone,7")
+        send(sock, b"+XAPL=iPhone,7")
         send(sock, b"OK")
     elif b"IPHONEACCEV" in line:
         parts = line.strip().split(b',')[1:]
@@ -54,48 +59,64 @@ def getATCommand(sock, line, device):
         params = line.strip().split(b"=")[1].split(b",")
         if params[0] == b"2":
             blevel = int(params[1])
+    elif b"XEVENT=BATTERY" in line:
+        params = line.strip().split(b"=")[1].split(b",")
+        blevel = int(params[1]) / int(params[2]) * 100
     else:
         send(sock, b"OK")
 
     if blevel != -1:
-        print(f"{blevel}") # Only show battery level
+        print(f"{blevel}")  # Only show battery level
         return False
 
     return True
 
+
 def find_rfcomm_port(device):
-    uuid="0000111e-0000-1000-8000-00805f9b34fb"
+    """
+    Find the RFCOMM port number for a given bluetooth device
+    """
+    uuid = "0000111e-0000-1000-8000-00805f9b34fb"
     proto = bluetooth.find_service(address=device, uuid=uuid)
     if len(proto) == 0:
-        print("Couldn't find the RFCOMM port number")
+        # print("Couldn't find the RFCOMM port number")
         return 4
-    else:
-        for j in range(len(proto)):
-            if 'protocol' in proto[j] and proto[j]['protocol'] == 'RFCOMM':
-                port = proto[j]['port']
-                return port
+
+    for pr in proto:
+        if 'protocol' in pr and pr['protocol'] == 'RFCOMM':
+            port = pr['port']
+            return port
+    return 4
+
 
 def main():
-    if (len(sys.argv) < 2):
-        print("Usage: bluetooth_battery.py BT_MAC_ADDRESS_1.PORT ...")
-        print("         Port number is optional")
-        exit()
+    """
+    The starting point of the program. For each device address in the argument
+    list a bluetooth socket will be opened and the battery level will be read
+    and printed to stdout
+    """
+    port = 0 # initialize with dummy port to prevent error
+    if len(sys.argv) < 2:
+        sys.exit()
     else:
         for device in sys.argv[1:]:
             i = device.find('.')
             if i == -1:
-                port = find_rfcomm_port(device)
+                try:
+                    port = find_rfcomm_port(device)
+                except OSError as err:
+                    print(-1)
             else:
                 port = int(device[i+1:])
                 device = device[:i]
             try:
-                s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-                s.connect((device, port))
-                while getATCommand(s, s.recv(128), device):
+                sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+                sock.connect((device, port))
+                while get_at_command(sock, sock.recv(128), device):
                     pass
-                s.close()
-            except OSError as e:
-                print(f"{device} is offline", e)
+                sock.close()
+            except OSError as err:
+                print(-1)
 
 
 if __name__ == "__main__":

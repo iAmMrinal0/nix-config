@@ -1,21 +1,11 @@
-{ lib, pkgs, i3blocksConf, keepmenu, ... }:
+{ lib, pkgs, keepmenu, ... }:
 
 let
   lock = import ../scripts/lock.nix { inherit pkgs; };
   shutdownMenu = import ../scripts/shutdownMenu.nix { inherit pkgs lock; };
   rofiAutorandr = import ../scripts/rofiAutorandr.nix { inherit pkgs; };
   fontSize = 10.8;
-  workspaces = [
-    " term"
-    " code"
-    " web"
-    "♪ music"
-    " avoid"
-    "scratch"
-    "scratch"
-    "scratch"
-    " bg"
-  ];
+  workspaces = [ "" "" "" "♪" "" "scratch" "scratch" "scratch" "" ];
   fonts = {
     names = [ "Font Awesome 5 Free" "Source Code Pro" ];
     style = "Medium";
@@ -35,39 +25,9 @@ in {
       "\"${lib.elemAt workspaceNumbers 1}\"" = [{ class = "Emacs"; }];
       "\"${lib.elemAt workspaceNumbers 3}\"" = [{ class = "Vlc"; }];
       "\"${lib.elemAt workspaceNumbers 4}\"" =
-        [ { class = "Slack"; } { class = "discord"; } ];
+        [ { class = "Slack"; } { class = "discord"; } { class = "element"; } ];
     };
-    bars = [{
-      inherit fonts;
-      position = "top";
-      trayOutput = "primary";
-      statusCommand = "${pkgs.i3blocks}/bin/i3blocks -c ${i3blocksConf}";
-      colors = {
-        background = "#1d2021";
-        statusline = "#ebdbb2";
-        separator = "#666666";
-        inactiveWorkspace = {
-          border = "#504945";
-          background = "#504945";
-          text = "#ebdbb2";
-        };
-        activeWorkspace = {
-          border = "#1d2021";
-          background = "#1d2021";
-          text = " #ebdbb2";
-        };
-        focusedWorkspace = {
-          border = "#1d2021";
-          background = "#1d2021";
-          text = " #ebdbb2";
-        };
-        urgentWorkspace = {
-          border = "#fb4933";
-          background = "#fb4933";
-          text = "#ebdbb2";
-        };
-      };
-    }];
+    bars = [ ];
     window = {
       hideEdgeBorders = "both";
       commands = [
@@ -95,6 +55,7 @@ in {
       }
       { command = "${pkgs.numlockx}/bin/numlockx on"; }
       { command = "${pkgs.keepassxc}/bin/keepassxc"; }
+      { command = "systemctl restart polybar.service --user"; }
     ];
     modes = {
       resize = {

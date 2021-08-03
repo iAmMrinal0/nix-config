@@ -160,6 +160,7 @@ in {
       pkgs.iosevka
       pkgs.noto-fonts
       pkgs.source-code-pro
+      pkgs.nerdfonts
     ];
     fontconfig = { enable = true; };
   };
