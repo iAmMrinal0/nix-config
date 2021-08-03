@@ -67,13 +67,11 @@ let
     jq = { enable = true; };
     kitty = import ./config/kitty.nix { inherit pkgs; };
     tmux = import ./config/tmux.nix { inherit lib pkgs; };
-    zathura = { enable = true; };
+    zathura = import ./config/zathura.nix;
     zsh = import ./config/zsh.nix { inherit lib pkgs zshCustom; };
   };
 
-  home = {
-    packages = packages;
-  };
+  home = { packages = packages; };
 in {
   programs = lib.recursiveUpdate programs linux.programs;
   home = { packages = home.packages ++ linux.home.packages; };
