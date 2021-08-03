@@ -2,7 +2,7 @@
 
 let
   emacsConfig = import ./config/emacs.nix { inherit pkgs; };
-  secrets = [ "aws-vpn-ca" ];
+  secrets = [ "aws-vpn-ca" "nixpkgs-review" ];
   defaultPermissions = secret: {
     ${secret} = {
       mode = "0440";
