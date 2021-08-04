@@ -152,13 +152,10 @@ in {
   fonts = {
     fonts = [
       pkgs.cantarell-fonts
-      pkgs.dejavu_fonts
       pkgs.emacs-all-the-icons-fonts
       pkgs.font-awesome
-      pkgs.google-fonts
       pkgs.hasklig
       pkgs.iosevka
-      pkgs.noto-fonts
       pkgs.source-code-pro
       pkgs.nerdfonts
     ];
