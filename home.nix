@@ -2,7 +2,6 @@
 
 let
   linux = import ./system/linux.nix { inherit lib pkgs; };
-  zshCustom = pkgs.callPackage ./config/modSteeefZsh.nix { };
 
   packages = [
     pkgs.keepassxc
@@ -68,7 +67,7 @@ let
     kitty = import ./config/kitty.nix { inherit pkgs; };
     tmux = import ./config/tmux.nix { inherit lib pkgs; };
     zathura = import ./config/zathura.nix;
-    zsh = import ./config/zsh.nix { inherit lib pkgs zshCustom; };
+    zsh = import ./config/zsh.nix { inherit lib pkgs; };
   };
 
   home = { packages = packages; };

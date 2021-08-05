@@ -1,6 +1,7 @@
-{ lib, pkgs, zshCustom, ... }:
+{ lib, pkgs, ... }:
 
-{
+let zshCustom = pkgs.callPackage ./modSteeefZsh.nix { };
+in {
   enable = true;
   enableCompletion = true;
   defaultKeymap = "emacs";
@@ -34,8 +35,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "zsh-users";
         repo = "zsh-autosuggestions";
-        rev = "v0.6.4";
-        sha256 = "0h52p2waggzfshvy1wvhj4hf06fmzd44bv6j18k3l9rcx6aixzn6";
+        rev = "v0.7.0";
+        sha256 = "sha256-KLUYpUu4DHRumQZ3w59m9aTW6TBKMCXl2UcKi4uMd7w=";
       };
     }
     {
@@ -51,8 +52,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "MichaelAquilina";
         repo = "zsh-you-should-use";
-        rev = "1.7.3";
-        sha256 = "1dz48rd66priqhxx7byndqhbmlwxi1nfw8ik25k0z5k7k754brgy";
+        rev = "ccc7e7f75bd7169758a1c931ea574b96b71aa9a0";
+        sha256 = "sha256-hTJjeJT9szHl9HXDHaSEmkv3wOARORs7sQA8/MjkfIo=";
       };
     }
     {
@@ -60,8 +61,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "zsh-users";
         repo = "zsh-history-substring-search";
-        rev = "0f80b8eb3368b46e5e573c1d91ae69eb095db3fb";
-        sha256 = "0y8va5kc2ram38hbk2cibkk64ffrabfv1sh4xm7pjspsba9n5p1y";
+        rev = "4abed97b6e67eb5590b39bcd59080aa23192f25d";
+        sha256 = "sha256-8kiPBtgsjRDqLWt0xGJ6vBBLqCWEIyFpYfd+s1prHWk=";
       };
     }
     {
@@ -70,8 +71,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "chisui";
         repo = "zsh-nix-shell";
-        rev = "v0.2.0";
-        sha256 = "1gfyrgn23zpwv1vj37gf28hf5z0ka0w5qm6286a7qixwv7ijnrx9";
+        rev = "v0.4.0";
+        sha256 = "037wz9fqmx0ngcwl9az55fgkipb745rymznxnssr3rx9irb6apzg";
       };
     }
   ];
