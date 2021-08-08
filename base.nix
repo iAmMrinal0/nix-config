@@ -1,7 +1,8 @@
-{ lib, config, pkgs, ... }:
+inputs@{ lib, config, pkgs, ... }:
 
 let
-  emacsConfig = import ./config/emacs.nix { inherit pkgs; };
+  emacsConfig =
+    import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
   secrets = [ "aws-vpn-ca" "nixpkgs-review" ];
   defaultPermissions = secret: {
     ${secret} = {
@@ -181,6 +182,11 @@ in {
   home-manager = {
     users = { iammrinal0 = ./home.nix; };
     useGlobalPkgs = true;
+    extraSpecialArgs = {
+      inherit (inputs)
+        zsh-autosuggestions zsh-you-should-use zsh-history-substring-search
+        zsh-nix-shell;
+    };
   };
 
   # This value determines the NixOS release with which your system is to be

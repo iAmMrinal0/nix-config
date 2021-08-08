@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+args@{ lib, pkgs, ... }:
 
 let
   linux = import ./system/linux.nix { inherit lib pkgs; };
@@ -67,7 +67,11 @@ let
     kitty = import ./config/kitty.nix { inherit pkgs; };
     tmux = import ./config/tmux.nix { inherit lib pkgs; };
     zathura = import ./config/zathura.nix;
-    zsh = import ./config/zsh.nix { inherit lib pkgs; };
+    zsh = import ./config/zsh.nix {
+      inherit (args)
+        lib pkgs zsh-autosuggestions zsh-you-should-use
+        zsh-history-substring-search zsh-nix-shell;
+    };
   };
 
   home = { packages = packages; };

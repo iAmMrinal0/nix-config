@@ -1,14 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, emacsConfiguration, ... }:
 
 {
-  config = "${
-      pkgs.fetchFromGitHub {
-        owner = "iammrinal0";
-        repo = ".emacs.d";
-        rev = "1d4ae437338cc8977d4a733f2c6b33cdac30ea9e";
-        sha256 = "1pz3lv58bd6q4zrcvyp9g2jk12gv0bdv78hjwgqgs6vxijcdaz4z";
-      }
-    }/init.el";
+  config = "${emacsConfiguration}/init.el";
   package = pkgs.emacsGcc;
   extraEmacsPackages = epkgs:
     (with epkgs; [
