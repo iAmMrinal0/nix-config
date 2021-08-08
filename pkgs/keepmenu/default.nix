@@ -2,13 +2,13 @@
 
 python37Packages.buildPythonApplication rec {
   pname = "keepmenu";
-  version = "0.6.2";
+  version = "unstable-2021-04-21";
 
   src = fetchFromGitHub {
     owner = "firecat53";
     repo = pname;
-    rev = "81a847b8230a0102653ea445d7c87f6ddf44b04a";
-    sha256 = "150xjdyb1qzkvhsv8zx7ddvllx918m0gpjaxydckqlji91yimfz3";
+    rev = "354c0944e4a0bc11f0ebb1ecfe9289d1f35d353b";
+    sha256 = "sha256-xVwLt2TLM2Hgpxl4QyCvCgEUoLinzp4eibRORtqRHLs=";
   };
 
   propagatedBuildInputs =
