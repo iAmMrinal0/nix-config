@@ -121,6 +121,7 @@ in {
       initial = 1;
 
       format-foreground = secondary;
+      format-padding = 1;
 
       hook-0 = "echo ''";
       hook-1 = "echo ''";
@@ -258,7 +259,7 @@ in {
 
     "module/i3" = {
       type = "internal/i3";
-      pin-workspaces = false;
+      pin-workspaces = true;
       strip-wsnumbers = true;
       format = "<label-state> <label-mode>";
       format-background = primary;
@@ -300,6 +301,7 @@ in {
       label-maxlen = 70;
       format-foreground = secondary;
       format-background = tertiary;
+      format-padding = 1;
     };
 
     "module/memory" = {
