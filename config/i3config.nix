@@ -18,6 +18,10 @@ let
   appendExecToCommand = lib.mapAttrs' (k: v: lib.nameValuePair k ("exec " + v));
 in {
   enable = true;
+  package = pkgs.i3-gaps;
+  extraConfig = ''
+    title_align center
+  '';
   config = rec {
     inherit fonts;
     modifier = "Mod4";
@@ -25,7 +29,12 @@ in {
       "\"${lib.elemAt workspaceNumbers 1}\"" = [{ class = "Emacs"; }];
       "\"${lib.elemAt workspaceNumbers 3}\"" = [{ class = "Vlc"; }];
       "\"${lib.elemAt workspaceNumbers 4}\"" =
-        [ { class = "Slack"; } { class = "discord"; } { class = "element"; } ];
+        [ { class = "Slack"; } { class = "discord"; } { class = "Element"; } ];
+    };
+    gaps = {
+      smartBorders = "on";
+      inner = 15;
+      outer = 5;
     };
     bars = [ ];
     window = {
