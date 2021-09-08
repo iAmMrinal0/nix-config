@@ -44,5 +44,24 @@
             zsh-history-substring-search zsh-nix-shell;
         };
       };
+      homeConfigurations = {
+        wsl = home-manager.lib.homeManagerConfiguration {
+          configuration = { pkgs, lib, ... }: {
+            imports = [ ./home.nix ];
+            nixpkgs = {
+              config = { allowUnfree = true; };
+            };
+          };
+          system = "x86_64-linux";
+          homeDirectory = "/home/iammrinal0";
+          username = "iammrinal0";
+          extraSpecialArgs = {
+            inherit emacsConfiguration zsh-autosuggestions zsh-you-should-use
+              zsh-history-substring-search zsh-nix-shell;
+          };
+        };
+      };
+      wsl = self.homeConfigurations.wsl.activationPackage;
+      defaultPackage.x86_64-linux = self.wsl;
     };
 }

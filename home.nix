@@ -54,7 +54,7 @@ let
       enable = true;
       enableZshIntegration = true;
     };
-    firefox = import ./config/firefox.nix { inherit lib pkgs; };
+    # firefox = import ./config/firefox.nix { inherit lib pkgs; };
     fzf = {
       enable = true;
       enableZshIntegration = true;
@@ -79,9 +79,9 @@ in {
   programs = lib.recursiveUpdate programs linux.programs;
   home = { packages = home.packages ++ linux.home.packages; };
   gtk = linux.gtk;
-  xsession = linux.xsession;
+  # xsession = linux.xsession;
   qt = linux.qt;
   services = linux.services;
-  systemd = linux.systemd;
-  xdg.configFile."keepassxc/keepassxc.ini".source = ./config/keepassxc.ini;
+  # systemd = linux.systemd;
+  # xdg.configFile."keepassxc/keepassxc.ini".source = ./config/keepassxc.ini;
 }

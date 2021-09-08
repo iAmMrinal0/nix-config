@@ -56,29 +56,31 @@ let
     pkgs.paper-icon-theme
     pkgs.obs-studio
     pkgs.ranger
+    pkgs.lorri
+    pkgs.nodejs-16_x
   ];
   programs = {
-    autorandr = import ../config/autorandr.nix { inherit wallpaper; };
-    chromium = import ../config/chromium.nix;
+    # autorandr = import ../config/autorandr.nix { inherit wallpaper; };
+    # chromium = import ../config/chromium.nix;
     command-not-found = { enable = true; };
     feh = import ../config/feh.nix;
-    rofi = import ../config/rofi.nix { inherit pkgs; };
+    # rofi = import ../config/rofi.nix { inherit pkgs; };
   };
   services = {
-    blueman-applet = { enable = true; };
-    dunst = import ../config/dunstrc.nix { inherit pkgs; };
+    # blueman-applet = { enable = true; };
+    # dunst = import ../config/dunstrc.nix { inherit pkgs; };
     gpg-agent = { enable = true; };
-    kdeconnect = {
-      enable = true;
-      indicator = true;
-    };
-    keybase = { enable = true; };
+    # kdeconnect = {
+    #   enable = true;
+    #   indicator = true;
+    # };
+    # keybase = { enable = true; };
     lorri = { enable = true; };
-    pasystray = { enable = true; };
-    picom = import ../config/picom.nix { inherit pkgs; };
+    # pasystray = { enable = true; };
+    # picom = import ../config/picom.nix { inherit pkgs; };
     playerctld = { enable = true; };
-    polybar = import ../config/polybar.nix { inherit pkgs; };
-    udiskie = { enable = true; };
+    # polybar = import ../config/polybar.nix { inherit pkgs; };
+    # udiskie = { enable = true; };
   };
   systemd = {
     user = {
