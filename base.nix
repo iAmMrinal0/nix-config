@@ -116,6 +116,7 @@ in {
       pkgs.razergenie
       pkgs.sops
       pkgs.stow
+      pkgs.tailscale
       pkgs.tcpdump
       pkgs.traceroute
       pkgs.usbutils
@@ -153,6 +154,7 @@ in {
     fwupd = { enable = true; };
     xserver = import ./services/xserver.nix { inherit pkgs; };
     gnome.gnome-keyring.enable = true;
+    tailscale.enable = true;
   };
 
   hardware = {
@@ -188,8 +190,9 @@ in {
       from = 1714;
       to = 1764;
     }]; # KDE Connect Ports
-    firewall.allowedTCPPorts = [ 24800 ];
-    firewall.allowedUDPPorts = [ 24800 ];
+    firewall.allowedTCPPorts = [ 24800 22 ];
+    firewall.allowedUDPPorts = [ 24800 config.services.tailscale.port ];
+    firewall.trustedInterfaces = [ "tailscale0" ];
     networkmanager = {
       enable = true;
       wifi.macAddress = "random";
