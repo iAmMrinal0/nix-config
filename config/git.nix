@@ -1,16 +1,8 @@
 {
   enable = true;
+  delta.enable = true;
   userName = "Mrinal Purohit";
   userEmail = "github@mrinalpurohit.in";
-  includes = [{
-    contents = {
-      user.name = "Mrinal Purohit";
-      user.email = "mrinal.purohit@juspay.in";
-      pull.rebase = true;
-      rebase.autostash = true;
-    };
-    condition = "gitdir:~/play/";
-  }];
   extraConfig = {
     fetch = { prune = true; };
     core = { editor = "emacs"; };
