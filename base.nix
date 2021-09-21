@@ -12,6 +12,51 @@ let
     };
   };
 
+  vscodeExtensions = with pkgs.vscode-extensions;
+    [ ms-vsliveshare.vsliveshare
+      justusadam.language-haskell
+      dhall.vscode-dhall-lsp-server
+      dhall.dhall-lang
+      eamodio.gitlens
+      github.vscode-pull-request-github
+      bbenoist.nix
+    ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+      {
+        name = "codespaces";
+        publisher = "github";
+        version = "1.0.3";
+        sha256 = "sha256-Kd9nut536ldtIGvLmsjeDK/rtXP5BRFaabU2tGETH/k=";
+      }
+      {
+        name = "vscode-direnv";
+        publisher = "rubymaniac";
+        version = "0.0.2";
+        sha256 = "1gml41bc77qlydnvk1rkaiv95rwprzqgj895kxllqy4ps8ly6nsd";
+      }
+      {
+        name = "haskell";
+        publisher = "haskell";
+        version = "1.5.1";
+        sha256 = "1y3c09m0dcx21kksxydmys9d040571chfh7yc7qsa33p4ha522jj";
+      }
+      {
+        name = "gruvbox-themes";
+        publisher = "tomphilbin";
+        version = "1.0.0";
+        sha256 = "sha256-DnwASBp1zvJluDc/yhSB87d0WM8PSbzqAvoICURw03c=";
+      }
+      {
+        name = "fluent-icons";
+        publisher = "miguelsolorio";
+        version = "0.0.12";
+        sha256 = "sha256-lrufKKATmWTxG8vyFSZkxtHOf2KqdJ13dSnibKA003E=";
+      }
+    ];
+
+  vscode-with-extensions = pkgs.vscode-with-extensions.override {
+    vscodeExtensions = vscodeExtensions;
+  };
+
 in {
 
   sops = {
@@ -66,6 +111,7 @@ in {
       pkgs.ntfs3g
       pkgs.openjdk
       pkgs.openssl
+      pkgs.pinentry-gnome
       pkgs.pptp
       pkgs.razergenie
       pkgs.sops
@@ -76,9 +122,12 @@ in {
       pkgs.vim
       pkgs.yubikey-personalization
       (pkgs.emacsWithPackagesFromUsePackage emacsConfig)
+      vscode-with-extensions
     ];
     variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
   };
+
+  security.pam.services.lightdm.enableGnomeKeyring = true;
 
   services = {
     avahi = {
@@ -90,7 +139,7 @@ in {
       };
     };
     udev.packages = [ pkgs.yubikey-personalization ];
-    dbus.packages = [ pkgs.blueman ];
+    dbus.packages = [ pkgs.blueman pkgs.gcr ];
     dnsmasq = { enable = true; };
     emacs = {
       enable = true;
@@ -103,6 +152,7 @@ in {
     upower = { enable = true; };
     fwupd = { enable = true; };
     xserver = import ./services/xserver.nix { inherit pkgs; };
+    gnome.gnome-keyring.enable = true;
   };
 
   hardware = {
