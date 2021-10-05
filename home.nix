@@ -6,21 +6,13 @@ let
   packages = [
     pkgs.keepassxc
     pkgs.slack
-    pkgs.kube-score
-    pkgs.kubeval
-    pkgs.stern
     pkgs.dhall
     pkgs.dhall-json
     pkgs.dhall-lsp-server
     pkgs.haskellPackages.dhall-yaml
-    pkgs.haskellPackages.hlint
-    pkgs.haskellPackages.haskell-language-server
-    pkgs.haskellPackages.stylish-haskell
     pkgs.cachix
     pkgs.gnumake
-    pkgs.google-cloud-sdk
     pkgs.imagemagick
-    pkgs.kafkacat
     pkgs.nix-review
     pkgs.nmap
     pkgs.pciutils
@@ -29,7 +21,6 @@ let
     pkgs.aspellDicts.en
     pkgs.aspellDicts.en-computers
     pkgs.aspell
-    pkgs.spago
     pkgs.xsel
     pkgs.ag
     pkgs.awscli
@@ -44,6 +35,8 @@ let
     pkgs.ripgrep
     pkgs.shellcheck
     pkgs.stow
+    pkgs.terminator
+    pkgs.terraform
     pkgs.tree
     pkgs.yq
   ];
