@@ -25,13 +25,13 @@ let
   urgency = "#e74c3c";
   common = {
     cursor-click = "pointer";
-    font-0 = "Source Code Pro:size=12;3";
+    font-0 = "Iosevka:size=12;3";
     font-1 = "Font Awesome 5 Free Regular:style=Regular:size=12;0";
     font-2 = "FuraCode Nerd Font:style=Bold:size=12;3";
   };
 
 in {
-  enable = true;
+  enable = false;
 
   package = polybar;
 
@@ -134,6 +134,7 @@ in {
       type = "custom/script";
       tail = true;
       format = " <label>";
+      format-padding = 1;
       exec = "${getStatus}/bin/getStatus";
       label-maxlen = 30;
       format-foreground = secondary;

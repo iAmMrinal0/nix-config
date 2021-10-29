@@ -1,6 +1,8 @@
 { lib, pkgs, ... }:
 
 let
+  i3blocksConf = pkgs.callPackage ../config/i3blocks.nix { };
+
   keepmenu = pkgs.callPackage ../pkgs/keepmenu { };
 
   wallpaper = lib.readFile (pkgs.callPackage ../scripts/wallpaper.nix { });
@@ -127,7 +129,6 @@ in {
     enable = true;
     initExtra = wallpaper;
     windowManager.i3 =
-      import ../config/i3config.nix { inherit pkgs lib keepmenu; };
   };
   qt = {
     enable = true;
@@ -136,5 +137,6 @@ in {
       package = pkgs.adwaita-qt;
       name = "adwaita-dark";
     };
+      import ../config/i3config.nix { inherit pkgs lib keepmenu i3blocksConf; };
   };
 }

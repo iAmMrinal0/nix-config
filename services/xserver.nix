@@ -13,6 +13,6 @@
     enable = true;
     extraPackages =
       [ pkgs.dmenu pkgs.rofi pkgs.i3status pkgs.i3lock pkgs.i3blocks ];
-    package = pkgs.i3-gaps;
+    # package = pkgs.i3-gaps;
   };
 }

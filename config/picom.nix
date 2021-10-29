@@ -7,7 +7,7 @@
   shadow = true;
   shadowOffsets = [ (-5) (-5) ];
   experimentalBackends = true;
-  package = pkgs.nur.repos.reedrw.picom-next-ibhagwan;
+  # package = pkgs.nur.repos.reedrw.picom-next-ibhagwan;
   fade = true;
   fadeSteps = [ "0.03" "0.03" ];
   fadeDelta = 4;
@@ -45,11 +45,10 @@
     frame-opacity = 1;
     inactive-opacity-override = false;
 
-    blur-method = "dual_kawase";
+    # blur-method = "dual_kawase";
     blur-strength = 8;
-    blur-background = true;
     blur-background-frame = false;
-    blur-background-fixed = true;
+    blur-background-fixed = false;
 
     mark-wmwin-focused = true;
     mark-ovredir-focused = true;
@@ -67,10 +66,11 @@
     detect-transient = true;
     detect-client-leader = true;
 
-    corner-radius = 18;
+    corner-radius = 25;
     rounded-corners-exclude = [
         "window_type = 'dock'",
         "_NET_WM_STATE@:32a *= '_NET_WM_STATE_FULLSCREEN'",
+        "class_g = 'Polybar'",
     ];
     round-borders = 1;
 
