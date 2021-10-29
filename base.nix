@@ -14,12 +14,16 @@ let
 
   vscodeExtensions = with pkgs.vscode-extensions;
     [ ms-vsliveshare.vsliveshare
+      ms-vscode-remote.remote-ssh
       justusadam.language-haskell
       dhall.vscode-dhall-lsp-server
       dhall.dhall-lang
       eamodio.gitlens
       github.vscode-pull-request-github
       bbenoist.nix
+      pkief.material-icon-theme
+      ms-azuretools.vscode-docker
+      hashicorp.terraform
     ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
       {
         name = "codespaces";
@@ -50,6 +54,12 @@ let
         publisher = "miguelsolorio";
         version = "0.0.12";
         sha256 = "sha256-lrufKKATmWTxG8vyFSZkxtHOf2KqdJ13dSnibKA003E=";
+      }
+      {
+        name = "vscode-emacs-friendly";
+        publisher = "lfs";
+        version = "0.9.0";
+        sha256 = "sha256-YWu2a5hz0qGZvgR95DbzUw6PUvz17i1o4+eAUM/xjMg=";
       }
     ];
 
