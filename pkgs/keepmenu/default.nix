@@ -1,18 +1,19 @@
-{ lib, python37Packages, fetchFromGitHub }:
+{ lib, python3Packages, fetchFromGitHub }:
 
-python37Packages.buildPythonApplication rec {
+python3Packages.buildPythonApplication rec {
   pname = "keepmenu";
-  version = "unstable-2021-04-21";
+  version = "unstable-2021-10-26";
 
   src = fetchFromGitHub {
     owner = "firecat53";
-    repo = pname;
-    rev = "354c0944e4a0bc11f0ebb1ecfe9289d1f35d353b";
-    sha256 = "sha256-xVwLt2TLM2Hgpxl4QyCvCgEUoLinzp4eibRORtqRHLs=";
+    repo = "keepmenu";
+    rev = "dcfe85e8cce862e996203ea572430eef225a5a40";
+    sha256 = "JTupb3kr6H52a+MqOTcRVHZyQXPX9KbBfIvakrnctl0=";
   };
 
+  doCheck = false;
   propagatedBuildInputs =
-    [ python37Packages.pykeepass python37Packages.pynput ];
+    [ python3Packages.pykeepass python3Packages.pynput ];
 
   meta = with lib; {
     description =
