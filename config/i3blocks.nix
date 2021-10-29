@@ -2,7 +2,7 @@
 
 let
   currentTrack = import ../scripts/currentTrack.nix { inherit pkgs; };
-  dunstNotifToggle = import ../scripts/dunstNotifToggle.nix { inherit pkgs; };
+  dunstNotifToggle = import ../scripts/i3DunstToggle.nix { inherit pkgs; };
   bluetooth_battery = import ../scripts/bluetooth_battery.nix { inherit pkgs; };
   # using this fork because few scripts have hardcoded shebangs
   # and the user has a patch PR open in the source repo
@@ -49,7 +49,7 @@ in pkgs.writeTextFile {
     color=#87AFAF
 
     [volume]
-    label= 
+    label=
     instance=Master
     #instance=PCM
     interval=1
@@ -72,11 +72,11 @@ in pkgs.writeTextFile {
     #separator=false
 
     [load_average]
-    label= 
+    label=
     interval=1
 
     [battery]
-    label=⚡ 
+    label=⚡
     interval=15
 
     [bluetooth]
