@@ -44,7 +44,7 @@ let
     pkgs.ripgrep
     pkgs.shellcheck
     pkgs.stow
-    pkgs.tree
+    # pkgs.tree
     pkgs.yq
   ];
 

@@ -13,7 +13,7 @@
   }];
   extraConfig = {
     fetch = { prune = true; };
-    core = { editor = "emacs"; };
+    core = { editor = "vim"; };
     merge = {
       conflictstyle = "diff3";
       tool = "ediff";

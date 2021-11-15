@@ -35,7 +35,7 @@ let
     pkgs.gnome3.dconf
     pkgs.gnome3.nautilus
     pkgs.google-drive-ocamlfuse
-    keepmenu
+    # keepmenu
     pkgs.lsof
     pkgs.netcat-gnu
     pkgs.nix-diff
@@ -58,6 +58,8 @@ let
     pkgs.ranger
     pkgs.lorri
     pkgs.nodejs-16_x
+    pkgs.terraform
+    pkgs.gh
   ];
   programs = {
     # autorandr = import ../config/autorandr.nix { inherit wallpaper; };

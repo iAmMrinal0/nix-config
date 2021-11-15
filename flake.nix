@@ -49,7 +49,10 @@
           configuration = { pkgs, lib, ... }: {
             imports = [ ./home.nix ];
             nixpkgs = {
-              config = { allowUnfree = true; };
+              config = {
+                allowUnfree = true;
+                permittedInsecurePackages = [ "electron-9.4.4" ];
+              };
             };
           };
           system = "x86_64-linux";
