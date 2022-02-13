@@ -39,10 +39,11 @@ let
     pkgs.terraform
     pkgs.tree
     pkgs.yq
+    (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
   ];
 
   programs = {
-    broot = { enable = true; };
+    broot = { enable = false; };
     direnv = {
       enable = true;
       enableZshIntegration = true;
@@ -68,12 +69,13 @@ let
   };
 
   home = { packages = packages; };
-in {
+in
+{
   programs = lib.recursiveUpdate programs linux.programs;
   home = { packages = home.packages ++ linux.home.packages; };
   gtk = linux.gtk;
   xsession = linux.xsession;
-  qt = linux.qt;
+  # qt = linux.qt;
   services = linux.services;
   systemd = linux.systemd;
   xdg.configFile."keepassxc/keepassxc.ini".source = ./config/keepassxc.ini;

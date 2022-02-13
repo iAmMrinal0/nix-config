@@ -3,7 +3,7 @@ inputs@{ lib, config, pkgs, ... }:
 let
   emacsConfig =
     import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
-  secrets = [ "aws-vpn-ca" "nixpkgs-review" ];
+  secrets = [ "service-access-host" "service-access-key" "nixpkgs-review" ];
   defaultPermissions = secret: {
     ${secret} = {
       mode = "0440";
@@ -13,7 +13,8 @@ let
   };
 
   vscodeExtensions = with pkgs.vscode-extensions;
-    [ ms-vsliveshare.vsliveshare
+    [
+      ms-vsliveshare.vsliveshare
       ms-vscode-remote.remote-ssh
       justusadam.language-haskell
       dhall.vscode-dhall-lsp-server
@@ -24,50 +25,60 @@ let
       pkief.material-icon-theme
       ms-azuretools.vscode-docker
       hashicorp.terraform
-    ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-      {
-        name = "codespaces";
-        publisher = "github";
-        version = "1.0.3";
-        sha256 = "sha256-Kd9nut536ldtIGvLmsjeDK/rtXP5BRFaabU2tGETH/k=";
-      }
-      {
-        name = "vscode-direnv";
-        publisher = "rubymaniac";
-        version = "0.0.2";
-        sha256 = "1gml41bc77qlydnvk1rkaiv95rwprzqgj895kxllqy4ps8ly6nsd";
-      }
-      {
-        name = "haskell";
-        publisher = "haskell";
-        version = "1.5.1";
-        sha256 = "1y3c09m0dcx21kksxydmys9d040571chfh7yc7qsa33p4ha522jj";
-      }
-      {
-        name = "gruvbox-themes";
-        publisher = "tomphilbin";
-        version = "1.0.0";
-        sha256 = "sha256-DnwASBp1zvJluDc/yhSB87d0WM8PSbzqAvoICURw03c=";
-      }
-      {
-        name = "fluent-icons";
-        publisher = "miguelsolorio";
-        version = "0.0.12";
-        sha256 = "sha256-lrufKKATmWTxG8vyFSZkxtHOf2KqdJ13dSnibKA003E=";
-      }
-      {
-        name = "vscode-emacs-friendly";
-        publisher = "lfs";
-        version = "0.9.0";
-        sha256 = "sha256-YWu2a5hz0qGZvgR95DbzUw6PUvz17i1o4+eAUM/xjMg=";
-      }
-    ];
+      jnoortheen.nix-ide
+    ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace
+
+      [
+        {
+          name = "codespaces";
+          publisher = "github";
+          version = "1.4.2";
+          sha256 = "195b0w4y65rr5l25rb4bxq2d043d4c3099a7amjdczw4ldf4qzld";
+        }
+        {
+          name = "vscode-direnv";
+          publisher = "rubymaniac";
+          version = "0.0.2";
+          sha256 = "1gml41bc77qlydnvk1rkaiv95rwprzqgj895kxllqy4ps8ly6nsd";
+        }
+        {
+          name = "haskell";
+          publisher = "haskell";
+          version = "1.8.0";
+          sha256 = "sha256-+k8XT2COe9Z8HvZvcrzfVuocRcxXBrVoNHDT/uKK7Hs=";
+        }
+        {
+          name = "gruvbox-themes";
+          publisher = "tomphilbin";
+          version = "1.0.0";
+          sha256 = "sha256-DnwASBp1zvJluDc/yhSB87d0WM8PSbzqAvoICURw03c=";
+        }
+        {
+          name = "fluent-icons";
+          publisher = "miguelsolorio";
+          version = "0.0.15";
+          sha256 = "1hzxyfvc06nanmvh54b7rg19vng6nrsnr9m20cjrlzv77zvdnsq3";
+        }
+        {
+          name = "vscode-emacs-friendly";
+          publisher = "lfs";
+          version = "0.9.0";
+          sha256 = "sha256-YWu2a5hz0qGZvgR95DbzUw6PUvz17i1o4+eAUM/xjMg=";
+        }
+        {
+          publisher = "jacobeanresearchanddevelopmentllc";
+          name = "vscode-scxml-preview";
+          version = "0.0.28";
+          sha256 = "sha256-qoJpLD02Dvogj5bxyNj42GRoGAUz93/a825XIzqZUIg=";
+        }
+      ];
 
   vscode-with-extensions = pkgs.vscode-with-extensions.override {
     vscodeExtensions = vscodeExtensions;
   };
 
-in {
+in
+{
 
   sops = {
     defaultSopsFile = ./sops/secrets.yaml;
@@ -83,13 +94,13 @@ in {
     allowUnfree = true;
     pulseaudio = true;
     chromium = { enableWideVine = true; };
+    permittedInsecurePackages = [ "electron-9.4.4" ];
   };
 
   nix = {
-    autoOptimiseStore = true;
     package = pkgs.nixUnstable;
     extraOptions = ''
-      experimental-features = nix-command flakes ca-derivations ca-references
+      experimental-features = nix-command flakes ca-derivations
       keep-outputs = true
       keep-derivations = true
     '';
@@ -102,7 +113,10 @@ in {
       automatic = true;
       dates = [ "weekly" ];
     };
-    trustedUsers = [ "root" "iammrinal0" ];
+    settings = {
+      auto-optimise-store = true;
+      trusted-users = [ "root" "iammrinal0" ];
+    };
   };
 
   time.timeZone = "Asia/Kolkata";
@@ -116,8 +130,10 @@ in {
       pkgs.android-file-transfer
       pkgs.binutils
       pkgs.coreutils-full
+      pkgs.docker-compose
       pkgs.git
       pkgs.ncdu
+      pkgs.nix-build-uncached
       pkgs.ntfs3g
       pkgs.openjdk
       pkgs.openssl
@@ -130,9 +146,9 @@ in {
       pkgs.tcpdump
       pkgs.traceroute
       pkgs.usbutils
+      pkgs.v4l-utils
       pkgs.vim
       pkgs.yubikey-personalization
-      (pkgs.emacsWithPackagesFromUsePackage emacsConfig)
       vscode-with-extensions
     ];
     variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
@@ -150,7 +166,7 @@ in {
       };
     };
     udev.packages = [ pkgs.yubikey-personalization ];
-    dbus.packages = [ pkgs.blueman pkgs.gcr ];
+    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr ];
     dnsmasq = { enable = true; };
     emacs = {
       enable = true;
@@ -163,6 +179,7 @@ in {
     upower = { enable = true; };
     fwupd = { enable = true; };
     xserver = import ./services/xserver.nix { inherit pkgs; };
+    gvfs = { enable = true; };
     gnome.gnome-keyring.enable = true;
     tailscale.enable = true;
   };
@@ -173,7 +190,10 @@ in {
       settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
       package = pkgs.bluezFull;
     };
-    openrazer = { enable = true; };
+    openrazer = {
+      enable = true;
+      users = [ "iammrinal0" ];
+    };
     pulseaudio = {
       enable = true;
       extraModules = [ pkgs.pulseaudio-modules-bt ];
@@ -219,9 +239,9 @@ in {
       pkgs.emacs-all-the-icons-fonts
       pkgs.font-awesome
       pkgs.hasklig
-      pkgs.iosevka
+      # pkgs.iosevka
       pkgs.source-code-pro
-      pkgs.nerdfonts
+      # pkgs.nerdfonts
     ];
     fontconfig = { enable = true; };
   };
@@ -246,6 +266,7 @@ in {
     users = { iammrinal0 = ./home.nix; };
     useGlobalPkgs = true;
     extraSpecialArgs = {
+      emacsConfig = emacsConfig;
       inherit (inputs)
         zsh-autosuggestions zsh-you-should-use zsh-history-substring-search
         zsh-nix-shell;

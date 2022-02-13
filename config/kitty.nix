@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  enable = true;
+  enable = false;
   font = {
     package = pkgs.iosevka;
     name = "Iosevka";
@@ -10,7 +10,7 @@
     font_size = "13.0";
     cursor_shape = "beam";
     scrollback_lines = 100000;
-    background_opacity = "0.3";
+    # background_opacity = "0.3";
     enable_audio_bell = false;
     copy_on_select = "yes";
     focus_follows_mouse = "yes";

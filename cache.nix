@@ -4,7 +4,7 @@
   # NOTE: These caches are used on NixOS (nixos-rebuild) only, and not in
   # home-manager (which would only use the user's nix.conf).
 
-  nix.binaryCaches = [
+  nix.settings.substituters = [
     "https://all-hies.cachix.org"
     "https://cachix.cachix.org"
     "https://fencer.cachix.org"
@@ -19,7 +19,7 @@
     "https://static-haskell-nix.cachix.org"
     "https://streamly.cachix.org"
   ];
-  nix.binaryCachePublicKeys = [
+  nix.settings.trusted-public-keys = [
     "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
     "all-hies.cachix.org-1:JjrzAOEUsD9ZMt8fdFbzo3jNAyEWlPAwdVuHw4RD43k="
     "fencer.cachix.org-1:Uc3oXF1AHnhrc7kwEAY+NHNH7BvkngdBiFLHPDCUVwA="

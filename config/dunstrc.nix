@@ -9,7 +9,7 @@
     global = {
       font = "SourceCodePro 12";
       markup = "yes";
-      plain_text = "no";
+      # plain_text = "no";
       format = "<b>%s</b>\\n%b";
       transparency = "10";
       ignore_newline = "no";
@@ -17,15 +17,17 @@
       separator_color = "#585858";
       sort = "yes";
       alignment = "center";
-      bounce_freq = "0";
       word_wrap = "yes";
       indicate_hidden = "yes";
       show_age_threshold = "60";
       idle_threshold = "120";
-      geometry = "500x5-10+30";
+      # geometry = "500x5-10+30";
+      width = 500;
+      height = 300;
+      offset = "10x30";
       shrink = "no";
       line_height = "0";
-      notification_height = "100";
+      # notification_height = "100";
       separator_height = "2";
       padding = "8";
       horizontal_padding = "8";
@@ -35,16 +37,9 @@
       history_length = "20";
       icon_position = "left";
       max_icon_size = 65;
-      startup_notification = "true";
+      # startup_notification = "true";
       frame_width = "1";
       frame_color = "#333333";
-    };
-
-    shortcuts = {
-      close = "ctrl+space";
-      close_all = "ctrl+shift+space";
-      history = "ctrl+grave";
-      context = "ctrl+shift+period";
     };
 
     urgency_low = {

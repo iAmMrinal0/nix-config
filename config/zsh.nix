@@ -1,8 +1,15 @@
-{ lib, pkgs, zsh-autosuggestions, zsh-you-should-use
-, zsh-history-substring-search, zsh-nix-shell, ... }:
+{ lib
+, pkgs
+, zsh-autosuggestions
+, zsh-you-should-use
+, zsh-history-substring-search
+, zsh-nix-shell
+, ...
+}:
 
 let zshCustom = pkgs.callPackage ./modSteeefZsh.nix { };
-in {
+in
+{
   enable = true;
   enableCompletion = true;
   defaultKeymap = "emacs";
@@ -23,7 +30,7 @@ in {
     tmuxnew =
       "${pkgs.tmux}/bin/tmux -u attach -t play || ${pkgs.tmux}/bin/tmux -u new -s play";
     tmuxdir = "new-tmux-from-dir-name";
-    br = "${pkgs.broot}/bin/broot";
+    # br = "${pkgs.broot}/bin/broot";
   };
   oh-my-zsh = {
     enable = true;

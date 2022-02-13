@@ -12,7 +12,7 @@ let
     pkgs.xorg.xdpyinfo
     pkgs.element-desktop
     pkgs.gnome3.gnome-screenshot
-    pkgs.keybase
+    # pkgs.keybase
     pkgs.rescuetime
     pkgs.xarchiver
     pkgs.xfce.thunar
@@ -34,9 +34,8 @@ let
     pkgs.arandr
     pkgs.discord
     pkgs.dunst
-    pkgs.gnome3.dconf
+    pkgs.dconf
     pkgs.gnome3.nautilus
-    pkgs.google-drive-ocamlfuse
     keepmenu
     pkgs.lsof
     pkgs.netcat-gnu
@@ -44,20 +43,20 @@ let
     pkgs.nixfmt
     pkgs.obs-studio
     pkgs.pgp-tools
-    pkgs.screenfetch
     pkgs.ssh-to-pgp
     pkgs.transmission-gtk
     pkgs.xfce.xfconf
     pkgs.xorg.xkill
     pkgs.lxappearance
     pkgs.arc-theme
-    pkgs.gnome3.defaultIconTheme
+    pkgs.gnome3.adwaita-icon-theme
     pkgs.papirus-icon-theme
-    pkgs.hicolor_icon_theme
-    pkgs.material-icons
     pkgs.paper-icon-theme
-    pkgs.obs-studio
     pkgs.ranger
+    pkgs.nodejs-16_x
+    (lib.hiPrio pkgs.insomnia)
+    pkgs.rnix-lsp
+    pkgs.nixpkgs-fmt
   ];
   programs = {
     autorandr = import ../config/autorandr.nix { inherit wallpaper; };
@@ -74,9 +73,9 @@ let
       enable = true;
       indicator = true;
     };
-    keybase = { enable = true; };
+    # keybase = { enable = true; };
     lorri = { enable = true; };
-    pasystray = { enable = true; };
+    # pasystray = { enable = true; };
     picom = import ../config/picom.nix { inherit pkgs; };
     playerctld = { enable = true; };
     polybar = import ../config/polybar.nix { inherit pkgs; };
@@ -99,16 +98,20 @@ let
             PartOf = [ "graphical-session.target" ];
           };
           Service = {
-            Environment = let
-              toolPaths = lib.makeBinPath [
-                pkgs.coreutils-full
-                pkgs.gnugrep
-                pkgs.xorg.xprop
-                pkgs.procps
-                pkgs.gawk
-                pkgs.nettools
-              ];
-            in [ "PATH=${toolPaths}" ];
+            Environment =
+              let
+                toolPaths = lib.makeBinPath [
+                  pkgs.coreutils-full
+                  pkgs.gnugrep
+                  pkgs.xorg.xprop
+                  pkgs.procps
+                  pkgs.gawk
+                  pkgs.nettools
+                  pkgs.gnused
+                  pkgs.systemd
+                ];
+              in
+              [ "PATH=${toolPaths}" ];
             ExecStart = "${pkgs.rescuetime}/bin/rescuetime";
             Restart = "on-failure";
           };
@@ -118,7 +121,8 @@ let
     };
   };
 
-in {
+in
+{
   inherit programs services systemd;
   home = {
     inherit packages;
@@ -129,14 +133,14 @@ in {
     enable = true;
     initExtra = wallpaper;
     windowManager.i3 =
-  };
-  qt = {
-    enable = true;
-    platformTheme = "gnome";
-    style = {
-      package = pkgs.adwaita-qt;
-      name = "adwaita-dark";
-    };
       import ../config/i3config.nix { inherit pkgs lib keepmenu i3blocksConf; };
   };
+  # qt = {
+  #   enable = true;
+  #   platformTheme = "gnome";
+  #   style = {
+  #     package = pkgs.adwaita-qt;
+  #     name = "adwaita-dark";
+  #   };
+  # };
 }

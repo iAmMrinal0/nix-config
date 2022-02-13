@@ -15,7 +15,7 @@
     octotree
     refined-github
     sponsorblock
-    pkgs.nur.repos.ethancedwards8.firefox-addons.enhancer-for-youtube
+    # pkgs.nur.repos.ethancedwards8.firefox-addons.enhancer-for-youtube
   ]);
   profiles = {
     default.settings = {
