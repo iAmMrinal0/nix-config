@@ -170,7 +170,7 @@ in
     dnsmasq = { enable = true; };
     emacs = {
       enable = true;
-      package = pkgs.emacsGcc;
+      package = pkgs.emacsNativeComp;
       defaultEditor = true;
       install = true;
     };
@@ -196,7 +196,6 @@ in
     };
     pulseaudio = {
       enable = true;
-      extraModules = [ pkgs.pulseaudio-modules-bt ];
       package = pkgs.pulseaudioFull;
       support32Bit = true;
     };
@@ -239,7 +238,7 @@ in
       pkgs.emacs-all-the-icons-fonts
       pkgs.font-awesome
       pkgs.hasklig
-      # pkgs.iosevka
+      pkgs.iosevka
       pkgs.source-code-pro
       # pkgs.nerdfonts
     ];

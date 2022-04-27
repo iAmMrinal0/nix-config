@@ -42,7 +42,7 @@ let
     pkgs.nix-diff
     pkgs.nixfmt
     pkgs.obs-studio
-    pkgs.pgp-tools
+    pkgs.signing-party
     pkgs.ssh-to-pgp
     pkgs.transmission-gtk
     pkgs.xfce.xfconf
@@ -57,6 +57,7 @@ let
     (lib.hiPrio pkgs.insomnia)
     pkgs.rnix-lsp
     pkgs.nixpkgs-fmt
+    pkgs.gh
   ];
   programs = {
     autorandr = import ../config/autorandr.nix { inherit wallpaper; };

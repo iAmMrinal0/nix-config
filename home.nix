@@ -22,7 +22,7 @@ let
     pkgs.aspellDicts.en-computers
     pkgs.aspell
     pkgs.xsel
-    pkgs.ag
+    pkgs.silver-searcher
     pkgs.awscli
     pkgs.bc
     pkgs.coreutils-full

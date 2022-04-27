@@ -2,7 +2,7 @@
 
 {
   config = "${emacsConfiguration}/init.el";
-  package = pkgs.emacsGcc;
+  package = pkgs.emacsNativeComp;
   extraEmacsPackages = epkgs:
     (with epkgs; [
       ace-window

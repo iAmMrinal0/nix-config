@@ -168,8 +168,8 @@ in
           "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
         "Control+mod1+m" =
           "exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
-        # "Return" = "exec ${pkgs.kitty}/bin/kitty";
-        # "Shift+Return" = "exec ${pkgs.kitty}/bin/kitty tmux";
+        "Return" = "exec ${pkgs.kitty}/bin/kitty";
+        "Shift+Return" = "exec ${pkgs.kitty}/bin/kitty tmux";
         "g" = "exec ${pkgs.wmfocus}/bin/wmfocus --fill -c asdf --textcolor red";
         "Control+k" = "exec ${keepmenu}/bin/keepmenu";
         "Control+p" = "exec ${pkgs.rofimoji}/bin/rofimoji --action copy";

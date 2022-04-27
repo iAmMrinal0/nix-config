@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  enable = false;
+  enable = true;
   font = {
     package = pkgs.iosevka;
     name = "Iosevka";
