@@ -51,5 +51,6 @@
     "file:///home/iammrinal0/Videos"
     "file:///home/iammrinal0/oss"
     "file:///home/iammrinal0/play"
+    "file:///home/iammrinal0/work"
   ];
 }
