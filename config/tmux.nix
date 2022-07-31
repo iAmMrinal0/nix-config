@@ -5,13 +5,13 @@
   baseIndex = 1;
   clock24 = true;
   historyLimit = 100000;
-  terminal = "screen-256color";
+  terminal = "tmux-256color";
   plugins = [
     { plugin = pkgs.tmuxPlugins.resurrect; }
-    {
-      plugin = pkgs.tmuxPlugins.continuum;
-      extraConfig = "set -g @continuum-restore 'on'";
-    }
+    # {
+    #   plugin = pkgs.tmuxPlugins.continuum;
+    #   extraConfig = "set -g @continuum-restore 'on'";
+    # }
     { plugin = pkgs.tmuxPlugins.copycat; }
   ];
 
