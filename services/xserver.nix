@@ -9,6 +9,7 @@
   };
   desktopManager = { xterm.enable = false; };
   libinput = { enable = true; };
+  videoDrivers = [ "intel" ];
   windowManager.i3 = {
     enable = true;
     extraPackages =

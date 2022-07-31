@@ -72,7 +72,10 @@ let
 in
 {
   programs = lib.recursiveUpdate programs linux.programs;
-  home = { packages = home.packages ++ linux.home.packages; };
+  home = {
+    packages = home.packages ++ linux.home.packages;
+    stateVersion = "22.11";
+  };
   gtk = linux.gtk;
   xsession = linux.xsession;
   # qt = linux.qt;

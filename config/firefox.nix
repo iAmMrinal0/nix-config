@@ -2,7 +2,6 @@
 
 {
   enable = true;
-  package = pkgs.firefox-unwrapped;
   extensions = (with pkgs.nur.repos.rycee.firefox-addons; [
     darkreader
     privacy-badger

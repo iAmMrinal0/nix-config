@@ -211,17 +211,20 @@ in
   };
 
   networking = {
-    firewall.allowedTCPPortRanges = [{
-      from = 1714;
-      to = 1764;
-    }]; # KDE Connect Ports
-    firewall.allowedUDPPortRanges = [{
-      from = 1714;
-      to = 1764;
-    }]; # KDE Connect Ports
-    firewall.allowedTCPPorts = [ 24800 22 ];
-    firewall.allowedUDPPorts = [ 24800 config.services.tailscale.port ];
-    firewall.trustedInterfaces = [ "tailscale0" ];
+    firewall = {
+      allowedTCPPortRanges = [{
+        from = 1714;
+        to = 1764;
+      }]; # KDE Connect Ports
+      allowedUDPPortRanges = [{
+        from = 1714;
+        to = 1764;
+      }]; # KDE Connect Ports
+      allowedTCPPorts = [ 24800 22 ];
+      allowedUDPPorts = [ 24800 config.services.tailscale.port ];
+      trustedInterfaces = [ "tailscale0" ];
+      checkReversePath = "loose";
+    };
     networkmanager = {
       enable = true;
       wifi.macAddress = "random";

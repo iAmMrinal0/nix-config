@@ -58,6 +58,7 @@ let
     pkgs.rnix-lsp
     pkgs.nixpkgs-fmt
     pkgs.gh
+    pkgs.openvpn
   ];
   programs = {
     autorandr = import ../config/autorandr.nix { inherit wallpaper; };
