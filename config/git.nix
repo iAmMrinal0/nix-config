@@ -14,6 +14,7 @@
   extraConfig = {
     fetch = { prune = true; };
     core = { editor = "vim"; };
+    rerere = { enabled = true; };
     merge = {
       conflictstyle = "diff3";
       tool = "ediff";

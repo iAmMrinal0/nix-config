@@ -7,6 +7,7 @@ let
 
   packages = [
     pkgs.authy
+    pkgs.azure-cli
     pkgs.xorg.xdpyinfo
     pkgs.element-desktop
     pkgs.gnome3.gnome-screenshot
@@ -32,7 +33,7 @@ let
     pkgs.arandr
     pkgs.discord
     pkgs.dunst
-    pkgs.gnome3.dconf
+    pkgs.dconf
     pkgs.gnome3.nautilus
     pkgs.google-drive-ocamlfuse
     # keepmenu
@@ -41,7 +42,7 @@ let
     pkgs.nix-diff
     pkgs.nixfmt
     pkgs.obs-studio
-    pkgs.pgp-tools
+    pkgs.signing-party # pgp-tools
     pkgs.screenfetch
     pkgs.ssh-to-pgp
     pkgs.transmission-gtk
@@ -49,9 +50,9 @@ let
     pkgs.xorg.xkill
     pkgs.lxappearance
     pkgs.arc-theme
-    pkgs.gnome3.defaultIconTheme
+    pkgs.gnome3.adwaita-icon-theme
     pkgs.papirus-icon-theme
-    pkgs.hicolor_icon_theme
+    pkgs.hicolor-icon-theme
     pkgs.material-icons
     pkgs.paper-icon-theme
     pkgs.obs-studio

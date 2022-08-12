@@ -16,7 +16,7 @@ let
     pkgs.haskellPackages.hlint
     pkgs.haskellPackages.haskell-language-server
     pkgs.haskellPackages.stylish-haskell
-    pkgs.cachix
+    # pkgs.cachix
     pkgs.gnumake
     pkgs.google-cloud-sdk
     pkgs.imagemagick
@@ -31,7 +31,7 @@ let
     pkgs.aspell
     pkgs.spago
     pkgs.xsel
-    pkgs.ag
+    pkgs.silver-searcher
     pkgs.awscli
     pkgs.bc
     pkgs.coreutils-full

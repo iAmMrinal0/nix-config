@@ -28,6 +28,7 @@ in {
     allowUnfree = true;
     pulseaudio = true;
     chromium = { enableWideVine = true; };
+    allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "slack" ];
   };
 
   nix = {
@@ -156,7 +157,7 @@ in {
       pkgs.emacs-all-the-icons-fonts
       pkgs.font-awesome
       pkgs.hasklig
-      pkgs.iosevka
+      # pkgs.iosevka
       pkgs.source-code-pro
       pkgs.nerdfonts
     ];

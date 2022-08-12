@@ -2,10 +2,10 @@
 
 {
   enable = true;
-  font = {
-    package = pkgs.iosevka;
-    name = "Iosevka";
-  };
+  # font = {
+  #   package = pkgs.iosevka;
+  #   name = "Iosevka";
+  # };
   settings = {
     font_size = "13.0";
     cursor_shape = "beam";
