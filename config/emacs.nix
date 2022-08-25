@@ -10,6 +10,7 @@
       all-the-icons
       anzu
       avy
+      company
       bind-key
       dhall-mode
       diminish

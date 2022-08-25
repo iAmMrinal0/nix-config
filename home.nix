@@ -40,6 +40,8 @@ let
     pkgs.tree
     pkgs.yq
     (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
+    pkgs.sqlite
+    pkgs.pgcli
   ];
 
   programs = {

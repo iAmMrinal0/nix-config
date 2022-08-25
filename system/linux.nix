@@ -59,6 +59,7 @@ let
     pkgs.nixpkgs-fmt
     pkgs.gh
     pkgs.openvpn
+    pkgs.barrier
   ];
   programs = {
     autorandr = import ../config/autorandr.nix { inherit wallpaper; };

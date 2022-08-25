@@ -32,8 +32,8 @@ let
         {
           name = "codespaces";
           publisher = "github";
-          version = "1.4.2";
-          sha256 = "195b0w4y65rr5l25rb4bxq2d043d4c3099a7amjdczw4ldf4qzld";
+          version = "1.10.0";
+          sha256 = "0b9lyjjfhq7k6wb18cfk7fbi9jlrc2qbq8fa42p2l6dzzid87z6k";
         }
         {
           name = "vscode-direnv";
@@ -44,8 +44,8 @@ let
         {
           name = "haskell";
           publisher = "haskell";
-          version = "1.8.0";
-          sha256 = "sha256-+k8XT2COe9Z8HvZvcrzfVuocRcxXBrVoNHDT/uKK7Hs=";
+          version = "2.2.1";
+          sha256 = "14p9g07zsb3da4ilaasgsdvh3wagfzayqr8ichsf6k5c952zi8fk";
         }
         {
           name = "gruvbox-themes";
@@ -56,8 +56,8 @@ let
         {
           name = "fluent-icons";
           publisher = "miguelsolorio";
-          version = "0.0.15";
-          sha256 = "1hzxyfvc06nanmvh54b7rg19vng6nrsnr9m20cjrlzv77zvdnsq3";
+          version = "0.0.18";
+          sha256 = "02zrlaq4f29vygisgsyx0nafcccq92mhms420qj0lgshipih0kdh";
         }
         {
           name = "vscode-emacs-friendly";
@@ -243,7 +243,7 @@ in
       pkgs.hasklig
       pkgs.iosevka
       pkgs.source-code-pro
-      # pkgs.nerdfonts
+      pkgs.nerdfonts
     ];
     fontconfig = { enable = true; };
   };
