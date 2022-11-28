@@ -188,7 +188,7 @@ in
     bluetooth = {
       enable = true;
       settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
-      package = pkgs.bluezFull;
+      package = pkgs.bluez;
     };
     openrazer = {
       enable = true;

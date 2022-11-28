@@ -92,7 +92,7 @@ in
     startup = [
       { command = "${pkgs.xorg.xset}/bin/xset -b"; }
       { command = "${pkgs.transmission-gtk}/bin/transmission-gtk --minimized"; }
-      { command = "${pkgs.kdeconnect}/bin/kdeconnect-indicator"; }
+      { command = "${pkgs.plasma5Packages.kdeconnect-kde}/bin/kdeconnect-indicator"; }
       {
         command =
           "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ 25%";
@@ -243,7 +243,7 @@ in
       "XF86AudioMicMute" =
         "${pkgs.pulseaudio}/bin/pactl set-source-mute 1 toggle";
 
-      "Print" = "${pkgs.gnome3.gnome-screenshot}/bin/gnome-screenshot -i";
+      "Print" = "${pkgs.gnome.gnome-screenshot}/bin/gnome-screenshot -i";
 
       "Control+mod1+l" = "${lock}";
 

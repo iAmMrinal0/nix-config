@@ -6,7 +6,6 @@
   shadowOpacity = 0.5;
   shadow = true;
   shadowOffsets = [ (-5) (-5) ];
-  experimentalBackends = true;
   # package = pkgs.nur.repos.reedrw.picom-next-ibhagwan;
   fade = true;
   fadeSteps = [ 0.03 0.03 ];

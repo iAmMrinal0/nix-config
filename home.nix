@@ -13,7 +13,7 @@ let
     pkgs.cachix
     pkgs.gnumake
     pkgs.imagemagick
-    pkgs.nix-review
+    pkgs.nixpkgs-review
     pkgs.nmap
     pkgs.pciutils
     pkgs.unzip

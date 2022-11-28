@@ -11,7 +11,7 @@ let
     pkgs.authy
     pkgs.xorg.xdpyinfo
     pkgs.element-desktop
-    pkgs.gnome3.gnome-screenshot
+    pkgs.gnome.gnome-screenshot
     # pkgs.keybase
     pkgs.rescuetime
     pkgs.xarchiver
@@ -35,7 +35,7 @@ let
     pkgs.discord
     pkgs.dunst
     pkgs.dconf
-    pkgs.gnome3.nautilus
+    pkgs.gnome.nautilus
     keepmenu
     pkgs.lsof
     pkgs.netcat-gnu
@@ -49,7 +49,7 @@ let
     pkgs.xorg.xkill
     pkgs.lxappearance
     pkgs.arc-theme
-    pkgs.gnome3.adwaita-icon-theme
+    pkgs.gnome.adwaita-icon-theme
     pkgs.papirus-icon-theme
     pkgs.paper-icon-theme
     pkgs.ranger
