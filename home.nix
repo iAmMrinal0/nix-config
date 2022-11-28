@@ -42,6 +42,7 @@ let
     (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
     pkgs.sqlite
     pkgs.pgcli
+    pkgs.rlwrap
   ];
 
   programs = {
