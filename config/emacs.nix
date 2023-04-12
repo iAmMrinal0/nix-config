@@ -2,7 +2,7 @@
 
 {
   config = "${emacsConfiguration}/init.el";
-  package = pkgs.emacsGcc;
+  package = pkgs.emacsUnstable;
   extraEmacsPackages = epkgs:
     (with epkgs; [
       ace-window
@@ -25,7 +25,7 @@
       groovy-mode
       gruvbox-theme
       haskell-mode
-      hasky-extensions
+      # hasky-extensions
       helm
       helm-ag
       helm-projectile

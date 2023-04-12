@@ -205,7 +205,7 @@ in {
       "XF86AudioMicMute" =
         "${pkgs.pulseaudio}/bin/pactl set-source-mute 1 toggle";
 
-      "Print" = "${pkgs.gnome3.gnome-screenshot}/bin/gnome-screenshot -i";
+      "Print" = "${pkgs.gnome.gnome-screenshot}/bin/gnome-screenshot -i";
 
       "Control+mod1+l" = "${lock}";
     });

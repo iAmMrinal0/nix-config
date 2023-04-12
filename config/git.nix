@@ -15,6 +15,7 @@
     fetch = { prune = true; };
     core = { editor = "vim"; };
     rerere = { enabled = true; };
+    push = { autoSetupRemote = true; };
     merge = {
       conflictstyle = "diff3";
       tool = "ediff";

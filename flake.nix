@@ -73,6 +73,7 @@
               homeDirectory = "/home/iammrinal0";
               stateVersion = "22.11";
             };
+            nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay ];
           }
         ];
         extraSpecialArgs = {

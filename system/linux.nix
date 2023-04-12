@@ -7,13 +7,13 @@ let
 
   packages = [
     pkgs.authy
-    pkgs.azure-cli
+    # pkgs.azure-cli
     pkgs.xorg.xdpyinfo
     pkgs.element-desktop
-    pkgs.gnome3.gnome-screenshot
+    pkgs.gnome.gnome-screenshot
     pkgs.keybase
     pkgs.rescuetime
-    pkgs.xarchiver
+    # pkgs.xarchiver
     pkgs.xfce.thunar
     pkgs.xfce.thunar-volman
     pkgs.xfce.thunar-archive-plugin
@@ -34,7 +34,7 @@ let
     pkgs.discord
     pkgs.dunst
     pkgs.dconf
-    pkgs.gnome3.nautilus
+    pkgs.gnome.nautilus
     pkgs.google-drive-ocamlfuse
     # keepmenu
     pkgs.lsof
@@ -50,7 +50,7 @@ let
     pkgs.xorg.xkill
     pkgs.lxappearance
     pkgs.arc-theme
-    pkgs.gnome3.adwaita-icon-theme
+    pkgs.gnome.adwaita-icon-theme
     pkgs.papirus-icon-theme
     pkgs.hicolor-icon-theme
     pkgs.material-icons
@@ -61,6 +61,8 @@ let
     pkgs.nodejs-16_x
     pkgs.terraform
     pkgs.gh
+    pkgs.pgcli
+    pkgs.rnix-lsp
   ];
   programs = {
     # autorandr = import ../config/autorandr.nix { inherit wallpaper; };

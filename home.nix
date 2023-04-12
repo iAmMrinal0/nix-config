@@ -3,6 +3,9 @@ args@{ lib, pkgs, ... }:
 let
   linux = import ./system/linux.nix { inherit lib pkgs; };
 
+  emacsConfig =
+    import ./config/emacs.nix { inherit (args) pkgs emacsConfiguration; };
+
   packages = [
     pkgs.keepassxc
     pkgs.slack
@@ -18,10 +21,9 @@ let
     pkgs.haskellPackages.stylish-haskell
     # pkgs.cachix
     pkgs.gnumake
-    pkgs.google-cloud-sdk
     pkgs.imagemagick
     pkgs.kafkacat
-    pkgs.nix-review
+    pkgs.nixpkgs-review
     pkgs.nmap
     pkgs.pciutils
     pkgs.unzip
@@ -46,6 +48,8 @@ let
     pkgs.stow
     # pkgs.tree
     pkgs.yq
+    (pkgs.emacsWithPackagesFromUsePackage emacsConfig)
+    pkgs.ngrok
   ];
 
   programs = {
