@@ -2,7 +2,8 @@
 
 {
   config = "${emacsConfiguration}/init.el";
-  package = pkgs.emacsNativeComp;
+  defaultInitFile = true;
+  package = pkgs.emacsUnstable;
   extraEmacsPackages = epkgs:
     (with epkgs; [
       ace-window

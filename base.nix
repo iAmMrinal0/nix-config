@@ -119,7 +119,7 @@ in
     };
   };
 
-  time.timeZone = "Asia/Kolkata";
+  time.timeZone = "Europe/Stockholm";
 
   environment = {
     systemPackages = [
@@ -170,7 +170,7 @@ in
     dnsmasq = { enable = true; };
     emacs = {
       enable = true;
-      package = pkgs.emacsNativeComp;
+      package = pkgs.emacsUnstable;
       defaultEditor = true;
       install = true;
     };
@@ -208,6 +208,7 @@ in
     light = { enable = true; };
     nm-applet = { enable = true; };
     ssh.startAgent = true;
+    zsh =  { enable = true; };
   };
 
   networking = {
