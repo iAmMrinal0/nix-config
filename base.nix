@@ -89,6 +89,8 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot = { enable = true; };
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
 
   nixpkgs.config = {
     allowUnfree = true;
@@ -159,7 +161,7 @@ in
   services = {
     avahi = {
       enable = true;
-      nssmdns = true;
+      nssmdns4 = true;
       publish = {
         enable = true;
         addresses = true;
@@ -236,7 +238,7 @@ in
   sound = { enable = true; };
 
   fonts = {
-    fonts = [
+    packages = [
       pkgs.cantarell-fonts
       pkgs.emacs-all-the-icons-fonts
       pkgs.font-awesome

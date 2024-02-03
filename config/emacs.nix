@@ -3,7 +3,7 @@
 {
   config = "${emacsConfiguration}/init.el";
   defaultInitFile = true;
-  package = pkgs.emacsUnstable;
+  package = pkgs.emacs-unstable;
   extraEmacsPackages = epkgs:
     (with epkgs; [
       ace-window

@@ -12,6 +12,7 @@ let
     pkgs.xorg.xdpyinfo
     pkgs.element-desktop
     pkgs.gnome.gnome-screenshot
+    pkgs.google-chrome
     # pkgs.keybase
     pkgs.rescuetime
     pkgs.xarchiver
@@ -53,7 +54,7 @@ let
     pkgs.papirus-icon-theme
     pkgs.paper-icon-theme
     pkgs.ranger
-    pkgs.nodejs-16_x
+    pkgs.nodejs
     (lib.hiPrio pkgs.insomnia)
     pkgs.rnix-lsp
     pkgs.nixpkgs-fmt
