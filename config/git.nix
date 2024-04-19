@@ -3,6 +3,12 @@
   userName = "Mrinal Purohit";
   userEmail = "github@mrinalpurohit.in";
   extraConfig = {
+    user = {
+      signingKey = "E27C4BC509095144";
+    };
+    commit = {
+      gpgSign = true;
+    };
     fetch = { prune = true; };
     core = { editor = "vim"; };
     rerere = { enabled = true; };
