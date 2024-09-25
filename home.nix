@@ -81,8 +81,13 @@ let
   home = { packages = packages; };
 in {
   programs = lib.recursiveUpdate programs linux.programs;
-  home = { packages = home.packages ++ linux.home.packages; };
-  gtk = linux.gtk;
+  home = {
+    packages = home.packages ++ linux.home.packages;
+    sessionVariables = {
+        SSH_AUTH_SOCK = "\${SSH_AUTH_SOCK:-$XDG_RUNTIME_DIR/ssh-agent}";
+    };
+    file.".config/pgcli/config".text = builtins.readFile ./config/pgcli;
+  };
   # xsession = linux.xsession;
   qt = linux.qt;
   services = linux.services;
