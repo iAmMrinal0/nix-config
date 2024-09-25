@@ -8,13 +8,12 @@ let
   wallpaper = lib.readFile (pkgs.callPackage ../scripts/wallpaper.nix { });
 
   packages = [
-    pkgs.authy
+    # pkgs.authy
     pkgs.xorg.xdpyinfo
     pkgs.element-desktop
     pkgs.gnome.gnome-screenshot
     pkgs.google-chrome
     # pkgs.keybase
-    pkgs.rescuetime
     pkgs.xarchiver
     pkgs.xfce.thunar
     pkgs.xfce.thunar-volman
@@ -45,7 +44,7 @@ let
     pkgs.obs-studio
     pkgs.signing-party
     pkgs.ssh-to-pgp
-    pkgs.transmission-gtk
+    # pkgs.transmission-gtk
     pkgs.xfce.xfconf
     pkgs.xorg.xkill
     pkgs.lxappearance
@@ -94,32 +93,6 @@ let
           Unit.After = [ "network.target" "sound.target" ];
           Service.ExecStart = "${pkgs.bluez}/bin/mpris-proxy";
           Install.WantedBy = [ "default.target" ];
-        };
-        rescuetime = {
-          Unit = {
-            Description = "Rescuetime Systemd Service";
-            After = [ "graphical-session-pre.target" ];
-            PartOf = [ "graphical-session.target" ];
-          };
-          Service = {
-            Environment =
-              let
-                toolPaths = lib.makeBinPath [
-                  pkgs.coreutils-full
-                  pkgs.gnugrep
-                  pkgs.xorg.xprop
-                  pkgs.procps
-                  pkgs.gawk
-                  pkgs.nettools
-                  pkgs.gnused
-                  pkgs.systemd
-                ];
-              in
-              [ "PATH=${toolPaths}" ];
-            ExecStart = "${pkgs.rescuetime}/bin/rescuetime";
-            Restart = "on-failure";
-          };
-          Install = { WantedBy = [ "graphical-session.target" ]; };
         };
       };
     };

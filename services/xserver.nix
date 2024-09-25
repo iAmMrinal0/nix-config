@@ -3,6 +3,7 @@
 {
   enable = true;
   exportConfiguration = true;
+  dpi = 180;
   displayManager = {
     lightdm = { enable = true; };
     defaultSession = "none+i3";

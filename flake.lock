@@ -20,22 +20,6 @@
         "type": "github"
       }
     },
-    "emacsConfiguration": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1635427007,
-        "narHash": "sha256-QYOnGK9YkyfxirpHFqWSBlJHywf81V+m3CgPy98su4Q=",
-        "owner": "iammrinal0",
-        "repo": ".emacs.d",
-        "rev": "26476fca69977452fcb9c73f2865eb08716abbfc",
-        "type": "github"
-      },
-      "original": {
-        "owner": "iammrinal0",
-        "repo": ".emacs.d",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -172,7 +156,6 @@
     "root": {
       "inputs": {
         "emacs-overlay": "emacs-overlay",
-        "emacsConfiguration": "emacsConfiguration",
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",

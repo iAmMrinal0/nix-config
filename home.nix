@@ -6,10 +6,10 @@ let
   packages = [
     pkgs.keepassxc
     pkgs.slack
-    pkgs.dhall
-    pkgs.dhall-json
-    pkgs.dhall-lsp-server
-    pkgs.haskellPackages.dhall-yaml
+    #pkgs.dhall
+    #pkgs.dhall-json
+    #pkgs.dhall-lsp-server
+    #pkgs.haskellPackages.dhall-yaml
     pkgs.cachix
     pkgs.gnumake
     pkgs.imagemagick
@@ -29,17 +29,17 @@ let
     pkgs.dnsutils
     pkgs.drive
     pkgs.neofetch
-    pkgs.niv
+    #pkgs.niv
     pkgs.nix-prefetch-github
     pkgs.pv
     pkgs.ripgrep
     pkgs.shellcheck
-    pkgs.stow
+    #pkgs.stow
     pkgs.terminator
-    pkgs.terraform
+    #pkgs.terraform
     pkgs.tree
     pkgs.yq
-    (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
+    # (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
     pkgs.sqlite
     pkgs.pgcli
     pkgs.rlwrap

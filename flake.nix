@@ -10,8 +10,8 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    emacsConfiguration.url = "github:iammrinal0/.emacs.d";
-    emacsConfiguration.flake = false;
+    #emacsConfiguration.url = "github:iammrinal0/.emacs.d";
+    #emacsConfiguration.flake = false;
     zsh-autosuggestions.url = "github:zsh-users/zsh-autosuggestions";
     zsh-autosuggestions.flake = false;
     zsh-you-should-use.url = "github:MichaelAquilina/zsh-you-should-use";
@@ -31,7 +31,7 @@
     , sops-nix
     , emacs-overlay
     , nixos-hardware
-    , emacsConfiguration
+    #, emacsConfiguration
     , zsh-autosuggestions
     , zsh-you-should-use
     , zsh-history-substring-search
@@ -51,7 +51,24 @@
           { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay ]; }
         ];
         specialArgs = {
-          inherit emacsConfiguration zsh-autosuggestions zsh-you-should-use
+          inherit zsh-autosuggestions zsh-you-should-use
+            zsh-history-substring-search zsh-nix-shell;
+        };
+      };
+      nixosConfigurations.mordor = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./cache.nix
+          ./hardware/mordor.nix
+          ./hosts/mordor.nix
+          ./base.nix
+          home-manager.nixosModules.home-manager
+          sops-nix.nixosModules.sops
+          nixos-hardware.nixosModules.lenovo-thinkpad-t14s
+          { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay ]; }
+        ];   
+        specialArgs = {
+          inherit zsh-autosuggestions zsh-you-should-use
             zsh-history-substring-search zsh-nix-shell;
         };
       };

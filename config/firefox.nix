@@ -2,20 +2,6 @@
 
 {
   enable = true;
-  extensions = (with pkgs.nur.repos.rycee.firefox-addons; [
-    darkreader
-    privacy-badger
-    reddit-enhancement-suite
-    ublock-origin
-    https-everywhere
-    multi-account-containers
-    keepassxc-browser
-    vimium
-    octotree
-    refined-github
-    sponsorblock
-    # pkgs.nur.repos.ethancedwards8.firefox-addons.enhancer-for-youtube
-  ]);
   profiles = {
     default.settings = {
       "browser.sessionstore.warnOnQuit" = false;
@@ -31,5 +17,19 @@
       "signon.rememberSignons" = false;
       "signon.usage.hasEntry" = true;
     };
+    default.extensions = (with pkgs.nur.repos.rycee.firefox-addons; [
+      darkreader
+      privacy-badger
+      reddit-enhancement-suite
+      ublock-origin
+      # https-everywhere
+      multi-account-containers
+      keepassxc-browser
+      vimium
+      octotree
+      refined-github
+      sponsorblock
+      # pkgs.nur.repos.ethancedwards8.firefox-addons.enhancer-for-youtube
+    ]);
   };
 }
