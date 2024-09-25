@@ -55,7 +55,6 @@ let
     pkgs.ranger
     pkgs.nodejs
     (lib.hiPrio pkgs.insomnia)
-    pkgs.rnix-lsp
     pkgs.nixpkgs-fmt
     pkgs.gh
     pkgs.openvpn

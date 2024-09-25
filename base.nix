@@ -100,7 +100,7 @@ in
   };
 
   nix = {
-    package = pkgs.nixUnstable;
+    package = pkgs.nixVersions.latest;
     extraOptions = ''
       experimental-features = nix-command flakes ca-derivations
       keep-outputs = true
@@ -126,7 +126,7 @@ in
   environment = {
     systemPackages = [
       (pkgs.writeShellScriptBin "nixFlakes" ''
-        exec ${pkgs.nixUnstable}/bin/nix --experimental-features "nix-command flakes" "$@"
+        exec ${pkgs.nixVersions.latest}/bin/nix --experimental-features "nix-command flakes" "$@"
       '')
       pkgs.atop
       pkgs.android-file-transfer
@@ -139,7 +139,7 @@ in
       pkgs.ntfs3g
       pkgs.openjdk
       pkgs.openssl
-      pkgs.pinentry-gnome
+      pkgs.pinentry-gnome3
       pkgs.pptp
       pkgs.razergenie
       pkgs.sops
@@ -197,7 +197,7 @@ in
       users = [ "iammrinal0" ];
     };
     pulseaudio = {
-      enable = true;
+      enable = false;
       package = pkgs.pulseaudioFull;
       support32Bit = true;
     };
@@ -235,7 +235,7 @@ in
     };
   };
 
-  sound = { enable = true; };
+  # sound = { enable = true; };
 
   fonts = {
     packages = [

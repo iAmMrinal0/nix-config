@@ -64,7 +64,7 @@
           ./base.nix
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
-          nixos-hardware.nixosModules.lenovo-thinkpad-t14s
+          # nixos-hardware.nixosModules.lenovo-thinkpad-t14s
           { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay ]; }
         ];   
         specialArgs = {
