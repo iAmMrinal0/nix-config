@@ -81,7 +81,26 @@
             zsh-history-substring-search zsh-nix-shell;
         };
       };
+      homeConfigurations.work-wsl = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          ./home.nix
+          {
+            home = {
+              username = "iammrinal0";
+              homeDirectory = "/home/iammrinal0";
+              stateVersion = "22.11";
+            };
+            nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay ];
+          }
+        ];
+        extraSpecialArgs = {
+          inherit emacsConfiguration zsh-autosuggestions zsh-you-should-use
+            zsh-history-substring-search zsh-nix-shell;
+        };
+      };
       wsl = self.homeConfigurations.wsl.activationPackage;
-      defaultPackage.x86_64-linux = self.wsl;
+      work-wsl = self.homeConfigurations.work-wsl.activationPackage;
+      defaultPackage.x86_64-linux = self.work-wsl;
     };
 }
