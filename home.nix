@@ -53,6 +53,10 @@ let
   ];
 
   programs = {
+    atuin = {
+      enable = true;
+      enableZshIntegration = true;
+    };
     broot = { enable = true; };
     direnv = {
       enable = true;

@@ -50,10 +50,6 @@ in {
       src = zsh-you-should-use;
     }
     {
-      name = "zsh-history-substring-search";
-      src = zsh-history-substring-search;
-    }
-    {
       name = "zsh-nix-shell";
       file = "nix-shell.plugin.zsh";
       src = zsh-nix-shell;
