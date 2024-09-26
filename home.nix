@@ -81,7 +81,7 @@ in
   programs = lib.recursiveUpdate programs linux.programs;
   home = {
     packages = home.packages ++ linux.home.packages;
-    stateVersion = "22.11";
+    stateVersion = "24.05";
   };
   gtk = linux.gtk;
   xsession = linux.xsession;
