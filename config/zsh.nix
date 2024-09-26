@@ -55,10 +55,10 @@ in
       name = "you-should-use";
       src = zsh-you-should-use;
     }
-    {
-      name = "zsh-history-substring-search";
-      src = zsh-history-substring-search;
-    }
+    # {
+    #   name = "zsh-history-substring-search";
+    #   src = zsh-history-substring-search;
+    # }
     {
       name = "zsh-nix-shell";
       file = "nix-shell.plugin.zsh";

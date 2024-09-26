@@ -46,6 +46,10 @@ let
   ];
 
   programs = {
+    atuin = {
+      enable = true;
+      enableZshIntegration = true;
+    };
     broot = { enable = false; };
     direnv = {
       enable = true;
@@ -84,5 +88,5 @@ in
   # qt = linux.qt;
   services = linux.services;
   systemd = linux.systemd;
-  xdg.configFile."keepassxc/keepassxc.ini".source = ./config/keepassxc.ini;
+  # xdg.configFile."keepassxc/keepassxc.ini".source = ./config/keepassxc.ini;
 }
