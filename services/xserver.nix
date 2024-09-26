@@ -3,12 +3,13 @@
 {
   enable = true;
   exportConfiguration = true;
+  xkb = { layout = "us"; variant = "";};
   dpi = 180;
   displayManager = {
-    lightdm = { enable = true; };
+    #lightdm = { enable = true; };
     defaultSession = "none+i3";
   };
-  desktopManager = { xterm.enable = false; };
+  desktopManager = { xterm.enable = true; };
   libinput = { enable = true; };
   videoDrivers = [ "intel" ];
   windowManager.i3 = {
