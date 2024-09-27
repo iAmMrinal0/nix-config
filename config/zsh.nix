@@ -11,7 +11,6 @@ in {
 
   initExtra = ''
     export DISABLE_MAGIC_FUNCTIONS=true
-    . $HOME/.nix-profile/etc/profile.d/nix.sh
     setopt HIST_FIND_NO_DUPS
     setopt HIST_IGNORE_ALL_DUPS
     function new-tmux-from-dir-name {

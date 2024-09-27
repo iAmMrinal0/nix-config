@@ -35,9 +35,7 @@
           permittedInsecurePackages = [ "electron-9.4.4" ];
           allowUnfreePredicate = pkg:
             builtins.elem (pkgs.lib.getName pkg) [
-              "authy"
               "discord"
-              "rescuetime"
               "slack"
               "spotify"
               "spotify-unwrapped"
@@ -45,7 +43,6 @@
         };
       };
     in {
-      nix.registry.nixpkgs.flake = nixpkgs;
       nixosConfigurations.betazed = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [

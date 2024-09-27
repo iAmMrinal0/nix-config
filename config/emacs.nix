@@ -1,8 +1,9 @@
 { pkgs, emacsConfiguration, ... }:
 
 {
-  config = "${emacsConfiguration}/init.el";
-  package = pkgs.emacsUnstable;
+  config = "${emacsConfiguration}/config.org";
+  package = pkgs.emacs-unstable;
+  defaultInitFile = true;
   extraEmacsPackages = epkgs:
     (with epkgs; [
       ace-window

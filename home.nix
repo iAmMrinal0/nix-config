@@ -8,22 +8,17 @@ let
 
   packages = [
     pkgs.keepassxc
-    pkgs.slack
-    pkgs.kube-score
-    pkgs.kubeval
+    # pkgs.slack
     pkgs.stern
     pkgs.dhall
     pkgs.dhall-json
-    pkgs.dhall-lsp-server
-    pkgs.haskellPackages.dhall-yaml
-    pkgs.haskellPackages.hlint
-    pkgs.haskellPackages.haskell-language-server
-    pkgs.haskellPackages.stylish-haskell
     # pkgs.cachix
     pkgs.gnumake
     pkgs.imagemagick
-    pkgs.kafkacat
+    pkgs.git-crypt
+    pkgs.jujutsu
     pkgs.nixpkgs-review
+    pkgs.nix-info
     pkgs.nmap
     pkgs.pciutils
     pkgs.unzip
@@ -31,7 +26,6 @@ let
     pkgs.aspellDicts.en
     pkgs.aspellDicts.en-computers
     pkgs.aspell
-    pkgs.spago
     pkgs.xsel
     pkgs.silver-searcher
     pkgs.awscli
@@ -39,6 +33,7 @@ let
     pkgs.coreutils-full
     pkgs.dnsutils
     pkgs.drive
+    pkgs.gdrive3
     pkgs.neofetch
     pkgs.niv
     pkgs.nix-prefetch-github
@@ -48,8 +43,9 @@ let
     pkgs.stow
     # pkgs.tree
     pkgs.yq
-    (pkgs.emacsWithPackagesFromUsePackage emacsConfig)
+    # (pkgs.emacsWithPackagesFromUsePackage emacsConfig)
     pkgs.ngrok
+    pkgs.nil
   ];
 
   programs = {
@@ -92,6 +88,7 @@ in {
     };
     file.".config/pgcli/config".text = builtins.readFile ./config/pgcli;
   };
+  gtk = {}; #linux.gtk; // enable linux.gtk for linux machines
   # xsession = linux.xsession;
   qt = linux.qt;
   services = linux.services;

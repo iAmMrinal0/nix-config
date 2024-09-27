@@ -6,14 +6,9 @@ let
   wallpaper = lib.readFile (pkgs.callPackage ../scripts/wallpaper.nix { });
 
   packages = [
-    pkgs.authy
-    # pkgs.azure-cli
     pkgs.xorg.xdpyinfo
-    pkgs.element-desktop
-    pkgs.gnome.gnome-screenshot
-    pkgs.keybase
-    pkgs.rescuetime
-    # pkgs.xarchiver
+    pkgs.nix-output-monitor
+    pkgs.xarchiver
     pkgs.xfce.thunar
     pkgs.xfce.thunar-volman
     pkgs.xfce.thunar-archive-plugin
@@ -34,35 +29,30 @@ let
     pkgs.discord
     pkgs.dunst
     pkgs.dconf
-    pkgs.gnome.nautilus
+    pkgs.nautilus
     pkgs.google-drive-ocamlfuse
     # keepmenu
     pkgs.lsof
     pkgs.netcat-gnu
     pkgs.nix-diff
-    pkgs.nixfmt
-    pkgs.obs-studio
+    pkgs.nixfmt-classic
     pkgs.signing-party # pgp-tools
     pkgs.screenfetch
     pkgs.ssh-to-pgp
-    pkgs.transmission-gtk
     pkgs.xfce.xfconf
     pkgs.xorg.xkill
     pkgs.lxappearance
     pkgs.arc-theme
-    pkgs.gnome.adwaita-icon-theme
+    pkgs.adwaita-icon-theme
     pkgs.papirus-icon-theme
     pkgs.hicolor-icon-theme
     pkgs.material-icons
     pkgs.paper-icon-theme
-    pkgs.obs-studio
     pkgs.ranger
     pkgs.lorri
-    pkgs.nodejs-16_x
-    pkgs.terraform
+    pkgs.nodejs-18_x
     pkgs.gh
     pkgs.pgcli
-    pkgs.rnix-lsp
   ];
   programs = {
     # autorandr = import ../config/autorandr.nix { inherit wallpaper; };
@@ -74,7 +64,7 @@ let
   services = {
     # blueman-applet = { enable = true; };
     # dunst = import ../config/dunstrc.nix { inherit pkgs; };
-    gpg-agent = { enable = true; };
+    gpg-agent = { enable = true; pinentryPackage = pkgs.pinentry-qt; };
     # kdeconnect = {
     #   enable = true;
     #   indicator = true;
@@ -97,28 +87,6 @@ let
           Service.ExecStart = "${pkgs.bluez}/bin/mpris-proxy";
           Install.WantedBy = [ "default.target" ];
         };
-        rescuetime = {
-          Unit = {
-            Description = "Rescuetime Systemd Service";
-            After = [ "graphical-session-pre.target" ];
-            PartOf = [ "graphical-session.target" ];
-          };
-          Service = {
-            Environment = let
-              toolPaths = lib.makeBinPath [
-                pkgs.coreutils-full
-                pkgs.gnugrep
-                pkgs.xorg.xprop
-                pkgs.procps
-                pkgs.gawk
-                pkgs.nettools
-              ];
-            in [ "PATH=${toolPaths}" ];
-            ExecStart = "${pkgs.rescuetime}/bin/rescuetime";
-            Restart = "on-failure";
-          };
-          Install = { WantedBy = [ "graphical-session.target" ]; };
-        };
       };
     };
   };
@@ -127,7 +95,9 @@ in {
   inherit programs services systemd;
   home = {
     inherit packages;
-    sessionVariables = { };
+    sessionVariables = {
+        SSH_AUTH_SOCK = "\${SSH_AUTH_SOCK:-$XDG_RUNTIME_DIR/ssh-agent}";
+    };
   };
   gtk = import ../config/gtk.nix { inherit pkgs; };
   xsession = {
@@ -138,7 +108,7 @@ in {
   };
   qt = {
     enable = true;
-    platformTheme = "gnome";
+    platformTheme = { name = "adwaita"; };
     style = {
       package = pkgs.adwaita-qt;
       name = "adwaita-dark";

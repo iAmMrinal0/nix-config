@@ -8,7 +8,6 @@
     "edacconmaakjimmfgnblocblbcdcpbko" # Session Buddy
     "hhinaapppaileiechjoiifaancjggfjm" # Web Scrobbler
     "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
-    "bdakmnplckeopfghnlpocafcepegjeap" # Rescuetime
     "hlepfoohegkhhmjieoechaddaejaokhf" # Refined GitHub
     "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
     "omdakjcmkglenbhjadbccaookpfjihpa" # TunnelBear VPN
