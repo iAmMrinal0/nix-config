@@ -40,7 +40,7 @@ let
     pkgs.lsof
     pkgs.netcat-gnu
     pkgs.nix-diff
-    pkgs.nixfmt
+    pkgs.nixfmt-classic
     pkgs.obs-studio
     pkgs.signing-party
     pkgs.ssh-to-pgp
@@ -70,7 +70,7 @@ let
   services = {
     blueman-applet = { enable = true; };
     dunst = import ../config/dunstrc.nix { inherit pkgs; };
-    gpg-agent = { enable = true; };
+    gpg-agent = { enable = true; pinentryPackage = pkgs.pinentry-gnome3; };
     kdeconnect = {
       enable = true;
       indicator = true;

@@ -37,7 +37,7 @@
     , zsh-history-substring-search
     , zsh-nix-shell
     }: {
-      nix.registry.nixpkgs.flake = nixpkgs;
+      #nix.registry.nixpkgs.flake = nixpkgs;
       nixosConfigurations.betazed = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [

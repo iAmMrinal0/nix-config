@@ -65,12 +65,6 @@ let
           version = "0.9.0";
           sha256 = "sha256-YWu2a5hz0qGZvgR95DbzUw6PUvz17i1o4+eAUM/xjMg=";
         }
-        {
-          publisher = "jacobeanresearchanddevelopmentllc";
-          name = "vscode-scxml-preview";
-          version = "0.0.28";
-          sha256 = "sha256-qoJpLD02Dvogj5bxyNj42GRoGAUz93/a825XIzqZUIg=";
-        }
       ];
 
   vscode-with-extensions = pkgs.vscode-with-extensions.override {
@@ -180,6 +174,11 @@ in
     openssh = { enable = true; };
     upower = { enable = true; };
     fwupd = { enable = true; };
+    displayManager = {
+      # lightdm = { enable = true; };
+      defaultSession = "none+i3";
+    };
+    libinput = { enable = true; };
     xserver = import ./services/xserver.nix { inherit pkgs; };
     gvfs = { enable = true; };
     gnome.gnome-keyring.enable = true;
@@ -211,6 +210,7 @@ in
     nm-applet = { enable = true; };
     ssh.startAgent = true;
     zsh =  { enable = true; };
+    seahorse = { enable = true; };
   };
 
   networking = {

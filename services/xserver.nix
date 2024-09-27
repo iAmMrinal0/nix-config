@@ -5,13 +5,8 @@
   exportConfiguration = true;
   xkb = { layout = "us"; variant = "";};
   dpi = 180;
-  displayManager = {
-    #lightdm = { enable = true; };
-    defaultSession = "none+i3";
-  };
-  desktopManager = { xterm.enable = true; };
-  libinput = { enable = true; };
-  videoDrivers = [ "intel" ];
+  desktopManager = { xterm.enable = false; };
+  videoDrivers = [ "intel" "displaylink" ];
   windowManager.i3 = {
     enable = true;
     extraPackages =
