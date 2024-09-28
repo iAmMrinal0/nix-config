@@ -4,6 +4,10 @@
   userName = "Mrinal Purohit";
   userEmail = "github@mrinalpurohit.in";
   extraConfig = {
+    commit = {
+      gpgSign = true;
+    };
+    user.signingKey = "E27C4BC509095144";
     fetch = { prune = true; };
     core = { editor = "emacs"; };
     merge = {

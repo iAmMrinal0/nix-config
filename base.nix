@@ -48,10 +48,10 @@ let
           sha256 = "14p9g07zsb3da4ilaasgsdvh3wagfzayqr8ichsf6k5c952zi8fk";
         }
         {
-          name = "gruvbox-themes";
-          publisher = "tomphilbin";
-          version = "1.0.0";
-          sha256 = "sha256-DnwASBp1zvJluDc/yhSB87d0WM8PSbzqAvoICURw03c=";
+          name = "gruvbox";
+          publisher = "jdinhlife";
+          version = "1.19.1";
+          sha256 = "sha256-mk0Iy68TuI7deQjPOygF9nXR3HB70+CBEIb2p1mdzm0=";
         }
         {
           name = "fluent-icons";
