@@ -118,6 +118,7 @@ in
       pkgs.coreutils-full
       pkgs.docker-compose
       pkgs.git
+      pkgs.libsecret
       pkgs.ncdu
       pkgs.nix-build-uncached
       pkgs.ntfs3g
@@ -153,7 +154,7 @@ in
       };
     };
     udev.packages = [ pkgs.yubikey-personalization ];
-    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr ];
+    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.gnome.seahorse ];
     dnsmasq = { enable = true; };
     emacs = {
      enable = true;
@@ -166,7 +167,9 @@ in
     upower = { enable = true; };
     fwupd = { enable = true; };
     displayManager = {
-      # lightdm = { enable = true; };
+      # for some reason the Login keyring doesn't work if autoLogin is enabled
+      # autoLogin.enable = true;
+      # autoLogin.user = "iammrinal0";
       defaultSession = "none+i3";
     };
     libinput = { enable = true; };
