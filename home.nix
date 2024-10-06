@@ -15,6 +15,8 @@ let
     pkgs.imagemagick
     pkgs.nixpkgs-review
     pkgs.nmap
+    pkgs.git-crypt
+    pkgs.obsidian
     pkgs.pciutils
     pkgs.unzip
     pkgs.xclip
