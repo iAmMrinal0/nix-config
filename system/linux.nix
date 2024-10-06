@@ -8,14 +8,12 @@ let
   wallpaper = lib.readFile (pkgs.callPackage ../scripts/wallpaper.nix { });
 
   packages = [
-    # pkgs.authy
     pkgs.alsa-utils
     pkgs.pulseaudio
     pkgs.xorg.xdpyinfo
     pkgs.element-desktop
     pkgs.gnome.gnome-screenshot
     pkgs.google-chrome
-    # pkgs.keybase
     pkgs.xarchiver
     pkgs.xfce.thunar
     pkgs.xfce.thunar-volman
@@ -60,7 +58,6 @@ let
     pkgs.nixpkgs-fmt
     pkgs.gh
     pkgs.openvpn
-    pkgs.barrier
   ];
   programs = {
     autorandr = import ../config/autorandr.nix { inherit wallpaper; };

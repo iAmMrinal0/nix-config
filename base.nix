@@ -80,7 +80,6 @@ in
     allowUnfree = true;
     pulseaudio = true;
     chromium = { enableWideVine = true; };
-    permittedInsecurePackages = [ "electron-9.4.4" ];
   };
 
   nix = {

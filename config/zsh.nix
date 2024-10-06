@@ -23,7 +23,6 @@ in
       dir_name=$(echo `basename $PWD` | tr '.' '-')
       ${pkgs.tmux}/bin/tmux new-session -As $dir_name
     }
-    source <(${pkgs.kubectl}/bin/kubectl completion zsh)
   '';
   shellAliases = {
     proc = "ps aux | ${pkgs.ripgrep}/bin/rg $1";
@@ -34,7 +33,7 @@ in
   };
   oh-my-zsh = {
     enable = true;
-    plugins = [ "command-not-found" "docker" "extract" "git" "kubectl" "sudo" ];
+    plugins = [ "command-not-found" "docker" "extract" "git" "sudo" ];
     theme = "mod_steeef";
     custom = "${zshCustom}";
   };
