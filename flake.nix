@@ -10,8 +10,8 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    #emacsConfiguration.url = "github:iammrinal0/.emacs.d";
-    #emacsConfiguration.flake = false;
+    emacsConfiguration.url = "github:iammrinal0/.emacs.d";
+    emacsConfiguration.flake = false;
     zsh-autosuggestions.url = "github:zsh-users/zsh-autosuggestions";
     zsh-autosuggestions.flake = false;
     zsh-you-should-use.url = "github:MichaelAquilina/zsh-you-should-use";
@@ -32,6 +32,7 @@
     , sops-nix
     , emacs-overlay
     , nixos-hardware
+    , emacsConfiguration
     , nix-vscode-extensions
     , zsh-autosuggestions
     , zsh-you-should-use
@@ -69,7 +70,7 @@
           { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay nix-vscode-extensions.overlays.default ]; }
         ];   
         specialArgs = {
-          inherit zsh-autosuggestions zsh-you-should-use
+          inherit zsh-autosuggestions zsh-you-should-use emacsConfiguration
             zsh-history-substring-search zsh-nix-shell;
         };
       };

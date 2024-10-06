@@ -39,7 +39,7 @@ let
     #pkgs.terraform
     pkgs.tree
     pkgs.yq
-    # (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
+    (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
     pkgs.sqlite
     pkgs.pgcli
     pkgs.rlwrap

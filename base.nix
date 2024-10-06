@@ -1,8 +1,8 @@
 inputs@{ lib, config, pkgs, ... }:
 
 let
-  # emacsConfig =
-  #  import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
+  emacsConfig =
+   import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
   secrets = [ "service-access-host" "service-access-key" "nixpkgs-review" ];
   defaultPermissions = secret: {
     ${secret} = {
@@ -154,12 +154,12 @@ in
     udev.packages = [ pkgs.yubikey-personalization ];
     dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr ];
     dnsmasq = { enable = true; };
-    #emacs = {
-    #  enable = true;
-    #  package = pkgs.emacsUnstable;
-    #  defaultEditor = true;
-    #  install = true;
-    #};
+    emacs = {
+     enable = true;
+     package = pkgs.emacs-unstable;
+     defaultEditor = true;
+     install = true;
+    };
     blueman = { enable = true; };
     openssh = { enable = true; };
     upower = { enable = true; };
@@ -260,7 +260,7 @@ in
     users = { iammrinal0 = ./home.nix; };
     useGlobalPkgs = true;
     extraSpecialArgs = {
-      # emacsConfig = emacsConfig;
+      emacsConfig = emacsConfig;
       inherit (inputs)
         zsh-autosuggestions zsh-you-should-use zsh-history-substring-search
         zsh-nix-shell;

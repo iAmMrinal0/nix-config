@@ -158,7 +158,7 @@ in
     keybindings = useWithModifier modifier
       ({
         "Control+l" = "exec ${shutdownMenu}";
-        #"Control+e" = "exec ${pkgs.emacs}/bin/emacsclient -a '' -c";
+        "Control+e" = "exec ${pkgs.emacs}/bin/emacsclient -a '' -c";
         "Control+mod1+p" = "exec ${pkgs.playerctl}/bin/playerctl play-pause";
         "Control+mod1+Right" = "exec ${pkgs.playerctl}/bin/playerctl next";
         "Control+mod1+Left" = "exec ${pkgs.playerctl}/bin/playerctl previous";
