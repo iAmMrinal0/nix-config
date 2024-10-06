@@ -9,7 +9,7 @@ toggle() {
   if [ "$status" = "true" ]
     then echo 
   else
-    echo 
+    echo  
   fi
 }
 

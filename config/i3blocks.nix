@@ -49,7 +49,7 @@ in pkgs.writeTextFile {
     color=#87AFAF
 
     [volume]
-    label=
+    label= 
     instance=Master
     #instance=PCM
     interval=1
