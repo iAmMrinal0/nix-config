@@ -21,6 +21,7 @@
     zsh-history-substring-search.flake = false;
     zsh-nix-shell.url = "github:chisui/zsh-nix-shell";
     zsh-nix-shell.flake = false;
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
   outputs =
@@ -31,7 +32,7 @@
     , sops-nix
     , emacs-overlay
     , nixos-hardware
-    #, emacsConfiguration
+    , nix-vscode-extensions
     , zsh-autosuggestions
     , zsh-you-should-use
     , zsh-history-substring-search
@@ -65,7 +66,7 @@
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           # nixos-hardware.nixosModules.lenovo-thinkpad-t14s
-          { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay ]; }
+          { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay nix-vscode-extensions.overlays.default ]; }
         ];   
         specialArgs = {
           inherit zsh-autosuggestions zsh-you-should-use

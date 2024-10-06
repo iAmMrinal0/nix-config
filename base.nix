@@ -12,60 +12,50 @@ let
     };
   };
 
-  vscodeExtensions = with pkgs.vscode-extensions;
+  vscodeExtensions = with pkgs.vscode-marketplace;
     [
+      ms-vscode-remote.vscode-remote-extensionpack
+      ms-vscode.remote-explorer
       ms-vsliveshare.vsliveshare
-      ms-vscode-remote.remote-ssh
-      justusadam.language-haskell
-      dhall.vscode-dhall-lsp-server
-      dhall.dhall-lang
-      eamodio.gitlens
-      github.vscode-pull-request-github
+      ms-python.vscode-pylance
+      ms-python.python
+      github.copilot
+      github.copilot-chat
+      # lfs.vscode-emacs-friendly
+    ] ++ (with pkgs.open-vsx; [
+      ahmadalli.vscode-nginx-conf
       bbenoist.nix
-      pkief.material-icon-theme
-      ms-azuretools.vscode-docker
+      berberman.vscode-cabal-fmt
+      bierner.markdown-mermaid
+      bigmoon.language-yesod
+      davidanson.vscode-markdownlint
+      dhall.dhall-lang
+      dhall.vscode-dhall-lsp-server
+      dksedgwick.xstviz
+      eamodio.gitlens
+      editorconfig.editorconfig
+      github.vscode-pull-request-github
       hashicorp.terraform
+      haskell.haskell
+      jdinhlife.gruvbox
       jnoortheen.nix-ide
-    ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace
-
-      [
-        {
-          name = "codespaces";
-          publisher = "github";
-          version = "1.10.0";
-          sha256 = "0b9lyjjfhq7k6wb18cfk7fbi9jlrc2qbq8fa42p2l6dzzid87z6k";
-        }
-        {
-          name = "vscode-direnv";
-          publisher = "rubymaniac";
-          version = "0.0.2";
-          sha256 = "1gml41bc77qlydnvk1rkaiv95rwprzqgj895kxllqy4ps8ly6nsd";
-        }
-        {
-          name = "haskell";
-          publisher = "haskell";
-          version = "2.2.1";
-          sha256 = "14p9g07zsb3da4ilaasgsdvh3wagfzayqr8ichsf6k5c952zi8fk";
-        }
-        {
-          name = "gruvbox";
-          publisher = "jdinhlife";
-          version = "1.19.1";
-          sha256 = "sha256-mk0Iy68TuI7deQjPOygF9nXR3HB70+CBEIb2p1mdzm0=";
-        }
-        {
-          name = "fluent-icons";
-          publisher = "miguelsolorio";
-          version = "0.0.18";
-          sha256 = "02zrlaq4f29vygisgsyx0nafcccq92mhms420qj0lgshipih0kdh";
-        }
-        {
-          name = "vscode-emacs-friendly";
-          publisher = "lfs";
-          version = "0.9.0";
-          sha256 = "sha256-YWu2a5hz0qGZvgR95DbzUw6PUvz17i1o4+eAUM/xjMg=";
-        }
-      ];
+      jock.svg
+      joeandaverde.sqitch-plan
+      justusadam.language-haskell
+      mel-brown.haskell-yesod-quasiquotes
+      miguelsolorio.fluent-icons
+      mkhl.direnv
+      ms-azuretools.vscode-docker
+      ms-python.black-formatter
+      ms-vscode-remote.remote-ssh
+      ms-vsliveshare.vsliveshare
+      pkief.material-icon-theme
+      raynigon.nginx-formatter
+      redhat.vscode-yaml
+      statelyai.stately-vscode
+      vscodeemacs.emacs
+      # lfs.vscode-emacs-friendly
+    ]);
 
   vscode-with-extensions = pkgs.vscode-with-extensions.override {
     vscodeExtensions = vscodeExtensions;
