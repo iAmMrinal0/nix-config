@@ -241,7 +241,7 @@ in
       "XF86MonBrightnessDown" = "${pkgs.light}/bin/light -U 10";
 
       "XF86AudioMicMute" =
-        "${pkgs.pulseaudio}/bin/pactl set-source-mute 1 toggle";
+        "${pkgs.pulseaudio}/bin/pactl set-source-mute 0 toggle";
 
       "Print" = "${pkgs.gnome.gnome-screenshot}/bin/gnome-screenshot -i";
 

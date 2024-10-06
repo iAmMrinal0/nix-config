@@ -141,6 +141,7 @@ in
   };
 
   security.pam.services.lightdm.enableGnomeKeyring = true;
+  security.rtkit.enable = true;
 
   services = {
     avahi = {
@@ -173,6 +174,12 @@ in
     gvfs = { enable = true; };
     gnome.gnome-keyring.enable = true;
     tailscale.enable = true;
+    pipewire = {
+      enable = true;
+      pulse.enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+    };
   };
 
   hardware = {
