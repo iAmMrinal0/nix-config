@@ -9,6 +9,10 @@
     };
     user.signingKey = "E27C4BC509095144";
     fetch = { prune = true; };
+    rerere = { enabled = true; };
+    pull = { rebase = true; };
+    push = { autoSetupRemote = true; };
+    rebase = { autostash = true; };
     core = { editor = "emacs"; };
     merge = {
       conflictstyle = "diff3";
