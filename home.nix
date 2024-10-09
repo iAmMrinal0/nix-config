@@ -84,6 +84,7 @@ in
   home = {
     packages = home.packages ++ linux.home.packages;
     stateVersion = "24.05";
+    file.".config/pgcli/config".text = builtins.readFile ./config/pgcli;
   };
   gtk = linux.gtk;
   xsession = linux.xsession;

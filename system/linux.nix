@@ -42,6 +42,7 @@ let
     pkgs.nix-diff
     pkgs.nixfmt-classic
     pkgs.obs-studio
+    pkgs.pgcli
     pkgs.signing-party
     pkgs.ssh-to-pgp
     # pkgs.transmission-gtk
