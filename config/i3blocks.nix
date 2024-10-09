@@ -72,7 +72,7 @@ in pkgs.writeTextFile {
     #separator=false
 
     [load_average]
-    label=
+    label= 
     interval=1
 
     [battery]
