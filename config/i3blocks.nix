@@ -79,6 +79,10 @@ in pkgs.writeTextFile {
     label=⚡
     interval=15
 
+    [kb]
+    interval=10
+    command=echo "$(${pkgs.xkb-switch}/bin/xkb-switch -p)"
+
     [bluetooth]
     command=${bluetooth_battery}
     interval=30
