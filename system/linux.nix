@@ -75,8 +75,6 @@ let
       enable = true;
       indicator = true;
     };
-    # keybase = { enable = true; };
-    lorri = { enable = true; };
     # pasystray = { enable = true; };
     picom = import ../config/picom.nix { inherit pkgs; };
     playerctld = { enable = true; };
