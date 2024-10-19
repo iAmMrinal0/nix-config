@@ -2,7 +2,7 @@ inputs@{ lib, config, pkgs, ... }:
 
 let
   emacsConfig =
-   import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
+    import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
   secrets = [ "service-access-host" "service-access-key" "nixpkgs-review" ];
   defaultPermissions = secret: {
     ${secret} = {
@@ -60,15 +60,15 @@ let
   vscode-with-extensions = pkgs.vscode-with-extensions.override {
     vscodeExtensions = vscodeExtensions;
   };
-
-in
-{
+in {
 
   #sops = {
   #  defaultSopsFile = ./sops/secrets.yaml;
   #  secrets =
   #    lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
   #};
+
+  imports = [ ./modules/xserver.nix ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot = { enable = true; };
@@ -80,6 +80,7 @@ in
     allowUnfree = true;
     pulseaudio = true;
     chromium = { enableWideVine = true; };
+    permittedInsecurePackages = [ ];
   };
 
   nix = {
@@ -171,10 +172,10 @@ in
     dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.gnome.seahorse ];
     dnsmasq = { enable = true; };
     emacs = {
-     enable = true;
-     package = pkgs.emacs-unstable;
-     defaultEditor = true;
-     install = true;
+      enable = true;
+      package = pkgs.emacs-unstable;
+      defaultEditor = true;
+      install = true;
     };
     blueman = { enable = true; };
     openssh = { enable = true; };
@@ -187,7 +188,6 @@ in
       defaultSession = "none+i3";
     };
     libinput = { enable = true; };
-    xserver = import ./services/xserver.nix { inherit pkgs; };
     gvfs = { enable = true; };
     gnome.gnome-keyring.enable = true;
     tailscale.enable = true;
@@ -197,6 +197,8 @@ in
       alsa.enable = true;
       alsa.support32Bit = true;
     };
+    touchegg = { enable = true; };
+    # printing = { enable = true; };
   };
 
   hardware = {
@@ -207,7 +209,7 @@ in
     };
     openrazer = {
       enable = true;
-      users = [ "iammrinal0" ];
+      users = [ config.users.users.iammrinal0.name ];
     };
     pulseaudio = {
       enable = false;
@@ -219,11 +221,10 @@ in
   virtualisation.docker = { enable = true; };
 
   programs = {
-    adb = { enable = true; };
     light = { enable = true; };
     nm-applet = { enable = true; };
     ssh.startAgent = true;
-    zsh =  { enable = true; };
+    zsh = { enable = true; };
     seahorse = { enable = true; };
   };
 
@@ -248,8 +249,6 @@ in
       #dns = "none";
     };
   };
-
-  # sound = { enable = true; };
 
   fonts = {
     packages = [
@@ -281,20 +280,36 @@ in
   };
 
   home-manager = {
-    users = { iammrinal0 = ./home.nix; };
-    useGlobalPkgs = true;
-    extraSpecialArgs = {
-      emacsConfig = emacsConfig;
-      inherit (inputs)
-        zsh-autosuggestions zsh-you-should-use zsh-history-substring-search
-        zsh-nix-shell;
+    users = {
+      iammrinal0 = { pkgs, ... }: {
+        imports = [
+          ./home.nix
+          ./modules/autorandr.nix
+          ./modules/dunstrc.nix
+          ./modules/chromium.nix
+          ./modules/feh.nix
+          ./modules/rofi.nix
+          ./modules/git.nix
+          ./modules/tmux.nix
+          ./modules/picom.nix
+          ./modules/zathura.nix
+          ./modules/kitty.nix
+          ./modules/htop.nix
+          ./modules/firefox.nix
+          ./modules/gtk.nix
+          ./modules/systemd.nix
+          ./modules/xsession.nix
+          ./modules/qt.nix
+          (import ./modules/zsh.nix {
+            inherit pkgs;
+            inherit (inputs)
+              zsh-autosuggestions zsh-you-should-use
+              zsh-history-substring-search zsh-nix-shell;
+          })
+        ];
+      };
     };
+    useGlobalPkgs = true;
+    extraSpecialArgs = { emacsConfig = emacsConfig; };
   };
-
-  # This value determines the NixOS release with which your system is to be
-  # compatible, in order to avoid breaking some software such as database
-  # servers. You should change this only after NixOS release notes say you
-  # should.
-  system.stateVersion = "24.05"; # Did you read the comment?
-
 }

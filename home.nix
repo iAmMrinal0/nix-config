@@ -1,15 +1,10 @@
 args@{ lib, pkgs, ... }:
 
 let
-  linux = import ./system/linux.nix { inherit lib pkgs; };
 
   packages = [
     pkgs.keepassxc
     pkgs.slack
-    #pkgs.dhall
-    #pkgs.dhall-json
-    #pkgs.dhall-lsp-server
-    #pkgs.haskellPackages.dhall-yaml
     pkgs.cachix
     pkgs.gnumake
     pkgs.imagemagick
@@ -29,22 +24,71 @@ let
     pkgs.bc
     pkgs.coreutils-full
     pkgs.dnsutils
-    pkgs.drive
     pkgs.neofetch
-    #pkgs.niv
     pkgs.nix-prefetch-github
     pkgs.pv
     pkgs.ripgrep
     pkgs.shellcheck
-    #pkgs.stow
     pkgs.terminator
-    #pkgs.terraform
     pkgs.tree
     pkgs.yq
     (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
     pkgs.sqlite
     pkgs.pgcli
     pkgs.rlwrap
+    # all other packages
+    pkgs.alsa-utils
+    pkgs.pulseaudio
+    pkgs.xorg.xdpyinfo
+    pkgs.element-desktop
+    pkgs.gnome.gnome-screenshot
+    pkgs.google-chrome
+    pkgs.xarchiver
+    pkgs.xfce.thunar
+    pkgs.xfce.thunar-volman
+    pkgs.xfce.thunar-archive-plugin
+    pkgs.xfce.tumbler # For image previews in Thunar. Can be handled with a dependency derivation I assume(?)
+    pkgs.xfce.xfconf # For saving preferences of Thunar.
+    pkgs.libnotify # To use dunst
+    pkgs.libsForQt5.qtstyleplugins
+    pkgs.lshw
+    pkgs.spotify
+    pkgs.vlc
+    pkgs.ffmpeg-full
+    pkgs.pavucontrol
+    pkgs.playerctl
+    pkgs.xdotool
+    pkgs.qt5ct
+    pkgs.acpi
+    pkgs.arandr
+    pkgs.discord
+    pkgs.dunst
+    pkgs.dconf
+    pkgs.gnome.nautilus
+    pkgs.keepmenu
+    pkgs.lsof
+    pkgs.netcat-gnu
+    pkgs.nix-diff
+    pkgs.nixfmt-classic
+    pkgs.pgcli
+    pkgs.rclone
+    pkgs.signing-party
+    pkgs.ssh-to-pgp
+    pkgs.xfce.xfconf
+    pkgs.xorg.xkill
+    pkgs.lxappearance
+    pkgs.arc-theme
+    pkgs.gnome.adwaita-icon-theme
+    pkgs.papirus-icon-theme
+    pkgs.paper-icon-theme
+    pkgs.ranger
+    pkgs.nodejs
+    (lib.hiPrio pkgs.insomnia)
+    pkgs.nixpkgs-fmt
+    pkgs.gh
+    pkgs.openvpn
+    pkgs.xorg.libxcvt
+    pkgs.nil
   ];
 
   programs = {
@@ -53,43 +97,39 @@ let
       enableZshIntegration = true;
     };
     broot = { enable = false; };
+    command-not-found = { enable = true; };
     direnv = {
       enable = true;
       enableZshIntegration = true;
     };
-    firefox = import ./config/firefox.nix { inherit lib pkgs; };
     fzf = {
       enable = true;
       enableZshIntegration = true;
     };
-    git = import ./config/git.nix;
     gpg = { enable = true; };
     home-manager = { enable = true; };
-    htop = import ./config/htop.nix;
     jq = { enable = true; };
-    kitty = import ./config/kitty.nix { inherit pkgs; };
-    tmux = import ./config/tmux.nix { inherit lib pkgs; };
-    zathura = import ./config/zathura.nix;
-    zsh = import ./config/zsh.nix {
-      inherit (args)
-        lib pkgs zsh-autosuggestions zsh-you-should-use
-        zsh-history-substring-search zsh-nix-shell;
+  };
+  services = {
+    blueman-applet = { enable = true; };
+    gpg-agent = {
+      enable = true;
+      pinentryPackage = pkgs.pinentry-qt;
     };
+    kdeconnect = {
+      enable = true;
+      indicator = true;
+    };
+    playerctld = { enable = true; };
+    udiskie = { enable = true; };
   };
 
-  home = { packages = packages; };
-in
-{
-  programs = lib.recursiveUpdate programs linux.programs;
+in {
+  inherit programs services;
   home = {
-    packages = home.packages ++ linux.home.packages;
+    inherit packages;
     stateVersion = "24.05";
-    file.".config/pgcli/config".text = builtins.readFile ./config/pgcli;
   };
-  gtk = linux.gtk;
-  xsession = linux.xsession;
-  # qt = linux.qt;
-  services = linux.services;
-  systemd = linux.systemd;
-  # xdg.configFile."keepassxc/keepassxc.ini".source = ./config/keepassxc.ini;
+
+  xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
 }

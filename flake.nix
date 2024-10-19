@@ -22,6 +22,7 @@
     zsh-nix-shell.url = "github:chisui/zsh-nix-shell";
     zsh-nix-shell.flake = false;
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    keepmenu.url = "github:firecat53/keepmenu";
   };
 
   outputs =
@@ -38,6 +39,7 @@
     , zsh-you-should-use
     , zsh-history-substring-search
     , zsh-nix-shell
+    , keepmenu
     }: {
       #nix.registry.nixpkgs.flake = nixpkgs;
       nixosConfigurations.betazed = nixpkgs.lib.nixosSystem {
@@ -63,12 +65,11 @@
           ./cache.nix
           ./hardware/mordor.nix
           ./hosts/mordor.nix
-          ./base.nix
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           nixos-hardware.nixosModules.lenovo-thinkpad-t14s
           { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay nix-vscode-extensions.overlays.default ]; }
-        ];   
+        ];
         specialArgs = {
           inherit zsh-autosuggestions zsh-you-should-use emacsConfiguration
             zsh-history-substring-search zsh-nix-shell;
