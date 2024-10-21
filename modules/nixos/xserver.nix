@@ -8,7 +8,7 @@
     xkb = {
       layout = "us,se";
       variant = "";
-      options = "grp:alt_shift_toggle";
+      options = "grp:switch";
     };
     desktopManager = { xterm.enable = false; };
     videoDrivers = [ "intel" "displaylink" ];
