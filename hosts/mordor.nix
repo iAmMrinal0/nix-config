@@ -3,7 +3,8 @@
 
 {
   networking.hostName = "mordor";
-  imports = [ ../modules/adb.nix ../base.nix ];
+  imports =
+    [ ../modules/nixos/adb.nix ../base.nix ../modules/nixos/xserver.nix ../home.nix ];
   # powerManagement.resumeCommands =
   #  "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
 

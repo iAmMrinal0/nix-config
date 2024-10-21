@@ -1,7 +1,8 @@
-args@{ lib, pkgs, ... }:
+inputs@{ lib, config, pkgs, ... }:
 
 let
-
+  emacsConfig =
+    import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
   packages = [
     pkgs.keepassxc
     pkgs.slack
@@ -32,7 +33,7 @@ let
     pkgs.terminator
     pkgs.tree
     pkgs.yq
-    (pkgs.emacsWithPackagesFromUsePackage (args.emacsConfig))
+    (pkgs.emacsWithPackagesFromUsePackage (emacsConfig))
     pkgs.sqlite
     pkgs.pgcli
     pkgs.rlwrap
@@ -91,45 +92,62 @@ let
     pkgs.nil
   ];
 
-  programs = {
-    atuin = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-    broot = { enable = false; };
-    command-not-found = { enable = true; };
-    direnv = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-    fzf = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-    gpg = { enable = true; };
-    home-manager = { enable = true; };
-    jq = { enable = true; };
-  };
-  services = {
-    blueman-applet = { enable = true; };
-    gpg-agent = {
-      enable = true;
-      pinentryPackage = pkgs.pinentry-qt;
-    };
-    kdeconnect = {
-      enable = true;
-      indicator = true;
-    };
-    playerctld = { enable = true; };
-    udiskie = { enable = true; };
-  };
-
 in {
-  inherit programs services;
-  home = {
-    inherit packages;
-    stateVersion = "24.05";
-  };
+  home-manager = {
+    users = {
+      iammrinal0 = { pkgs, ... }: {
+        xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
+        services = {
+          blueman-applet = { enable = true; };
+          gpg-agent = {
+            enable = true;
+            pinentryPackage = pkgs.pinentry-qt;
+          };
+          kdeconnect = {
+            enable = true;
+            indicator = true;
+          };
+          playerctld = { enable = true; };
+          udiskie = { enable = true; };
+        };
 
-  xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
+        programs = {
+          atuin = {
+            enable = true;
+            enableZshIntegration = true;
+          };
+          broot = { enable = false; };
+          command-not-found = { enable = true; };
+          direnv = {
+            enable = true;
+            enableZshIntegration = true;
+          };
+          fzf = {
+            enable = true;
+            enableZshIntegration = true;
+          };
+          gpg = { enable = true; };
+          home-manager = { enable = true; };
+          jq = { enable = true; };
+        };
+
+        home = {
+          inherit packages;
+          stateVersion = "24.05";
+        };
+
+        imports = [
+          (import ./modules/home-manager {
+            inherit pkgs;
+            inherit (inputs)
+              zsh-autosuggestions zsh-you-should-use
+              zsh-history-substring-search zsh-nix-shell;
+          })
+        ];
+      };
+    };
+    useUserPackages = true;
+    useGlobalPkgs = true;
+    extraSpecialArgs = { emacsConfig = emacsConfig; };
+  };
 }

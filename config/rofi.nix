@@ -10,7 +10,7 @@
   # extraConfig = { };
   # scrollbar = false;
   # terminal = "${pkgs.kitty}/bin/kitty";
-  font = "Iosevka 25";
+  # font = "Iosevka 25";
   theme = "gruvbox-dark-hard";
   extraConfig = {
     # hide-scrollbar = true;

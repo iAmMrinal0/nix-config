@@ -27,7 +27,7 @@
       enable = true;
       plugins = [ "command-not-found" "docker" "extract" "git" "sudo" ];
       theme = "mod_steeef";
-      custom = "${pkgs.callPackage ../config/modSteeefZsh.nix { }}";
+      custom = "${pkgs.callPackage ./modSteeefZsh.nix { }}";
     };
     plugins = [
       {

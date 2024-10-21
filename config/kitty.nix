@@ -7,7 +7,7 @@
     name = "Iosevka";
   };
   settings = {
-    font_size = "25.0";
+    font_size = "16.0";
     cursor_shape = "beam";
     scrollback_lines = 100000;
     # background_opacity = "0.3";

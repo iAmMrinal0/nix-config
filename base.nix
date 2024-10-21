@@ -68,8 +68,6 @@ in {
   #    lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
   #};
 
-  imports = [ ./modules/xserver.nix ];
-
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot = { enable = true; };
   boot.loader.efi.canTouchEfiVariables = true;
@@ -277,39 +275,5 @@ in {
       "wheel"
     ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
-  };
-
-  home-manager = {
-    users = {
-      iammrinal0 = { pkgs, ... }: {
-        imports = [
-          ./home.nix
-          ./modules/autorandr.nix
-          ./modules/dunstrc.nix
-          ./modules/chromium.nix
-          ./modules/feh.nix
-          ./modules/rofi.nix
-          ./modules/git.nix
-          ./modules/tmux.nix
-          ./modules/picom.nix
-          ./modules/zathura.nix
-          ./modules/kitty.nix
-          ./modules/htop.nix
-          ./modules/firefox.nix
-          ./modules/gtk.nix
-          ./modules/systemd.nix
-          ./modules/xsession.nix
-          ./modules/qt.nix
-          (import ./modules/zsh.nix {
-            inherit pkgs;
-            inherit (inputs)
-              zsh-autosuggestions zsh-you-should-use
-              zsh-history-substring-search zsh-nix-shell;
-          })
-        ];
-      };
-    };
-    useGlobalPkgs = true;
-    extraSpecialArgs = { emacsConfig = emacsConfig; };
   };
 }
