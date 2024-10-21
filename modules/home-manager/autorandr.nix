@@ -16,7 +16,7 @@ let
 
 in {
   programs.autorandr = {enable = true;
-  hooks = { postswitch = { "change-background" = lib.readFile (pkgs.callPackage ../../scripts/wallpaper.nix { }); }; };
+  hooks = { postswitch = { "change-background" = lib.readFile (pkgs.callPackage ./common/wallpaper.nix { }); }; };
   profiles = {
     "default" = {
       inherit fingerprint;

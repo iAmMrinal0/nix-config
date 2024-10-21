@@ -1,6 +1,6 @@
 { lib, pkgs, ... }:
 
-let wallpaper = lib.readFile (pkgs.callPackage ../../scripts/wallpaper.nix { });
+let wallpaper = lib.readFile (pkgs.callPackage ./common/wallpaper.nix { });
 in {
   imports = [ ./i3 ];
   xsession = {
