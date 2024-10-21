@@ -49,7 +49,7 @@ in pkgs.writeTextFile {
     color=#87AFAF
 
     [volume]
-    label=
+    label= 
     instance=Master
     #instance=PCM
     interval=1
@@ -72,7 +72,7 @@ in pkgs.writeTextFile {
     #separator=false
 
     [load_average]
-    label=
+    label= 
     interval=1
 
     [battery]

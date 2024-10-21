@@ -3,21 +3,22 @@ inputs@{ pkgs, ... }:
 {
   imports = [
     ./autorandr.nix
-    ./dunstrc.nix
+    ./blueman-applet.nix
     ./chromium.nix
+    ./dunstrc.nix
     ./feh.nix
-    ./rofi.nix
-    ./git.nix
-    ./tmux.nix
-    ./picom.nix
-    ./zathura.nix
-    ./kitty.nix
-    ./htop.nix
     ./firefox.nix
+    ./git.nix
     ./gtk.nix
-    ./systemd.nix
-    ./xsession.nix
+    ./htop.nix
+    ./kitty.nix
+    ./picom.nix
     ./qt.nix
+    ./rofi.nix
+    ./systemd.nix
+    ./tmux.nix
+    ./xsession.nix
+    ./zathura.nix
     (import ./zsh {
       inherit pkgs;
       inherit (inputs)

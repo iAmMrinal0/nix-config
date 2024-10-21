@@ -98,7 +98,6 @@ in {
       iammrinal0 = { pkgs, ... }: {
         xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
         services = {
-          blueman-applet = { enable = true; };
           gpg-agent = {
             enable = true;
             pinentryPackage = pkgs.pinentry-qt;
