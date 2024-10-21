@@ -1,7 +1,7 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, inputs, ... }:
 
 let
-  lock = import ../../../scripts/lock.nix { inherit pkgs; };
+  lock = import ./lock.nix { inherit pkgs; };
   shutdownMenu = import ../../../scripts/shutdownMenu.nix { inherit pkgs lock; };
   rofiAutorandr = import ../../../scripts/rofiAutorandr.nix { inherit pkgs; };
   i3blocksConf = pkgs.callPackage ./i3blocks.nix { };
@@ -180,7 +180,7 @@ in {
         "Return" = "exec ${pkgs.kitty}/bin/kitty";
         "Shift+Return" = "exec ${pkgs.kitty}/bin/kitty tmux";
         "g" = "exec ${pkgs.wmfocus}/bin/wmfocus --fill -c asdf --textcolor red";
-        "Control+k" = "exec ${pkgs.keepmenu}/bin/keepmenu";
+        "Control+k" = "exec ${inputs.keepmenu}/bin/keepmenu";
         "Control+p" = "exec ${pkgs.rofimoji}/bin/rofimoji --action copy";
         "t" = ''
           exec ${pkgs.libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%U`"'';

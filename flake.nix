@@ -25,7 +25,7 @@
     keepmenu.url = "github:firecat53/keepmenu";
   };
 
-  outputs = { self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
+  outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
     , nixos-hardware, emacsConfiguration, nix-vscode-extensions
     , zsh-autosuggestions, zsh-you-should-use, zsh-history-substring-search
     , zsh-nix-shell, keepmenu }: {
@@ -64,10 +64,7 @@
             ];
           }
         ];
-        specialArgs = {
-          inherit zsh-autosuggestions zsh-you-should-use emacsConfiguration
-            zsh-history-substring-search zsh-nix-shell;
-        };
+        specialArgs = { inherit inputs; };
       };
     };
 }

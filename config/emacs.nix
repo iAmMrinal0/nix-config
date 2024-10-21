@@ -1,7 +1,7 @@
-{ pkgs, emacsConfiguration, ... }:
+{ pkgs, inputs, ... }:
 
 {
-  config = "${emacsConfiguration}/init.el";
+  config = "${inputs.emacsConfiguration}/init.el";
   defaultInitFile = true;
   package = pkgs.emacs-unstable;
   extraEmacsPackages = epkgs:

@@ -1,9 +1,10 @@
-inputs@{ lib, config, pkgs, ... }:
+{ lib, inputs, pkgs, ... }:
 
 let
   emacsConfig =
-    import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
+    import ./config/emacs.nix { inherit inputs pkgs; };
   packages = [
+    pkgs.eza
     pkgs.keepassxc
     pkgs.slack
     pkgs.cachix
@@ -66,7 +67,7 @@ let
     pkgs.dunst
     pkgs.dconf
     pkgs.gnome.nautilus
-    pkgs.keepmenu
+    inputs.keepmenu
     pkgs.lsof
     pkgs.netcat-gnu
     pkgs.nix-diff
@@ -136,17 +137,12 @@ in {
         };
 
         imports = [
-          (import ./modules/home-manager {
-            inherit pkgs;
-            inherit (inputs)
-              zsh-autosuggestions zsh-you-should-use
-              zsh-history-substring-search zsh-nix-shell;
-          })
+          ./modules/home-manager
         ];
       };
     };
     useUserPackages = true;
     useGlobalPkgs = true;
-    extraSpecialArgs = { emacsConfig = emacsConfig; };
+    extraSpecialArgs = { inherit inputs; };
   };
 }

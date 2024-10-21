@@ -1,4 +1,4 @@
-inputs@{ pkgs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -19,11 +19,6 @@ inputs@{ pkgs, ... }:
     ./tmux.nix
     ./xsession.nix
     ./zathura.nix
-    (import ./zsh {
-      inherit pkgs;
-      inherit (inputs)
-        zsh-autosuggestions zsh-you-should-use zsh-history-substring-search
-        zsh-nix-shell;
-    })
+    ./zsh
   ];
 }

@@ -1,8 +1,8 @@
-inputs@{ lib, config, pkgs, ... }:
+{ lib, config, inputs, pkgs, ... }:
 
 let
   emacsConfig =
-    import ./config/emacs.nix { inherit (inputs) pkgs emacsConfiguration; };
+    import ./config/emacs.nix { inherit inputs pkgs; };
   secrets = [ "service-access-host" "service-access-key" "nixpkgs-review" ];
   defaultPermissions = secret: {
     ${secret} = {

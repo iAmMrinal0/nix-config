@@ -1,4 +1,4 @@
-{ pkgs, zsh-autosuggestions, zsh-you-should-use, zsh-nix-shell, ... }:
+{ pkgs, inputs, ... }:
 
 {
   programs.zsh = {
@@ -32,7 +32,7 @@
     plugins = [
       {
         name = "zsh-autosuggestions";
-        src = "${zsh-autosuggestions}";
+        src = "${inputs.zsh-autosuggestions}";
       }
       {
         name = "nix-zsh-completions";
@@ -44,7 +44,7 @@
       }
       {
         name = "you-should-use";
-        src = zsh-you-should-use;
+        src = inputs.zsh-you-should-use;
       }
       # {
       #   name = "zsh-history-substring-search";
@@ -53,7 +53,7 @@
       {
         name = "zsh-nix-shell";
         file = "nix-shell.plugin.zsh";
-        src = zsh-nix-shell;
+        src = inputs.zsh-nix-shell;
       }
     ];
   };
