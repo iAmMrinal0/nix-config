@@ -252,6 +252,8 @@ in {
 
         "Print" = "${pkgs.gnome.gnome-screenshot}/bin/gnome-screenshot -i";
 
+        "Control+mod1+c" = "${pkgs.rofi}/bin/rofi -show calc -modi calc -no-show-match -no-sort";
+
         "Control+mod1+l" = "${lock}";
 
         # dunst shortcuts
