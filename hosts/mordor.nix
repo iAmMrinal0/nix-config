@@ -22,6 +22,7 @@
   services.xserver = {
     monitorSection = ''
       Modeline "2560x1440"  312.25  2560 2752 3024 3488  1440 1443 1448 1493 -hsync +vsync
+      Modeline "1920x1080"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
     '';
     deviceSection = ''
       Option "ModeValidation" "AllowNonEdidModes"
