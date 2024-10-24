@@ -196,7 +196,7 @@ in {
       alsa.support32Bit = true;
     };
     touchegg = { enable = true; };
-    # printing = { enable = true; };
+    printing = { enable = true; };
   };
 
   hardware = {
