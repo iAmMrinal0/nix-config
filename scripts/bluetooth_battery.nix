@@ -3,7 +3,7 @@
 pkgs.writeShellScript "bluetooth_battery" ''
   devices='[
     {"device":"WH-1000XM3","serial":"CC:98:8B:F5:09:D3"},
-    {"device":"WH-1000XM4","serial":"CC:98:8B:F5:09:D4"}
+    {"device":"LE_WH-1000XM3","serial":"CC:98:8B:F5:09:D3"}
   ]'
 
   # Iterate over each device in the JSON array
