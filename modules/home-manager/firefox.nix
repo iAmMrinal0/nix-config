@@ -5,12 +5,14 @@
     enable = true;
     profiles = {
       default.settings = {
-        "browser.sessionstore.warnOnQuit" = false;
+        "accessibility.typeaheadfind.soundURL" = "";
         "browser.aboutConfig.showWarning" = false;
         "browser.ctrlTab.recentlyUsedOrder" = false;
         "browser.download.panel.shown" = true;
         "browser.newtab.extensionControlled" = true;
         "browser.newtab.privateAllowed" = true;
+        "browser.sessionstore.warnOnQuit" = false;
+        "browser.warnOnQuit" = false;
         "findbar.highlightAll" = true;
         "privacy.donottrackheader.enabled" = true;
         "signon.autofillForms" = false;
