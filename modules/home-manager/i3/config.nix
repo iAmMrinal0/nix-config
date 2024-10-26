@@ -2,8 +2,8 @@
 
 let
   lock = import ./lock.nix { inherit pkgs; };
-  shutdownMenu = import ../../../scripts/shutdownMenu.nix { inherit pkgs lock; };
-  rofiAutorandr = import ../../../scripts/rofiAutorandr.nix { inherit pkgs; };
+  shutdownMenu = import ./scripts/shutdownMenu.nix { inherit pkgs lock; };
+  rofiAutorandr = import ./scripts/rofiAutorandr.nix { inherit pkgs; };
   i3blocksConf = pkgs.callPackage ./i3blocks.nix { };
 
   fontSize = 10.8;
