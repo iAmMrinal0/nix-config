@@ -86,7 +86,6 @@ let
     pkgs.ranger
     pkgs.nodejs
     (lib.hiPrio pkgs.insomnia)
-    pkgs.nixpkgs-fmt
     pkgs.gh
     pkgs.openvpn
     pkgs.xorg.libxcvt
@@ -95,6 +94,7 @@ let
 
 in {
   home-manager = {
+    backupFileExtension = "hm-backup";
     users = {
       iammrinal0 = { pkgs, ... }: {
         xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
