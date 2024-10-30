@@ -12,16 +12,14 @@ let
     };
   };
 
-  vscodeExtensions = with pkgs.vscode-marketplace;
-    [
+  vscodeExtensions = (with pkgs.vscode-extensions; [ github.copilot-chat ]) ++
+     (with pkgs.vscode-marketplace; [
       ms-vscode-remote.vscode-remote-extensionpack
       ms-vscode.remote-explorer
       ms-vsliveshare.vsliveshare
       ms-python.vscode-pylance
       ms-python.python
       github.copilot
-      github.copilot-chat
-      # lfs.vscode-emacs-friendly
     ] ++ (with pkgs.open-vsx; [
       ahmadalli.vscode-nginx-conf
       bbenoist.nix
@@ -42,9 +40,9 @@ let
       jock.svg
       joeandaverde.sqitch-plan
       justusadam.language-haskell
-      mel-brown.haskell-yesod-quasiquotes
       miguelsolorio.fluent-icons
       mkhl.direnv
+      william-voyek.vscode-nginx
       ms-azuretools.vscode-docker
       ms-python.black-formatter
       ms-vscode-remote.remote-ssh
@@ -53,12 +51,29 @@ let
       raynigon.nginx-formatter
       redhat.vscode-yaml
       statelyai.stately-vscode
-      vscodeemacs.emacs
-      # lfs.vscode-emacs-friendly
-    ]);
+      # vscodeemacs.emacs
+      lfs.vscode-emacs-friendly
+      graphql.vscode-graphql-syntax
+      tootone.org-mode
+    ]));
 
   vscode-with-extensions = pkgs.vscode-with-extensions.override {
-    vscodeExtensions = vscodeExtensions;
+    vscodeExtensions = vscodeExtensions ++ [
+      ((pkgs.vscode-utils.buildVscodeExtension {
+        name = "haskell-yesod-quasiquotes-0.1.2";
+        src = pkgs.fetchFromGitHub {
+          owner = "kronor-io";
+          repo = "haskell-yesod-quasiquotes";
+          rev = "8e4cf69c049c950ef8ae583039939e25d8a3a36c";
+          sha256 = "sha256-vnNiYxHRnYCyMC6ciMoPEgnLYsEN8DiaSdXp39x70Ak=";
+        };
+        version = "0.1.2";
+        vscodeExtName = "haskell-yesod-quasiquotes";
+        vscodeExtPublisher = "mel-brown";
+        vscodeExtUniqueId = "mel-brown.haskell-yesod-quasiquotes";
+      }).overrideAttrs
+        (_: { sourceRoot = null; }))
+    ];
   };
 in {
 
