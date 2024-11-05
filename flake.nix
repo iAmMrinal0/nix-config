@@ -23,12 +23,14 @@
     zsh-nix-shell.flake = false;
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     keepmenu.url = "github:firecat53/keepmenu";
+    haskell-yesod-quasiquotes.url = "github:kronor-io/haskell-yesod-quasiquotes";
+    haskell-yesod-quasiquotes.flake = false;
   };
 
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
     , nixos-hardware, emacsConfiguration, nix-vscode-extensions
     , zsh-autosuggestions, zsh-you-should-use, zsh-history-substring-search
-    , zsh-nix-shell, keepmenu }: {
+    , zsh-nix-shell, keepmenu, haskell-yesod-quasiquotes }: {
       nixosConfigurations.betazed = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [

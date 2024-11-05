@@ -61,12 +61,7 @@ let
     vscodeExtensions = vscodeExtensions ++ [
       ((pkgs.vscode-utils.buildVscodeExtension {
         name = "haskell-yesod-quasiquotes-0.1.2";
-        src = pkgs.fetchFromGitHub {
-          owner = "kronor-io";
-          repo = "haskell-yesod-quasiquotes";
-          rev = "8e4cf69c049c950ef8ae583039939e25d8a3a36c";
-          sha256 = "sha256-vnNiYxHRnYCyMC6ciMoPEgnLYsEN8DiaSdXp39x70Ak=";
-        };
+        src = inputs.haskell-yesod-quasiquotes;
         version = "0.1.2";
         vscodeExtName = "haskell-yesod-quasiquotes";
         vscodeExtPublisher = "mel-brown";
