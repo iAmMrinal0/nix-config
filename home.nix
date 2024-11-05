@@ -90,6 +90,9 @@ let
     pkgs.openvpn
     pkgs.xorg.libxcvt
     pkgs.nil
+    pkgs.gnome.dconf-editor
+    pkgs.transmission-gtk
+    pkgs.nvd
   ];
 
 in {
