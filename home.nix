@@ -60,7 +60,7 @@ let
     pkgs.pavucontrol
     pkgs.playerctl
     pkgs.xdotool
-    pkgs.qt5ct
+    pkgs.libsForQt5.qt5ct
     pkgs.acpi
     pkgs.arandr
     pkgs.discord
@@ -93,6 +93,7 @@ let
     pkgs.gnome.dconf-editor
     pkgs.transmission-gtk
     pkgs.nvd
+    pkgs.btop
   ];
 
 in {
@@ -101,6 +102,9 @@ in {
     users = {
       iammrinal0 = { pkgs, ... }: {
         xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
+        dconf.settings."gnome/desktop/sound" = {
+          event-sounds = false;
+        };
         services = {
           gpg-agent = {
             enable = true;

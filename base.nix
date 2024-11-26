@@ -1,8 +1,6 @@
 { lib, config, inputs, pkgs, ... }:
 
 let
-  emacsConfig =
-    import ./config/emacs.nix { inherit inputs pkgs; };
   secrets = [ "service-access-host" "service-access-key" "nixpkgs-review" ];
   defaultPermissions = secret: {
     ${secret} = {
@@ -12,50 +10,52 @@ let
     };
   };
 
-  vscodeExtensions = (with pkgs.vscode-extensions; [ github.copilot-chat ]) ++
-     (with pkgs.vscode-marketplace; [
-      ms-vscode-remote.vscode-remote-extensionpack
-      ms-vscode.remote-explorer
-      ms-vsliveshare.vsliveshare
-      ms-python.vscode-pylance
-      ms-python.python
-      github.copilot
-    ] ++ (with pkgs.open-vsx; [
-      ahmadalli.vscode-nginx-conf
-      bbenoist.nix
-      berberman.vscode-cabal-fmt
-      bierner.markdown-mermaid
-      bigmoon.language-yesod
-      davidanson.vscode-markdownlint
-      dhall.dhall-lang
-      dhall.vscode-dhall-lsp-server
-      dksedgwick.xstviz
-      eamodio.gitlens
-      editorconfig.editorconfig
-      github.vscode-pull-request-github
-      hashicorp.terraform
-      haskell.haskell
-      jdinhlife.gruvbox
-      jnoortheen.nix-ide
-      jock.svg
-      joeandaverde.sqitch-plan
-      justusadam.language-haskell
-      miguelsolorio.fluent-icons
-      mkhl.direnv
-      william-voyek.vscode-nginx
-      ms-azuretools.vscode-docker
-      ms-python.black-formatter
-      ms-vscode-remote.remote-ssh
-      ms-vsliveshare.vsliveshare
-      pkief.material-icon-theme
-      raynigon.nginx-formatter
-      redhat.vscode-yaml
-      statelyai.stately-vscode
-      # vscodeemacs.emacs
-      lfs.vscode-emacs-friendly
-      graphql.vscode-graphql-syntax
-      tootone.org-mode
-    ]));
+  vscodeExtensions = (with pkgs.vscode-extensions; [ github.copilot-chat ])
+    ++ (with pkgs.vscode-marketplace;
+      [
+        ms-vscode-remote.vscode-remote-extensionpack
+        ms-vscode.remote-explorer
+        ms-vsliveshare.vsliveshare
+        ms-python.vscode-pylance
+        ms-python.python
+        github.copilot
+        pkief.material-icon-theme
+      ] ++ (with pkgs.open-vsx; [
+	mechatroner.rainbow-csv
+        ahmadalli.vscode-nginx-conf
+        bbenoist.nix
+        berberman.vscode-cabal-fmt
+        bierner.markdown-mermaid
+        bigmoon.language-yesod
+        davidanson.vscode-markdownlint
+        dhall.dhall-lang
+        dhall.vscode-dhall-lsp-server
+        dksedgwick.xstviz
+        eamodio.gitlens
+        editorconfig.editorconfig
+        github.vscode-pull-request-github
+        hashicorp.terraform
+        haskell.haskell
+        jdinhlife.gruvbox
+        jnoortheen.nix-ide
+        jock.svg
+        joeandaverde.sqitch-plan
+        justusadam.language-haskell
+        miguelsolorio.fluent-icons
+        mkhl.direnv
+        william-voyek.vscode-nginx
+        ms-azuretools.vscode-docker
+        ms-python.black-formatter
+        ms-vscode-remote.remote-ssh
+        ms-vsliveshare.vsliveshare
+        raynigon.nginx-formatter
+        redhat.vscode-yaml
+        statelyai.stately-vscode
+        # vscodeemacs.emacs
+        lfs.vscode-emacs-friendly
+        graphql.vscode-graphql-syntax
+        tootone.org-mode
+      ]));
 
   vscode-with-extensions = pkgs.vscode-with-extensions.override {
     vscodeExtensions = vscodeExtensions ++ [
@@ -66,8 +66,7 @@ let
         vscodeExtName = "haskell-yesod-quasiquotes";
         vscodeExtPublisher = "mel-brown";
         vscodeExtUniqueId = "mel-brown.haskell-yesod-quasiquotes";
-      }).overrideAttrs
-        (_: { sourceRoot = null; }))
+      }).overrideAttrs (_: { sourceRoot = null; }))
     ];
   };
 in {

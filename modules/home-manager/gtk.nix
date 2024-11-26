@@ -3,7 +3,7 @@
 {gtk = {
   enable = true;
   font.package = pkgs.cantarell-fonts;
-  font.name = "Cantarell 11";
+  font.name = "Cantarell Regular 12";
   iconTheme.package = pkgs.paper-icon-theme;
   iconTheme.name = "Paper";
   theme.name = "Adwaita-dark";
@@ -13,8 +13,8 @@
     gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
     gtk-button-images=1
     gtk-menu-images=1
-    gtk-enable-event-sounds=1
-    gtk-enable-input-feedback-sounds=1
+    gtk-enable-event-sounds=0
+    gtk-enable-input-feedback-sounds=0
     gtk-xft-antialias=1
     gtk-xft-hinting=1
     gtk-xft-hintstyle=hintfull
