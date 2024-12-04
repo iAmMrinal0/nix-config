@@ -42,7 +42,6 @@ let
     pkgs.alsa-utils
     pkgs.pulseaudio
     pkgs.xorg.xdpyinfo
-    pkgs.element-desktop
     pkgs.gnome.gnome-screenshot
     pkgs.google-chrome
     pkgs.xarchiver

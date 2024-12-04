@@ -7,6 +7,7 @@
       # package = pkgs.iosevka;
       name = "Iosevka";
     };
+    shellIntegration.enableZshIntegration = false;
     themeFile = "gruvbox-dark-hard";
     settings = {
       font_size = "16.0";

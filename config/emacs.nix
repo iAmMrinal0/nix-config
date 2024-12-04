@@ -27,7 +27,6 @@
       groovy-mode
       gruvbox-theme
       haskell-mode
-      # hasky-extensions
       helm
       helm-ag
       helm-projectile

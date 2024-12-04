@@ -181,7 +181,7 @@ in {
     emacs = {
       enable = true;
       package = pkgs.emacs-unstable;
-      defaultEditor = true;
+      # defaultEditor = true;
       install = true;
     };
     blueman = { enable = true; };
@@ -285,4 +285,31 @@ in {
     ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
+
+  system.activationScripts.diff = ''
+    if [[ -e /run/current-system ]]; then
+      ${pkgs.nix}/bin/nix store diff-closures /run/current-system "$systemConfig"
+    fi
+  '';
+
+  networking.extraHosts =
+  ''
+  127.0.0.1 bankid.local
+  127.0.0.1 swish.local
+  127.0.0.1 mss.swish.local
+  127.0.0.1 uc.local
+  127.0.0.1 mock.local
+  127.0.0.1 finsharkauth.local
+  127.0.0.1 finsharkapi.local
+  127.0.0.1 boozt.finance.local
+  127.0.0.1 reepay.local
+  127.0.0.1 reepay.checkout.local
+  127.0.0.1 braintree.local
+  127.0.0.1 slack.local
+  127.0.0.1 paypal.local
+  127.0.0.1 valitor.local
+  127.0.0.1 clearhaus.local
+  127.0.0.1 enablebanking.local
+  127.0.0.1 przelewy24.local
+  '';
 }
