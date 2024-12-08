@@ -311,5 +311,6 @@ in {
   127.0.0.1 clearhaus.local
   127.0.0.1 enablebanking.local
   127.0.0.1 przelewy24.local
+  127.0.0.1 api.nordeaopenbanking.local
   '';
 }
