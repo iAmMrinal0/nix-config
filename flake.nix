@@ -60,7 +60,7 @@
           nixos-hardware.nixosModules.lenovo-thinkpad-t14s
           {
             nixpkgs.overlays = [
-              nur.overlay
+              nur.overlays.default
               emacs-overlay.overlay
               nix-vscode-extensions.overlays.default
             ];
