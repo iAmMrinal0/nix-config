@@ -99,8 +99,9 @@ in {
     '';
     gc = {
       automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 30d";
+      dates = "daily";
+      randomizedDelaySec = "14m";
+      options = "--delete-older-than 10d";
     };
     optimise = {
       automatic = true;
