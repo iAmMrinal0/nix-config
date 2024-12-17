@@ -42,7 +42,7 @@ let
     pkgs.alsa-utils
     pkgs.pulseaudio
     pkgs.xorg.xdpyinfo
-    pkgs.gnome.gnome-screenshot
+    pkgs.gnome-screenshot
     pkgs.google-chrome
     pkgs.xarchiver
     pkgs.xfce.thunar
@@ -65,7 +65,7 @@ let
     pkgs.discord
     pkgs.dunst
     pkgs.dconf
-    pkgs.gnome.nautilus
+    pkgs.nautilus
     inputs.keepmenu
     pkgs.lsof
     pkgs.netcat-gnu
@@ -79,7 +79,7 @@ let
     pkgs.xorg.xkill
     pkgs.lxappearance
     pkgs.arc-theme
-    pkgs.gnome.adwaita-icon-theme
+    pkgs.adwaita-icon-theme
     pkgs.papirus-icon-theme
     pkgs.paper-icon-theme
     pkgs.ranger
@@ -89,8 +89,8 @@ let
     pkgs.openvpn
     pkgs.xorg.libxcvt
     pkgs.nil
-    pkgs.gnome.dconf-editor
-    pkgs.transmission-gtk
+    pkgs.dconf-editor
+    pkgs.transmission_4-gtk
     pkgs.nvd
     pkgs.btop
   ];

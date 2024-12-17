@@ -98,7 +98,7 @@ in {
         {
           command = "${pkgs.xorg.xset}/bin/xset -b";
         }
-        # { command = "${pkgs.transmission-gtk}/bin/transmission-gtk --minimized"; }
+        # { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
         {
           command =
             "${pkgs.plasma5Packages.kdeconnect-kde}/bin/kdeconnect-indicator";
@@ -250,7 +250,7 @@ in {
         "XF86AudioMicMute" =
           "${pkgs.pulseaudio}/bin/pactl set-source-mute 0 toggle";
 
-        "Print" = "${pkgs.gnome.gnome-screenshot}/bin/gnome-screenshot -i";
+        "Print" = "${pkgs.gnome-screenshot}/bin/gnome-screenshot -i";
 
         "Control+mod1+c" = "${pkgs.rofi}/bin/rofi -show calc -modi calc -no-show-match -no-sort";
 

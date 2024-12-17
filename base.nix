@@ -176,7 +176,7 @@ in {
       };
     };
     udev.packages = [ pkgs.yubikey-personalization ];
-    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.gnome.seahorse ];
+    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.seahorse ];
     dnsmasq = { enable = true; };
     emacs = {
       enable = true;
@@ -265,8 +265,8 @@ in {
       pkgs.hasklig
       pkgs.iosevka
       pkgs.source-code-pro
-      pkgs.nerdfonts
-    ];
+      # pkgs.nerdfonts
+    ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerdfonts);
     fontconfig = { enable = true; };
   };
 

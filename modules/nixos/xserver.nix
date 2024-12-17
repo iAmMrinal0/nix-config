@@ -11,7 +11,7 @@
       options = "grp:switch";
     };
     desktopManager = { xterm.enable = false; };
-    videoDrivers = [ "intel" "displaylink" ];
+    videoDrivers = [ "modesetting" "displaylink" ];
     windowManager.i3 = {
       enable = true;
       extraPackages = [
