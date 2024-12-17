@@ -23,7 +23,8 @@
     zsh-nix-shell.flake = false;
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     keepmenu.url = "github:firecat53/keepmenu";
-    haskell-yesod-quasiquotes.url = "github:kronor-io/haskell-yesod-quasiquotes";
+    haskell-yesod-quasiquotes.url =
+      "github:kronor-io/haskell-yesod-quasiquotes";
     haskell-yesod-quasiquotes.flake = false;
   };
 
@@ -41,7 +42,13 @@
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           nixos-hardware.nixosModules.lenovo-thinkpad-t480
-          { nixpkgs.overlays = [ nur.overlay emacs-overlay.overlay nix-vscode-extensions.overlays.default ]; }
+          {
+            nixpkgs.overlays = [
+              nur.overlay
+              emacs-overlay.overlay
+              nix-vscode-extensions.overlays.default
+            ];
+          }
         ];
         specialArgs = {
           inherit zsh-autosuggestions zsh-you-should-use

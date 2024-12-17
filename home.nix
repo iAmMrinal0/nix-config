@@ -1,8 +1,7 @@
 { lib, inputs, pkgs, ... }:
 
 let
-  emacsConfig =
-    import ./config/emacs.nix { inherit inputs pkgs; };
+  emacsConfig = import ./config/emacs.nix { inherit inputs pkgs; };
   packages = [
     pkgs.eza
     pkgs.keepassxc
@@ -101,9 +100,7 @@ in {
     users = {
       iammrinal0 = { pkgs, ... }: {
         xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
-        dconf.settings."gnome/desktop/sound" = {
-          event-sounds = false;
-        };
+        dconf.settings."gnome/desktop/sound" = { event-sounds = false; };
         services = {
           gpg-agent = {
             enable = true;
@@ -142,9 +139,7 @@ in {
           stateVersion = "24.05";
         };
 
-        imports = [
-          ./modules/home-manager
-        ];
+        imports = [ ./modules/home-manager ];
       };
     };
     useUserPackages = true;

@@ -21,7 +21,7 @@ let
         github.copilot
         pkief.material-icon-theme
       ] ++ (with pkgs.open-vsx; [
-	mechatroner.rainbow-csv
+        mechatroner.rainbow-csv
         ahmadalli.vscode-nginx-conf
         bbenoist.nix
         berberman.vscode-cabal-fmt
@@ -267,7 +267,8 @@ in {
       pkgs.iosevka
       pkgs.source-code-pro
       # pkgs.nerdfonts
-    ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerdfonts);
+    ] ++ builtins.filter lib.attrsets.isDerivation
+      (builtins.attrValues pkgs.nerdfonts);
     fontconfig = { enable = true; };
   };
 
@@ -293,25 +294,24 @@ in {
     fi
   '';
 
-  networking.extraHosts =
-  ''
-  127.0.0.1 bankid.local
-  127.0.0.1 swish.local
-  127.0.0.1 mss.swish.local
-  127.0.0.1 uc.local
-  127.0.0.1 mock.local
-  127.0.0.1 finsharkauth.local
-  127.0.0.1 finsharkapi.local
-  127.0.0.1 boozt.finance.local
-  127.0.0.1 reepay.local
-  127.0.0.1 reepay.checkout.local
-  127.0.0.1 braintree.local
-  127.0.0.1 slack.local
-  127.0.0.1 paypal.local
-  127.0.0.1 valitor.local
-  127.0.0.1 clearhaus.local
-  127.0.0.1 enablebanking.local
-  127.0.0.1 przelewy24.local
-  127.0.0.1 api.nordeaopenbanking.local
+  networking.extraHosts = ''
+    127.0.0.1 bankid.local
+    127.0.0.1 swish.local
+    127.0.0.1 mss.swish.local
+    127.0.0.1 uc.local
+    127.0.0.1 mock.local
+    127.0.0.1 finsharkauth.local
+    127.0.0.1 finsharkapi.local
+    127.0.0.1 boozt.finance.local
+    127.0.0.1 reepay.local
+    127.0.0.1 reepay.checkout.local
+    127.0.0.1 braintree.local
+    127.0.0.1 slack.local
+    127.0.0.1 paypal.local
+    127.0.0.1 valitor.local
+    127.0.0.1 clearhaus.local
+    127.0.0.1 enablebanking.local
+    127.0.0.1 przelewy24.local
+    127.0.0.1 api.nordeaopenbanking.local
   '';
 }

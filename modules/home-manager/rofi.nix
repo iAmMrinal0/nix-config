@@ -12,9 +12,7 @@
     # scrollbar = false;
     # terminal = "${pkgs.kitty}/bin/kitty";
     # font = "Iosevka 25";
-    plugins = [
-      pkgs.rofi-calc
-    ];
+    plugins = [ pkgs.rofi-calc ];
     theme = "gruvbox-dark-hard";
     extraConfig = {
       # hide-scrollbar = true;
