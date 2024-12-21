@@ -1,8 +1,10 @@
 keys:
-  - &iammrinal0 76f930ad05aaa18fb3c64fdd88024e24c8eb45d5
-  - &betazed d05d0f7e9c1aa2be12b7e8d4f9696e87829def1f
+  - &age_betazed_iammrinal0 age1yk2lqwvacdnvce9phpks99yacrcd7vp49gtexnsskesntgh0pavsal6583
+  - &age_betazed age1csat6txgrfmvxcxe0hzfpcv0lk8x4t50ah53jdst7xms0v9m6u6sg3hu8r
+  - &age_mordor age1spq30m6hvgmcc37p9cte9xk90q09zzacs0xsm83p5huges5n490smncmy5
 creation_rules:
   - key_groups:
-      - pgp:
-          - *iammrinal0
-          - *betazed
+      - age:
+          - *age_betazed_iammrinal0
+          - *age_betazed
+          - *age_mordor
