@@ -71,11 +71,11 @@ let
   };
 in {
 
-  #sops = {
-  #  defaultSopsFile = ./sops/secrets.yaml;
-  #  secrets =
-  #    lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
-  #};
+  sops = {
+    defaultSopsFile = ./sops/secrets.yaml;
+    secrets =
+      lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
+  };
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot = { enable = true; };
