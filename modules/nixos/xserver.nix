@@ -11,6 +11,11 @@
       options = "grp:switch";
     };
     desktopManager = { xterm.enable = false; };
+    displayManager = {
+      sessionCommands = ''
+        ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
+      '';
+    };
     videoDrivers = [ "modesetting" "displaylink" ];
     windowManager.i3 = {
       enable = true;
