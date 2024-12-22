@@ -43,10 +43,6 @@
     ];
   };
 
-  boot.tmp.useTmpfs = true;
-  boot.tmp.cleanOnBoot = true;
-  boot.plymouth.enable = true;
-
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
   services.tlp = {

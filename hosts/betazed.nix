@@ -2,6 +2,11 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ../base.nix
+    ../modules/nixos/xserver.nix
+    ../home.nix    
+  ];
   networking.hostName = "betazed";
   powerManagement.resumeCommands =
     "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";

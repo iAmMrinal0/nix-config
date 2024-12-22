@@ -314,4 +314,8 @@ in {
     127.0.0.1 przelewy24.local
     127.0.0.1 api.nordeaopenbanking.local
   '';
+
+  boot.tmp.useTmpfs = true;
+  boot.tmp.cleanOnBoot = true;
+  boot.plymouth.enable = true;
 }

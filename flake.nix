@@ -38,22 +38,19 @@
           ./cache.nix
           ./hardware/betazed.nix
           ./hosts/betazed.nix
-          ./base.nix
+          ./nix-config.nix
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           nixos-hardware.nixosModules.lenovo-thinkpad-t480
           {
             nixpkgs.overlays = [
-              nur.overlay
+              nur.overlays.default
               emacs-overlay.overlay
               nix-vscode-extensions.overlays.default
             ];
           }
         ];
-        specialArgs = {
-          inherit zsh-autosuggestions zsh-you-should-use
-            zsh-history-substring-search zsh-nix-shell;
-        };
+        specialArgs = { inherit inputs; };
       };
       nixosConfigurations.mordor = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
