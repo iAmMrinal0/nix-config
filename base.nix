@@ -160,6 +160,7 @@ in {
       pkgs.vim
       pkgs.yubikey-personalization
       vscode-with-extensions
+      inputs.ghostty.packages.x86_64-linux.default
     ];
     variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
   };
@@ -218,11 +219,6 @@ in {
     openrazer = {
       enable = true;
       users = [ config.users.users.iammrinal0.name ];
-    };
-    pulseaudio = {
-      enable = false;
-      package = pkgs.pulseaudioFull;
-      support32Bit = true;
     };
   };
 
