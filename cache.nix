@@ -15,6 +15,7 @@
     "https://nixfmt.cachix.org"
     "https://pre-commit-hooks.cachix.org"
     "https://static-haskell-nix.cachix.org"
+    "https://iammrinal0.cachix.org"
   ];
   nix.settings.trusted-public-keys = [
     "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
@@ -27,5 +28,6 @@
     "nixfmt.cachix.org-1:uyEQg16IhCFeDpFV07aL+Dbmh18XHVUqpkk/35WAgJI="
     "pre-commit-hooks.cachix.org-1:Pkk3Panw5AW24TOv6kz3PvLhlH8puAsJTBbOPmBo7Rc="
     "static-haskell-nix.cachix.org-1:Q17HawmAwaM1/BfIxaEDKAxwTOyRVhPG5Ji9K3+FvUU="
+    "iammrinal0.cachix.org-1:uWCwkRYptDrFnr4qxYyYFJZb4+e/QebcODAe8Of/ngc="
   ];
 }
