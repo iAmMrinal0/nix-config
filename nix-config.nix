@@ -6,4 +6,5 @@
   environment.etc."nix/inputs/nixpkgs".source = "${inputs.nixpkgs}";
   # https://github.com/NixOS/nix/issues/9574
   nix.settings.nix-path = lib.mkForce "nixpkgs=/etc/nix/inputs/nixpkgs";
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 }

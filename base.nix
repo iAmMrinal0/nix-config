@@ -20,6 +20,7 @@ let
       ms-python.python
       github.copilot
       pkief.material-icon-theme
+      ms-vscode-remote.remote-containers
     ] ++ (with pkgs.open-vsx; [
       mechatroner.rainbow-csv
       ahmadalli.vscode-nginx-conf
@@ -162,7 +163,7 @@ in
       pkgs.vim
       pkgs.yubikey-personalization
       vscode-with-extensions
-      inputs.ghostty.packages.x86_64-linux.default
+      pkgs.bitwarden
     ];
     variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
   };
