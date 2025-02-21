@@ -4,10 +4,11 @@
 {
   networking.hostName = "mordor";
   imports = [
-    ../modules/nixos/adb.nix
     ../base.nix
-    ../modules/nixos/xserver.nix
     ../home.nix
+    ../modules/nixos/adb.nix
+    ../modules/nixos/vscode.nix
+    ../modules/nixos/xserver.nix
   ];
   # powerManagement.resumeCommands =
   #  "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
