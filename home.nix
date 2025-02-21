@@ -1,4 +1,4 @@
-{ lib, inputs, pkgs, ... }:
+{ lib, inputs, config, pkgs, ... }:
 
 let
   emacsConfig = import ./config/emacs.nix { inherit inputs pkgs; };
@@ -98,9 +98,10 @@ in {
   home-manager = {
     backupFileExtension = "hm-backup";
     users = {
-      iammrinal0 = { pkgs, ... }: {
+      iammrinal0 = { pkgs, config, ... }: {
         xdg.configFile."pgcli/config".text = builtins.readFile ./config/pgcli;
         dconf.settings."gnome/desktop/sound" = { event-sounds = false; };
+        xdg.enable = true;
         services = {
           gpg-agent = {
             enable = true;
@@ -119,7 +120,7 @@ in {
             enable = true;
             enableZshIntegration = true;
           };
-          broot = { enable = false; };
+          broot = { enable = true; };
           command-not-found = { enable = true; };
           direnv = {
             enable = true;
@@ -137,6 +138,10 @@ in {
         home = {
           inherit packages;
           stateVersion = "24.05";
+          sessionVariables = {
+            SSH_AUTH_SOCK = "${config.xdg.dataHome}/ssh-agent";
+            BITWARDEN_SSH_AUTH_SOCK = "${config.home.sessionVariables.SSH_AUTH_SOCK}";
+          };
         };
 
         imports = [ ./modules/home-manager ];
