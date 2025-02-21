@@ -21,6 +21,7 @@ let
       github.copilot
       pkief.material-icon-theme
       ms-vscode-remote.remote-containers
+      github.vscode-pull-request-github
     ] ++ (with pkgs.open-vsx; [
       mechatroner.rainbow-csv
       ahmadalli.vscode-nginx-conf
@@ -34,7 +35,6 @@ let
       dksedgwick.xstviz
       eamodio.gitlens
       editorconfig.editorconfig
-      github.vscode-pull-request-github
       hashicorp.terraform
       haskell.haskell
       jdinhlife.gruvbox
