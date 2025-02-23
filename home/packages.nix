@@ -1,5 +1,9 @@
 { pkgs, lib, inputs }:
-with pkgs; [
+
+let
+  crow = pkgs.callPackage ../pkgs/crow { };
+  huenicorn = pkgs.callPackage ../pkgs/huenicorn { inherit crow; };
+in with pkgs; [
   # Development Tools
   eza
   cachix
@@ -41,7 +45,9 @@ with pkgs; [
   openvpn
 
   # Development Environment
-  (emacsWithPackagesFromUsePackage (import ../config/emacs.nix { inherit inputs pkgs; }))
+  (emacsWithPackagesFromUsePackage
+    (import ../config/emacs.nix { inherit inputs pkgs; }))
+  huenicorn
   sqlite
   pgcli
   rlwrap
