@@ -119,6 +119,7 @@ in
       };
     };
     udev.packages = [ pkgs.yubikey-personalization ];
+    davfs2.enable = true;
     dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.seahorse ];
     dnsmasq = { enable = true; };
     emacs = {
