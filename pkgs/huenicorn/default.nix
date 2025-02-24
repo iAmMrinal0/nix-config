@@ -2,10 +2,8 @@
 , nlohmann_json, mbedtls, glm, pipewire, glib, pcre2, libsepol, libselinux, xorg
 , clang, util-linuxMinimal, makeWrapper, crow }:
 
-let 
-  version = "1.0.10";
-  in
-    stdenv.mkDerivation {
+let version = "1.0.10";
+in stdenv.mkDerivation {
   pname = "huenicorn";
 
   src = fetchFromGitLab {

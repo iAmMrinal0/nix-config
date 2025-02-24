@@ -1,15 +1,12 @@
 { pkgs, config, lib, inputs, ... }:
-let
-  userPackages = import ./packages.nix { inherit pkgs lib inputs; };
+let userPackages = import ./packages.nix { inherit pkgs lib inputs; };
 in {
   xdg = {
     enable = true;
     configFile."pgcli/config".text = builtins.readFile ../config/pgcli;
   };
 
-  dconf.settings."gnome/desktop/sound" = { 
-    event-sounds = false; 
-  };
+  dconf.settings."gnome/desktop/sound" = { event-sounds = false; };
 
   services = {
     gpg-agent = {
