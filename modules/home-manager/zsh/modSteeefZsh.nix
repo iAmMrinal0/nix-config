@@ -77,23 +77,16 @@ pkgs.writeTextDir "themes/mod_steeef.zsh-theme" ''
   }
 
   function steeef_precmd {
-      local FMT_BRANCH PR_GIT_UPDATE=0
-      local git_bin=${pkgs.git}/bin/git
-
-      # Check if we're in a Git repo first
-      if $git_bin rev-parse --is-inside-work-tree &> /dev/null; then
-          # Check for untracked files
-          if $git_bin status --porcelain 2> /dev/null | grep -q '^??'; then
-              PR_GIT_UPDATE=1
-              FMT_BRANCH="(%{$turquoise%}%b%u%c%{$hotpink%}●''${PR_RST})"
-          else
-              FMT_BRANCH="(%{$turquoise%}%b%u%c''${PR_RST})"
-          fi
-
-          # Apply the format to vcs_info
-          zstyle ':vcs_info:*:prompt:*' formats " ''${FMT_BRANCH}"
-          vcs_info 'prompt'
+      # check for untracked files or updated submodules, since vcs_info doesn't
+      if ${pkgs.git}/bin/git ls-files --other --exclude-standard 2> /dev/null | grep -q "."; then
+          PR_GIT_UPDATE=1
+          FMT_BRANCH="(%{$turquoise%}%b%u%c%{$hotpink%}●''${PR_RST})"
+      else
+          FMT_BRANCH="(%{$turquoise%}%b%u%c''${PR_RST})"
       fi
+      zstyle ':vcs_info:*:prompt:*' formats " ''${FMT_BRANCH}"
+
+      vcs_info 'prompt'
   }
   add-zsh-hook precmd steeef_precmd
 
