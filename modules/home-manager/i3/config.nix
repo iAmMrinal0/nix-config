@@ -180,7 +180,7 @@ in {
         "Return" = "exec ${pkgs.kitty}/bin/kitty";
         "Shift+Return" = "exec ${pkgs.kitty}/bin/kitty tmux";
         "g" = "exec ${pkgs.wmfocus}/bin/wmfocus --fill -c asdf --textcolor red";
-        "Control+k" = "exec ${inputs.keepmenu}/bin/keepmenu";
+        "Control+k" = "exec ${pkgs.rofi-rbw}/bin/rofi-rbw";
         "Control+p" = "exec ${pkgs.rofimoji}/bin/rofimoji --action copy";
         "t" = ''
           exec ${pkgs.libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%U`"'';
