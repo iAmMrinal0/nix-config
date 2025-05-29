@@ -30,4 +30,5 @@
       # package = pkgs.i3-gaps;
     };
   };
+  security.pam.services.i3lock.enable = true;
 }

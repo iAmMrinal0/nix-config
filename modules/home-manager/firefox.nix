@@ -20,7 +20,7 @@
         "signon.rememberSignons" = false;
         "signon.usage.hasEntry" = true;
       };
-      default.extensions = (with pkgs.nur.repos.rycee.firefox-addons; [
+      default.extensions.packages = (with pkgs.nur.repos.rycee.firefox-addons; [
         darkreader
         privacy-badger
         reddit-enhancement-suite
