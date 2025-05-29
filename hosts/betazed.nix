@@ -17,4 +17,34 @@
   # servers. You should change this only after NixOS release notes say you
   # should.
   system.stateVersion = "24.05"; # Did you read the comment?
+
+  # services.fprintd.enable = true;
+
+  ## enable fingerprint reader. disabled because this wasn't working in 25.05
+  # security.pam.services.login.fprintAuth = true;
+  # security.pam.services.sudo.fprintAuth = true;
+  # security.pam.services.i3lock.fprintAuth = true;
+
+  # security.polkit.extraConfig = ''
+  #   polkit.addRule(function(action, subject) {
+  #     if ((action.id == "net.reactivated.fprint.device.enroll") ||
+  #         (action.id == "net.reactivated.fprint.device.verify") ||
+  #         (action.id == "net.reactivated.fprint.device.delete")) {
+  #       return polkit.Result.YES;
+  #     }
+  #   });
+  # '';
+
+  # # Ensure users in these groups can access the fingerprint reader
+  # users.groups.plugdev.members = [ config.users.users.iammrinal0.name ];
+
+  # services."06cb-009a-fingerprint-sensor" = {                                 
+  #   enable = true;                                                            
+  #   # backend = "python-validity";
+  #   backend = "libfprint-tod";                                                
+  #   calib-data-file = ./calib-data.bin;      
+  # };
+  ## end of fingerprint reader config
+
+
 }

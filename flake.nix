@@ -26,6 +26,10 @@
     haskell-yesod-quasiquotes.url =
       "github:kronor-io/haskell-yesod-quasiquotes";
     haskell-yesod-quasiquotes.flake = false;
+    # nixos-06cb-009a-fingerprint-sensor = {
+    #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor?ref=25.05";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
@@ -42,6 +46,7 @@
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           nixos-hardware.nixosModules.lenovo-thinkpad-t480
+          # nixos-06cb-009a-fingerprint-sensor.nixosModules."06cb-009a-fingerprint-sensor"
           {
             nixpkgs.overlays = [
               nur.overlays.default
