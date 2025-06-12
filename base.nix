@@ -199,9 +199,7 @@ in
       pkgs.hasklig
       pkgs.iosevka
       pkgs.source-code-pro
-      # pkgs.nerdfonts
-    ] ++ builtins.filter lib.attrsets.isDerivation
-      (builtins.attrValues pkgs.nerdfonts);
+    ];
     fontconfig = { enable = true; };
   };
 
@@ -231,6 +229,7 @@ in
     127.0.0.1 bankid.local
     127.0.0.1 swish.local
     127.0.0.1 mss.swish.local
+    127.0.0.1 mobilepay.local
     127.0.0.1 uc.local
     127.0.0.1 mock.local
     127.0.0.1 finsharkauth.local

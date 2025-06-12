@@ -83,4 +83,6 @@
 
   # Ensure users in these groups can access the fingerprint reader
   users.groups.plugdev.members = [ config.users.users.iammrinal0.name ];
+
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 }

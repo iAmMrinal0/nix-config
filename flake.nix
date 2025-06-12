@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -35,7 +36,7 @@
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
     , nixos-hardware, emacsConfiguration, nix-vscode-extensions
     , zsh-autosuggestions, zsh-you-should-use, zsh-history-substring-search
-    , zsh-nix-shell, keepmenu, haskell-yesod-quasiquotes }: {
+    , zsh-nix-shell, keepmenu, haskell-yesod-quasiquotes, nixpkgs-unstable }: {
       nixosConfigurations.betazed = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
@@ -72,6 +73,12 @@
               nur.overlays.default
               emacs-overlay.overlay
               nix-vscode-extensions.overlays.default
+              (final: prev: {
+                unstable = import nixpkgs-unstable {
+                  system = final.system;
+                  config = final.config;
+                };
+              })
             ];
           }
         ];

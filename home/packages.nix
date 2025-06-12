@@ -19,6 +19,7 @@ in with pkgs; [
   gh
   nil
   btop
+  unzip
 
   # Text Processing & Search
   ripgrep
@@ -43,6 +44,8 @@ in with pkgs; [
   signing-party
   ssh-to-pgp
   openvpn
+  rbw
+  rofi-rbw
 
   # Development Environment
   (emacsWithPackagesFromUsePackage
@@ -52,7 +55,7 @@ in with pkgs; [
   pgcli
   rlwrap
   nodejs
-  (lib.hiPrio insomnia)
+  (lib.hiPrio pkgs.unstable.insomnia)
 
   # Desktop Environment
   terminator
