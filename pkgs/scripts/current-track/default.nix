@@ -1,6 +1,6 @@
 { pkgs, ... }:
 
-pkgs.writeShellScript "currentTrack" ''
+pkgs.writeShellScriptBin "current-track" ''
 
   PLAYER=spotify
   ARGS="--player=$PLAYER"

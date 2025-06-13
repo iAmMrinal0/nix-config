@@ -1,9 +1,9 @@
 { lib, pkgs, inputs, ... }:
 
 let
-  lock = import ./lock.nix { inherit pkgs; };
-  shutdownMenu = import ./scripts/shutdownMenu.nix { inherit pkgs lock; };
-  rofiAutorandr = import ./scripts/rofiAutorandr.nix { inherit pkgs; };
+  lock = "${pkgs.scripts.i3lock-fancy}/bin/i3lock-fancy";
+  shutdownMenu = "${pkgs.scripts.shutdown-menu}/bin/shutdown-menu"; 
+  rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
   i3blocksConf = pkgs.callPackage ./i3blocks.nix { };
 
   fontSize = 10.8;

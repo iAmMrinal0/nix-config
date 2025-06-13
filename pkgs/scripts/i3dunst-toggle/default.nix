@@ -1,9 +1,6 @@
-{ pkgs, ... }:
+{ lib, stdenv, writeShellScriptBin, dunst }:
 
-with pkgs;
-
-writeShellScript "dunstNotifToggle" ''
-
+writeShellScriptBin "i3dunst-toggle" ''
   toggle() {
     status=$(${dunst}/bin/dunstctl is-paused)
     if [ "$status" = "true" ]

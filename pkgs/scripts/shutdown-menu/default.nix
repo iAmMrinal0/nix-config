@@ -1,7 +1,6 @@
-{ pkgs, lock, ... }:
+{ lib, stdenv, writeShellScriptBin, rofi, i3lock-fancy, i3lock, imagemagick, maim, playerctl, xorg }:
 
-pkgs.writeShellScript "shutdownMenu" (''
-
+writeShellScriptBin "shutdown-menu" ''
   # Colors: FG (foreground), BG (background), HL (highlighted)
   FG_COLOR="#bbbbbb"
   BG_COLOR="#111111"
@@ -45,10 +44,10 @@ pkgs.writeShellScript "shutdownMenu" (''
   menu=(
     [Shutdown]="systemctl poweroff"
     [Reboot]="systemctl reboot"
-    [Hibernate]="sh ${lock} && systemctl hibernate"
-    [Suspend]="sh ${lock} && systemctl suspend"
+    [Hibernate]="sh ${i3lock-fancy}/bin/i3lock-fancy && systemctl hibernate"
+    [Suspend]="sh ${i3lock-fancy}/bin/i3lock-fancy && systemctl suspend"
     [Halt]="systemctl halt"
-    [Lock]="${lock}"
+    [Lock]="${i3lock-fancy}/bin/i3lock-fancy"
     [Logout]="i3-msg exit"
     [Cancel]=""
   )
@@ -59,11 +58,11 @@ pkgs.writeShellScript "shutdownMenu" (''
 
   rofi_colors="-bc $BORDER_COLOR -bg $BG_COLOR -fg $FG_COLOR -hlfg $HLFG_COLOR -hlbg $HLBG_COLOR"
 
-  launcher="${pkgs.rofi}/bin/rofi -dmenu -i -lines $menu_nrows -p $ROFI_TEXT $rofi_colors $ROFI_OPTIONS"
+  launcher="${rofi}/bin/rofi -dmenu -i -lines $menu_nrows -p $ROFI_TEXT $rofi_colors $ROFI_OPTIONS"
   selection="$(printf '%s\n' "''${!menu[@]}" | sort | $launcher)"
 
   function ask_confirmation() {
-      confirmed=$(echo -e "Yes\nNo" | ${pkgs.rofi}/bin/rofi -dmenu -i -lines 2 -p "$selection?" \
+      confirmed=$(echo -e "Yes\nNo" | ${rofi}/bin/rofi -dmenu -i -lines 2 -p "$selection?" \
         $rofi_colors $ROFI_OPTIONS)
       [ "$confirmed" == "Yes" ] && confirmed=0
 
@@ -80,4 +79,4 @@ pkgs.writeShellScript "shutdownMenu" (''
       i3-msg -q "exec ''${menu[''${selection}]}"
     fi
   fi
-'')
+''

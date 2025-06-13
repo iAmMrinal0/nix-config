@@ -53,6 +53,13 @@
               nur.overlays.default
               emacs-overlay.overlay
               nix-vscode-extensions.overlays.default
+              (import ./overlays)
+              (final: prev: {
+                unstable = import nixpkgs-unstable {
+                  system = final.system;
+                  config = final.config;
+                };
+              })
             ];
           }
         ];
@@ -73,6 +80,7 @@
               nur.overlays.default
               emacs-overlay.overlay
               nix-vscode-extensions.overlays.default
+              (import ./overlays)
               (final: prev: {
                 unstable = import nixpkgs-unstable {
                   system = final.system;

@@ -1,9 +1,9 @@
 { pkgs, ... }:
 
 let
-  currentTrack = import ./scripts/currentTrack.nix { inherit pkgs; };
-  dunstNotifToggle = import ./scripts/i3DunstToggle.nix { inherit pkgs; };
-  bluetooth_battery = import ./scripts/bluetooth_battery.nix { inherit pkgs; };
+  currentTrack = "${pkgs.scripts.current-track}/bin/current-track";
+  dunstNotifToggle = "${pkgs.scripts.i3dunst-toggle}/bin/i3dunst-toggle";
+  bluetooth_battery = "${pkgs.scripts.bluetooth-battery}/bin/bluetooth-battery";
   # using this fork because few scripts have hardcoded shebangs
   # and the user has a patch PR open in the source repo
   i3blocks-contrib = pkgs.fetchFromGitHub {

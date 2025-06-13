@@ -1,8 +1,6 @@
 { pkgs, lib, inputs }:
 
 let
-  crow = pkgs.callPackage ../pkgs/crow { };
-  huenicorn = pkgs.callPackage ../pkgs/huenicorn { inherit crow; };
 in with pkgs; [
   # Development Tools
   eza
