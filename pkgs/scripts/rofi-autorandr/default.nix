@@ -1,6 +1,6 @@
-{ pkgs, ... }:
+{ writeShellScriptBin, autorandr, rofi }:
 
-pkgs.writeShellScriptBin "rofi-autorandr" ''
-  layout=$(${pkgs.autorandr}/bin/autorandr --list | rofi -dmenu -p "Layout")
-  ${pkgs.autorandr}/bin/autorandr --load $layout --skip-option crtc
+writeShellScriptBin "rofi-autorandr" ''
+  layout=$(${autorandr}/bin/autorandr --list | ${rofi}/bin/rofi -dmenu -p "Layout")
+  ${autorandr}/bin/autorandr --load $layout
 ''
