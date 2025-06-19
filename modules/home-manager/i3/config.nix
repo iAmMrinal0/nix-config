@@ -1,7 +1,7 @@
 { lib, pkgs, inputs, ... }:
 
 let
-  lock = "${pkgs.scripts.i3lock-fancy}/bin/i3lock-fancy";
+  lock = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
   shutdownMenu = "${pkgs.scripts.shutdown-menu}/bin/shutdown-menu"; 
   rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
   i3blocksConf = pkgs.callPackage ./i3blocks.nix { };

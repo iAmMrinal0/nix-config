@@ -7,6 +7,6 @@
     current-track
     i3dunst-toggle
     bluetooth-battery
-    i3lock-fancy
+    i3lock-custom
   ];
 }

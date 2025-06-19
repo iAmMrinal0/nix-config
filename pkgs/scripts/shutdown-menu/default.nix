@@ -1,4 +1,4 @@
-{ lib, stdenv, writeShellScriptBin, rofi, i3lock-fancy, i3lock, imagemagick, maim, playerctl, xorg }:
+{ lib, stdenv, writeShellScriptBin, rofi, i3lock-custom, i3lock, imagemagick, maim, playerctl, xorg }:
 
 writeShellScriptBin "shutdown-menu" ''
   # Colors: FG (foreground), BG (background), HL (highlighted)
@@ -44,10 +44,10 @@ writeShellScriptBin "shutdown-menu" ''
   menu=(
     [Shutdown]="systemctl poweroff"
     [Reboot]="systemctl reboot"
-    [Hibernate]="sh ${i3lock-fancy}/bin/i3lock-fancy && systemctl hibernate"
-    [Suspend]="sh ${i3lock-fancy}/bin/i3lock-fancy && systemctl suspend"
+    [Hibernate]="${i3lock-custom}/bin/i3lock-custom && systemctl hibernate"
+    [Suspend]="${i3lock-custom}/bin/i3lock-custom && systemctl suspend"
     [Halt]="systemctl halt"
-    [Lock]="${i3lock-fancy}/bin/i3lock-fancy"
+    [Lock]="${i3lock-custom}/bin/i3lock-custom"
     [Logout]="i3-msg exit"
     [Cancel]=""
   )
