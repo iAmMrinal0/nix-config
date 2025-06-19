@@ -13,7 +13,8 @@
     # terminal = "${pkgs.kitty}/bin/kitty";
     # font = "Iosevka 25";
     plugins = [ pkgs.rofi-calc ];
-    theme = "gruvbox-dark-hard";
+    # Theme is now managed by the theming module
+    # theme = "gruvbox-dark-hard";
     extraConfig = {
       # hide-scrollbar = true;
       # separator = "none";

@@ -1,55 +1,50 @@
 { pkgs, config, lib, inputs, ... }:
-let userPackages = import ./packages.nix { inherit pkgs lib inputs; };
-in {
-  xdg = {
-    enable = true;
-    configFile."pgcli/config".text = builtins.readFile ../config/pgcli;
-  };
 
-  dconf.settings."gnome/desktop/sound" = { event-sounds = false; };
-
-  services = {
-    gpg-agent = {
+{
+  imports = [
+    ../modules/home
+    ../modules/home-manager
+    ../modules/home/theming.nix
+    ../modules/home/host-specific.nix
+  ];
+  
+  personal = {
+    theming = {
       enable = true;
-      pinentry.package = pkgs.pinentry-qt;
+      colors = {
+        primary = "#ebdbb2";  # Gruvbox foreground
+        background = "#1d2021";  # Gruvbox background
+        accent = "#fe8019";  # Gruvbox orange
+      };
+      font = {
+        regular = "Iosevka";  # Match the font name from kitty.nix
+        size = 16;  # Match the font size that was previously in kitty.nix
+        package = pkgs.iosevka;  # Specify the font package
+      };
+      rofi = {
+        theme = "gruvbox-dark-hard";
+      };
+      kitty = {
+        theme = "gruvbox-dark-hard";
+      };
     };
-    kdeconnect = {
+    
+    shell-tools = {
       enable = true;
-      indicator = true;
+      atuin.enable = true;
+      direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+      };
+      fzf.enable = true;
+      simpleTools = {
+        enabledTools = [ "broot" "command-not-found" "jq" ];
+      };
     };
-    playerctld.enable = true;
-    udiskie.enable = true;
-  };
-
-  programs = {
-    atuin = {
+        
+    host-specific = {
       enable = true;
-      enableZshIntegration = true;
-    };
-    broot.enable = true;
-    command-not-found.enable = true;
-    direnv = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-    fzf = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-    gpg.enable = true;
-    home-manager.enable = true;
-    jq.enable = true;
-  };
-
-  home = {
-    packages = userPackages;
-    stateVersion = "24.05";
-    sessionVariables = {
-      SSH_AUTH_SOCK = "${config.xdg.dataHome}/ssh-agent";
-      BITWARDEN_SSH_AUTH_SOCK = "${config.home.sessionVariables.SSH_AUTH_SOCK}";
     };
   };
-
-  imports = [ ../modules/home-manager ];
 }
 
