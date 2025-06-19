@@ -2,8 +2,7 @@
 
 let
   vscodeExtensions = (with pkgs.vscode-extensions; [ ])
-    ++ (with pkgs.vscode-marketplace; [ ])
-    ++ (with (pkgs.forVSCodeVersion "1.100.2").vscode-marketplace; [
+    ++ (with pkgs.vscode-marketplace; [
       ms-vscode-remote.vscode-remote-extensionpack
       ms-vscode.remote-explorer
       ms-vsliveshare.vsliveshare
@@ -45,7 +44,7 @@ let
       tootone.org-mode
       tailscale.vscode-tailscale
       ms-ossdata.vscode-pgsql
-    ]) ++ (with (pkgs.forVSCodeVersion "1.100.2").vscode-marketplace-release; [
+    ]) ++ (with pkgs.vscode-marketplace-release; [
       github.vscode-pull-request-github
       github.copilot-chat
       github.copilot
@@ -77,4 +76,4 @@ let
       buildInputs = oldAttrs.buildInputs ++ [ pkgs.krb5 ];
     });
 
-in { environment.systemPackages = [ vscode-with-extensions vscode-insiders ]; }
+in { environment.systemPackages = [ vscode-with-extensions ]; }
