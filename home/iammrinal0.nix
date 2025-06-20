@@ -8,6 +8,13 @@
     ../modules/home/host-specific.nix
   ];
   
+  modules.emacs = {
+    enable = true;
+    package = pkgs.emacs-unstable;
+    configureGitWithEmacs = true;
+    i3Integration = true;
+  };
+  
   personal = {
     theming = {
       enable = true;

@@ -4,10 +4,16 @@
 {
   imports = [
     ../base.nix
-    ../modules/nixos/vscode.nix
-    ../modules/nixos/xserver.nix
+    ../modules/nixos
     ../home.nix
   ];
+
+  modules.emacs = {
+    enable = true;
+    package = pkgs.emacs-unstable;
+    defaultEditor = false;
+  };
+
   networking.hostName = "betazed";
   powerManagement.resumeCommands =
     "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";

@@ -6,10 +6,15 @@
   imports = [
     ../base.nix
     ../home.nix
-    ../modules/nixos/adb.nix
-    ../modules/nixos/vscode.nix
-    ../modules/nixos/xserver.nix
+    ../modules/nixos
   ];
+
+  modules.emacs = {
+    enable = true;
+    package = pkgs.emacs-unstable;
+    defaultEditor = false;
+  };
+
   # powerManagement.resumeCommands =
   #  "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
 

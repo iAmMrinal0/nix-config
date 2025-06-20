@@ -46,8 +46,6 @@ in with pkgs; [
   rofi-rbw
 
   # Development Environment
-  (emacsWithPackagesFromUsePackage
-    (import ../config/emacs.nix { inherit inputs pkgs; }))
   huenicorn
   sqlite
   pgcli

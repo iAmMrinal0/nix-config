@@ -38,7 +38,6 @@ in {
       inherit fonts;
       modifier = "Mod4";
       assigns = {
-        "\"${lib.elemAt workspaceNumbers 1}\"" = [{ class = "Emacs"; }];
         "\"${lib.elemAt workspaceNumbers 3}\"" = [{ class = "Vlc"; }];
         "\"${lib.elemAt workspaceNumbers 4}\"" = [
           { class = "Slack"; }
@@ -167,7 +166,6 @@ in {
       };
       keybindings = useWithModifier modifier ({
         "Control+l" = "exec ${shutdownMenu}";
-        "Control+e" = "exec ${pkgs.emacs}/bin/emacsclient -a '' -c";
         "Control+mod1+p" = "exec ${pkgs.playerctl}/bin/playerctl play-pause";
         "Control+mod1+Right" = "exec ${pkgs.playerctl}/bin/playerctl next";
         "Control+mod1+Left" = "exec ${pkgs.playerctl}/bin/playerctl previous";

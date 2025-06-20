@@ -122,12 +122,6 @@ in
     davfs2.enable = true;
     dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.seahorse ];
     dnsmasq = { enable = true; };
-    emacs = {
-      enable = true;
-      package = pkgs.emacs-unstable;
-      # defaultEditor = true;
-      install = true;
-    };
     blueman = { enable = true; };
     openssh = { enable = true; };
     upower = { enable = true; };
@@ -194,7 +188,6 @@ in
   fonts = {
     packages = [
       pkgs.cantarell-fonts
-      pkgs.emacs-all-the-icons-fonts
       pkgs.font-awesome
       pkgs.hasklig
       pkgs.iosevka
