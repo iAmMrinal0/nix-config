@@ -5,10 +5,15 @@
   networking.hostName = "mordor";
   imports = [ ../base.nix ../home.nix ../modules/nixos ];
 
-  modules.emacs = {
-    enable = true;
-    package = pkgs.emacs-unstable;
-    defaultEditor = false;
+  modules = {
+    emacs = {
+      enable = true;
+      package = pkgs.emacs-unstable;
+      defaultEditor = false;
+    };
+
+    openrazer.enable = true;
+    bluetooth.enable = true;
   };
 
   # powerManagement.resumeCommands =

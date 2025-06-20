@@ -4,10 +4,19 @@
 {
   imports = [ ../base.nix ../modules/nixos ../home.nix ];
 
-  modules.emacs = {
-    enable = true;
-    package = pkgs.emacs-unstable;
-    defaultEditor = false;
+  modules = {
+    emacs = {
+      enable = true;
+      package = pkgs.emacs-unstable;
+      defaultEditor = false;
+    };
+
+    openrazer.enable = true;
+    touchegg.enable = true;
+    displayManager.autoLogin = {
+      enable = false;
+      user = "iammrinal0";
+    };
   };
 
   networking.hostName = "betazed";

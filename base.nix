@@ -22,12 +22,9 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot = { enable = true; };
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
-  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
 
   nixpkgs.config = {
     allowUnfree = true;
-    pulseaudio = true;
     chromium = { enableWideVine = true; };
     permittedInsecurePackages = [ ];
   };
@@ -122,67 +119,19 @@ in
     davfs2.enable = true;
     dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.seahorse ];
     dnsmasq = { enable = true; };
-    blueman = { enable = true; };
     openssh = { enable = true; };
     upower = { enable = true; };
     fwupd = { enable = true; };
-    displayManager = {
-      # for some reason the Login keyring doesn't work if autoLogin is enabled
-      # autoLogin.enable = true;
-      # autoLogin.user = "iammrinal0";
-      defaultSession = "none+i3";
-    };
     libinput = { enable = true; };
     gvfs = { enable = true; };
     gnome.gnome-keyring.enable = true;
-    tailscale = {
-      enable = true;
-      openFirewall = true;
-      useRoutingFeatures = "both";
-    };
-    pipewire = {
-      enable = true;
-      pulse.enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-    };
-    touchegg = { enable = true; };
-    printing = { enable = true; };
   };
-
-  hardware = {
-    bluetooth = {
-      enable = true;
-      settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
-      package = pkgs.bluez;
-    };
-    openrazer = {
-      enable = true;
-      users = [ config.users.users.iammrinal0.name ];
-    };
-  };
-
-  virtualisation.docker = { enable = true; };
 
   programs = {
     light = { enable = true; };
-    nm-applet = { enable = true; };
     ssh.startAgent = true;
     zsh = { enable = true; };
     seahorse = { enable = true; };
-  };
-
-  networking = {
-    firewall = {
-      allowedTCPPorts = [ 24800 22 ];
-      allowedUDPPorts = [ 24800 ];
-      trustedInterfaces = [ "tailscale0" ];
-    };
-    networkmanager = {
-      enable = true;
-      wifi.macAddress = "random";
-      #dns = "none";
-    };
   };
 
   fonts = {
@@ -194,6 +143,90 @@ in
       pkgs.source-code-pro
     ];
     fontconfig = { enable = true; };
+  };
+  
+  modules = {
+    audio = {
+      enable = true;
+      pulseaudio = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
+    };
+    
+    bluetooth = {
+      enable = true;
+      settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
+    };
+    
+    displayManager = {
+      enable = true;
+      defaultSession = "none+i3";
+      autoLogin = {
+        enable = false;
+        user = "iammrinal0";
+      };
+    };
+    
+    docker = {
+      enable = true;
+      addUserToGroup = true;
+      installCompose = true;
+    };
+    
+    networking = {
+      enable = true;
+      networkManager = {
+        enable = true;
+        wifi.macAddressRandomization = "random";
+      };
+      firewall = {
+        enable = true;
+      };
+      extraHosts = ''
+        127.0.0.1 bankid.local
+        127.0.0.1 swish.local
+        127.0.0.1 mss.swish.local
+        127.0.0.1 mobilepay.local
+        127.0.0.1 uc.local
+        127.0.0.1 mock.local
+        127.0.0.1 finsharkauth.local
+        127.0.0.1 finsharkapi.local
+        127.0.0.1 boozt.finance.local
+        127.0.0.1 reepay.local
+        127.0.0.1 reepay.checkout.local
+        127.0.0.1 braintree.local
+        127.0.0.1 slack.local
+        127.0.0.1 paypal.local
+        127.0.0.1 valitor.local
+        127.0.0.1 clearhaus.local
+        127.0.0.1 enablebanking.local
+        127.0.0.1 przelewy24.local
+        127.0.0.1 api.nordeaopenbanking.local
+      '';
+    };
+    
+    openrazer = {
+      enable = true;
+      addUser = true;
+      installRazergenie = true;
+    };
+    
+    printing = {
+      enable = true;
+    };
+    
+    tailscale = {
+      enable = true;
+      openFirewall = true;
+      useRoutingFeatures = "both";
+      installPackage = true;
+    };
+    
+    touchegg = {
+      enable = true;
+    };
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -216,28 +249,6 @@ in
     if [[ -e /run/current-system ]]; then
       ${pkgs.nix}/bin/nix store diff-closures /run/current-system "$systemConfig"
     fi
-  '';
-
-  networking.extraHosts = ''
-    127.0.0.1 bankid.local
-    127.0.0.1 swish.local
-    127.0.0.1 mss.swish.local
-    127.0.0.1 mobilepay.local
-    127.0.0.1 uc.local
-    127.0.0.1 mock.local
-    127.0.0.1 finsharkauth.local
-    127.0.0.1 finsharkapi.local
-    127.0.0.1 boozt.finance.local
-    127.0.0.1 reepay.local
-    127.0.0.1 reepay.checkout.local
-    127.0.0.1 braintree.local
-    127.0.0.1 slack.local
-    127.0.0.1 paypal.local
-    127.0.0.1 valitor.local
-    127.0.0.1 clearhaus.local
-    127.0.0.1 enablebanking.local
-    127.0.0.1 przelewy24.local
-    127.0.0.1 api.nordeaopenbanking.local
   '';
 
   boot.tmp.useTmpfs = true;
