@@ -3,11 +3,7 @@
 
 {
   networking.hostName = "mordor";
-  imports = [
-    ../base.nix
-    ../home.nix
-    ../modules/nixos
-  ];
+  imports = [ ../base.nix ../home.nix ../modules/nixos ];
 
   modules.emacs = {
     enable = true;

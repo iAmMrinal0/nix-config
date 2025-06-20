@@ -1,4 +1,5 @@
-{ lib, stdenv, writeShellScriptBin, rofi, i3lock-custom, i3lock, imagemagick, maim, playerctl, xorg }:
+{ lib, stdenv, writeShellScriptBin, rofi, i3lock-custom, i3lock, imagemagick
+, maim, playerctl, xorg }:
 
 writeShellScriptBin "shutdown-menu" ''
   # Colors: FG (foreground), BG (background), HL (highlighted)

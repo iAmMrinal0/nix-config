@@ -1,10 +1,5 @@
 { ... }:
 
 {
-  imports = [
-    ./adb.nix
-    ./vscode.nix
-    ./xserver.nix
-    ./emacs.nix
-  ];
+  imports = [ ./adb.nix ./vscode.nix ./xserver.nix ./emacs.nix ];
 }

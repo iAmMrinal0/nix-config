@@ -1,9 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options = {};
+  options = { };
 
-  config = {
-    services.playerctld.enable = true;
-  };
+  config = { services.playerctld.enable = true; };
 }

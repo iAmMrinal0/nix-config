@@ -1,2 +1,1 @@
-final: prev: 
-  (import ./packages.nix) final prev
+final: prev: (import ./packages.nix) final prev

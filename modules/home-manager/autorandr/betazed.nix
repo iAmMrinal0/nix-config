@@ -20,11 +20,7 @@ in {
   profiles = {
     "default" = {
       inherit fingerprint;
-      config = {
-        eDP-1 = t480 // {
-          primary = true;
-        };
-      };
+      config = { eDP-1 = t480 // { primary = true; }; };
     };
     "home" = {
       inherit fingerprint;
@@ -37,7 +33,10 @@ in {
           position = "0x0";
           rate = "120.00";
         };
-        eDP-1 = t480 // { crtc = 1; position = "2560x0"; };
+        eDP-1 = t480 // {
+          crtc = 1;
+          position = "2560x0";
+        };
       };
     };
   };

@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options = {};
+  options = { };
 
   config = {
     programs.atuin = {

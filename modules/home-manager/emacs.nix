@@ -64,23 +64,22 @@ let
         zop-to-char
       ]);
   });
-in
-{
+in {
   options.modules.emacs = {
     enable = mkEnableOption "Enable Emacs configuration";
-    
+
     package = mkOption {
       type = types.package;
       default = pkgs.emacs-unstable;
       description = "The Emacs package to use";
     };
-    
+
     configureGitWithEmacs = mkOption {
       type = types.bool;
       default = false;
       description = "Whether to configure Git to use Emacs";
     };
-    
+
     i3Integration = mkOption {
       type = types.bool;
       default = true;
@@ -89,26 +88,25 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ 
-      emacsWithPackagesFromUsePackage
-    ];
-    
+    home.packages = [ emacsWithPackagesFromUsePackage ];
+
     programs.git.extraConfig = mkIf cfg.configureGitWithEmacs {
       core.editor = "emacs";
-      mergetool.ediff.cmd = 
+      mergetool.ediff.cmd =
         "${pkgs.emacs}/bin/emacsclient -a '' --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"";
     };
-    
+
     # Add i3 keybinding and workspace assignment for Emacs if i3Integration is enabled
-    xsession.windowManager.i3.config = let 
-      modifier = config.xsession.windowManager.i3.config.modifier;
-    in mkIf cfg.i3Integration {
-      keybindings = {
-        "${modifier}+Control+e" = "exec ${cfg.package}/bin/emacsclient -a '' -c";
+    xsession.windowManager.i3.config =
+      let modifier = config.xsession.windowManager.i3.config.modifier;
+      in mkIf cfg.i3Integration {
+        keybindings = {
+          "${modifier}+Control+e" =
+            "exec ${cfg.package}/bin/emacsclient -a '' -c";
+        };
+
+        # Add Emacs to code workspace (workspace 2)
+        assigns."\"2  code\"" = [{ class = "Emacs"; }];
       };
-      
-      # Add Emacs to code workspace (workspace 2)
-      assigns."\"2  code\"" = [{ class = "Emacs"; }];
-    };
   };
 }

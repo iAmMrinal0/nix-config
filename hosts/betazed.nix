@@ -2,11 +2,7 @@
 { config, pkgs, ... }:
 
 {
-  imports = [
-    ../base.nix
-    ../modules/nixos
-    ../home.nix
-  ];
+  imports = [ ../base.nix ../modules/nixos ../home.nix ];
 
   modules.emacs = {
     enable = true;
@@ -51,6 +47,5 @@
   #   calib-data-file = ./calib-data.bin;      
   # };
   ## end of fingerprint reader config
-
 
 }

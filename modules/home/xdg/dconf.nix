@@ -2,13 +2,11 @@
 
 with lib;
 
-let
-  cfg = config.personal.dconf;
-in
-{
+let cfg = config.personal.dconf;
+in {
   options.personal.dconf = {
     enable = mkEnableOption "dconf settings";
-    
+
     sound = {
       eventSounds = mkOption {
         type = types.bool;
@@ -16,7 +14,7 @@ in
         description = "Whether to enable GNOME event sounds";
       };
     };
-    
+
     appearance = {
       preferDarkTheme = mkOption {
         type = types.bool;
@@ -28,13 +26,10 @@ in
 
   config = mkIf cfg.enable {
     dconf.settings = {
-      "gnome/desktop/sound" = { 
-        event-sounds = cfg.sound.eventSounds;
-      };
-      
-      "org/gnome/desktop/interface" = mkIf cfg.appearance.preferDarkTheme {
-        color-scheme = "prefer-dark";
-      };
+      "gnome/desktop/sound" = { event-sounds = cfg.sound.eventSounds; };
+
+      "org/gnome/desktop/interface" =
+        mkIf cfg.appearance.preferDarkTheme { color-scheme = "prefer-dark"; };
     };
   };
 }

@@ -1,12 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  imports = [
-    ./kdeconnect.nix
-    ./playerctld.nix
-    ./udiskie.nix
-  ];
-  
-  config = {
-  };
+  imports = [ ./kdeconnect.nix ./playerctld.nix ./udiskie.nix ];
+
+  config = { };
 }

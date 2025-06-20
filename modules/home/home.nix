@@ -1,10 +1,8 @@
 { config, pkgs, lib, inputs, ... }:
 
-let 
-  userPackages = import ../../home/packages.nix { inherit pkgs lib inputs; };
-in
-{
-  options = {};
+let userPackages = import ../../home/packages.nix { inherit pkgs lib inputs; };
+in {
+  options = { };
 
   config = {
     home = {

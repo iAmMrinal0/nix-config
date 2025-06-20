@@ -1,9 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options = {};
+  options = { };
 
-  config = {
-    programs.jq.enable = true;
-  };
+  config = { programs.jq.enable = true; };
 }

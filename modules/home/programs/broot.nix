@@ -1,9 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options = {};
+  options = { };
 
-  config = {
-    programs.broot.enable = true;
-  };
+  config = { programs.broot.enable = true; };
 }

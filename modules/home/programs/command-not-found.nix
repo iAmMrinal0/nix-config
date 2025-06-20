@@ -1,9 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options = {};
+  options = { };
 
-  config = {
-    programs.command-not-found.enable = true;
-  };
+  config = { programs.command-not-found.enable = true; };
 }

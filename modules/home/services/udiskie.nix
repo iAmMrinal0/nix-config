@@ -1,9 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options = {};
+  options = { };
 
-  config = {
-    services.udiskie.enable = true;
-  };
+  config = { services.udiskie.enable = true; };
 }

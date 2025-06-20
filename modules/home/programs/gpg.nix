@@ -1,9 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  options = {};
+  options = { };
 
-  config = {
-    programs.gpg.enable = true;
-  };
+  config = { programs.gpg.enable = true; };
 }
