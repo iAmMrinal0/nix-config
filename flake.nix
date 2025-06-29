@@ -37,60 +37,55 @@
     , nixos-hardware, emacsConfiguration, nix-vscode-extensions
     , zsh-autosuggestions, zsh-you-should-use, zsh-history-substring-search
     , zsh-nix-shell, keepmenu, haskell-yesod-quasiquotes, nixpkgs-unstable }: {
-      nixosConfigurations.betazed = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./cache.nix
-          ./hardware/betazed.nix
-          ./hosts/betazed.nix
-          ./nix-config.nix
-          home-manager.nixosModules.home-manager
-          sops-nix.nixosModules.sops
-          nixos-hardware.nixosModules.lenovo-thinkpad-t480
-          # nixos-06cb-009a-fingerprint-sensor.nixosModules."06cb-009a-fingerprint-sensor"
-          {
-            nixpkgs.overlays = [
-              nur.overlays.default
-              emacs-overlay.overlay
-              nix-vscode-extensions.overlays.default
-              (import ./overlays)
-              (final: prev: {
-                unstable = import nixpkgs-unstable {
-                  system = final.system;
-                  config = final.config;
-                };
-              })
-            ];
-          }
-        ];
-        specialArgs = { inherit inputs; };
-      };
-      nixosConfigurations.mordor = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./cache.nix
-          ./hardware/mordor.nix
-          ./hosts/mordor.nix
-          ./nix-config.nix
-          home-manager.nixosModules.home-manager
-          sops-nix.nixosModules.sops
-          nixos-hardware.nixosModules.lenovo-thinkpad-t14s
-          {
-            nixpkgs.overlays = [
-              nur.overlays.default
-              emacs-overlay.overlay
-              nix-vscode-extensions.overlays.default
-              (import ./overlays)
-              (final: prev: {
-                unstable = import nixpkgs-unstable {
-                  system = final.system;
-                  config = final.config;
-                };
-              })
-            ];
-          }
-        ];
-        specialArgs = { inherit inputs; };
+      nixosConfigurations = {
+        betazed = let hostname = "betazed";
+        in nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs hostname; };
+          modules = [
+            ./hosts/${hostname}.nix
+            ./cache.nix
+            sops-nix.nixosModules.sops
+            {
+              nixpkgs.overlays = [
+                nur.overlays.default
+                emacs-overlay.overlay
+                nix-vscode-extensions.overlays.default
+                (import ./overlays)
+                (final: prev: {
+                  unstable = import nixpkgs-unstable {
+                    system = final.system;
+                    config = final.config;
+                  };
+                })
+              ];
+            }
+          ];
+        };
+        mordor = let hostname = "mordor";
+        in nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs hostname; };
+          modules = [
+            ./hosts/${hostname}.nix
+            ./cache.nix
+            sops-nix.nixosModules.sops
+            {
+              nixpkgs.overlays = [
+                nur.overlays.default
+                emacs-overlay.overlay
+                nix-vscode-extensions.overlays.default
+                (import ./overlays)
+                (final: prev: {
+                  unstable = import nixpkgs-unstable {
+                    system = final.system;
+                    config = final.config;
+                  };
+                })
+              ];
+            }
+          ];
+        };
       };
     };
 }

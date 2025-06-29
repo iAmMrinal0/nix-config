@@ -1,8 +1,8 @@
-{ lib, pkgs, config, osConfig ? { }, ... }:
+{ lib, pkgs, config, hostname ? "", ... }:
 
 let
-  systemHostName = if osConfig ? networking.hostName then
-    osConfig.networking.hostName
+  systemHostName = if hostname != "" then
+    hostname
   else if config ? networking.hostName then
     config.networking.hostName
   else

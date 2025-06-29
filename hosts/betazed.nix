@@ -1,8 +1,15 @@
 # NixOS config for personal laptop
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, hostname, ... }:
 
 {
-  imports = [ ../base.nix ../modules/nixos ../home.nix ];
+  imports = [
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
+    ../base.nix
+    ../modules/nixos
+    ../home.nix
+    ../hardware/${hostname}.nix
+    ../modules/nixos/nvidia.nix
+  ];
 
   modules = {
     emacs = {
@@ -19,9 +26,12 @@
     };
   };
 
-  networking.hostName = "betazed";
+  networking.hostName = hostname;
   powerManagement.resumeCommands =
     "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
+
+  # keep this in sync with swapDevices in hardware/${hostname}.nix  
+  boot.resumeDevice = "/dev/disk/by-uuid/34266fca-fc14-434a-bc58-fb50a883256b";
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
@@ -57,4 +67,9 @@
   # };
   ## end of fingerprint reader config
 
+  services.ollama = {
+    enable = true;
+    host = "0.0.0.0";
+    acceleration = "cuda";
+  };
 }

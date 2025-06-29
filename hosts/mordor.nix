@@ -1,9 +1,15 @@
 # NixOS config for work laptop
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, hostname, ... }:
 
 {
-  networking.hostName = "mordor";
-  imports = [ ../base.nix ../home.nix ../modules/nixos ];
+  networking.hostName = hostname;
+  imports = [
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14s
+    ../base.nix
+    ../home.nix
+    ../modules/nixos
+    ../hardware/${hostname}.nix
+  ];
 
   modules = {
     emacs = {

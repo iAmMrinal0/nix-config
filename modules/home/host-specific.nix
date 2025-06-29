@@ -1,30 +1,28 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hostname, ... }:
 
 with lib;
 
-let
-  cfg = config.personal.host-specific;
-  hostName = builtins.getEnv "HOSTNAME";
+let cfg = config.personal.host-specific;
 in {
   options.personal.host-specific = {
     enable = mkEnableOption "Host-specific configurations";
 
     isLaptop = mkOption {
       type = types.bool;
-      default = if (hostName == "mordor") then true else false;
+      default = if (hostname == "mordor" || hostname == "betazed") then true else false;
       description = "Whether the current host is a laptop";
     };
 
     hasBluetooth = mkOption {
       type = types.bool;
       default =
-        if (hostName == "mordor" || hostName == "betazed") then true else false;
+        if (hostname == "mordor" || hostname == "betazed") then true else false;
       description = "Whether the current host has bluetooth";
     };
 
     primaryMonitor = mkOption {
       type = types.str;
-      default = if (hostName == "mordor") then "eDP-1" else "DP-3";
+      default = if (hostname == "mordor" || hostname == "betazed") then "eDP-1" else "DP-3";
       description = "The primary monitor for this host";
     };
 
