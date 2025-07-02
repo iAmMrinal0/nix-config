@@ -2,8 +2,8 @@
 
 writeShellScriptBin "bluetooth-battery" ''
   devices='[
-    {"device":"WH-1000XM3","serial":"CC:98:8B:F5:09:D3","icon":""},
-    {"device":"LE_WH-1000XM3","serial":"CC:98:8B:F5:09:D3","icon":""}
+    {"device":"WH-1000XM3","serial":"CC:98:8B:F5:09:D3","icon":""},
+    {"device":"LE_WH-1000XM3","serial":"CC:98:8B:F5:09:D3","icon":""}
   ]'
 
   # Iterate over each device in the JSON array
@@ -18,7 +18,7 @@ writeShellScriptBin "bluetooth-battery" ''
 
     # Check if the charge percentage is valid and print it with icon
     if [[ $CHARGE =~ ^[0-9]+$ ]] && (( CHARGE >= 0 && CHARGE <= 100 )); then
-      echo "$icon  $CHARGE%"
+      echo "$icon $CHARGE%"
       break  # Exit after finding the charge for the first matched device
     fi
   done
