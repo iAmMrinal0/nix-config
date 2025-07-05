@@ -38,6 +38,7 @@ in {
       inherit fonts;
       modifier = "Mod4";
       assigns = {
+        "\"${lib.elemAt workspaceNumbers 1}\"" = [{ class = "^Code$"; }];
         "\"${lib.elemAt workspaceNumbers 3}\"" = [{ class = "Vlc"; }];
         "\"${lib.elemAt workspaceNumbers 4}\"" = [
           { class = "Slack"; }
