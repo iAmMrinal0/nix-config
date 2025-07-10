@@ -27,6 +27,10 @@
     haskell-yesod-quasiquotes.url =
       "github:kronor-io/haskell-yesod-quasiquotes";
     haskell-yesod-quasiquotes.flake = false;
+    zsh-autosuggestions-abbreviations-strategy = {
+      url = "github:olets/zsh-autosuggestions-abbreviations-strategy";
+      flake = false;
+    };
     # nixos-06cb-009a-fingerprint-sensor = {
     #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor?ref=25.05";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -35,8 +39,9 @@
 
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
     , nixos-hardware, emacsConfiguration, nix-vscode-extensions
-    , zsh-autosuggestions, zsh-you-should-use, zsh-history-substring-search
-    , zsh-nix-shell, keepmenu, haskell-yesod-quasiquotes, nixpkgs-unstable }: {
+    , zsh-autosuggestions, zsh-autosuggestions-abbreviations-strategy
+    , zsh-you-should-use, zsh-history-substring-search, zsh-nix-shell, keepmenu
+    , haskell-yesod-quasiquotes, nixpkgs-unstable }: {
       nixosConfigurations = {
         betazed = let hostname = "betazed";
         in nixpkgs.lib.nixosSystem {
