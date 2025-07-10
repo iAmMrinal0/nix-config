@@ -46,7 +46,6 @@ in with pkgs; [
   rofi-rbw
 
   # Development Environment
-  huenicorn
   sqlite
   pgcli
   rlwrap

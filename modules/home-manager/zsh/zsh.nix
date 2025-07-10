@@ -55,10 +55,6 @@ in {
         name = "zsh-autosuggestions-abbreviations-strategy";
         src = inputs.zsh-autosuggestions-abbreviations-strategy;
       }
-      # {
-      #   name = "zsh-history-substring-search";
-      #   src = zsh-history-substring-search;
-      # }
       {
         name = "zsh-nix-shell";
         file = "nix-shell.plugin.zsh";
