@@ -9,8 +9,7 @@ in {
 
     isLaptop = mkOption {
       type = types.bool;
-      default =
-        hostname == "mordor" || hostname == "betazed";
+      default = hostname == "mordor" || hostname == "betazed";
       description = "Whether the current host is a laptop";
     };
 
