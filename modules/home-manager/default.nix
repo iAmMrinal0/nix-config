@@ -11,6 +11,7 @@
     ./firefox.nix
     ./git.nix
     ./gtk.nix
+    ./home-manager.nix
     ./htop.nix
     ./kitty.nix
     ./picom.nix

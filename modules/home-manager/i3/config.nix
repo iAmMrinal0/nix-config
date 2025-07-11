@@ -37,6 +37,8 @@ in {
     config = rec {
       inherit fonts;
       modifier = "Mod4";
+      terminal = "kitty";
+      workspaceLayout = "tabbed";
       assigns = {
         "\"${lib.elemAt workspaceNumbers 1}\"" = [{ class = "^Code$"; }];
         "\"${lib.elemAt workspaceNumbers 3}\"" = [{ class = "Vlc"; }];
