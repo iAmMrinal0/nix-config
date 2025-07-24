@@ -31,4 +31,8 @@ in {
     };
     profiles = hostConfig.profiles;
   };
+  services.autorandr = {
+    enable = true;
+    matchEdid = true;
+  };
 }

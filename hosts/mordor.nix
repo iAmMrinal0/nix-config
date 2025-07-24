@@ -13,13 +13,18 @@
 
   modules = {
     emacs = {
-      enable = true;
+      enable = false;
       package = pkgs.emacs-unstable;
       defaultEditor = false;
     };
 
-    openrazer.enable = true;
     bluetooth.enable = true;
+    gc = {
+      enable = true;
+      method = "nh";
+    };
+    openrazer.enable = true;
+    touchegg.enable = true;
   };
 
   # powerManagement.resumeCommands =

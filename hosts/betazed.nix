@@ -18,12 +18,13 @@
       defaultEditor = false;
     };
 
+    bluetooth.enable = true;
+    gc = {
+      enable = true;
+      method = "nh";
+    };
     openrazer.enable = true;
     touchegg.enable = true;
-    displayManager.autoLogin = {
-      enable = false;
-      user = "iammrinal0";
-    };
   };
 
   networking.hostName = hostname;

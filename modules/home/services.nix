@@ -19,4 +19,12 @@
       enableSshSupport = false;
     };
   };
+
+  services.gnome-keyring.enable = true;
+
+  services.screen-locker = {
+    enable = true;
+    inactiveInterval = 5;
+    lockCmd = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
+  };
 }

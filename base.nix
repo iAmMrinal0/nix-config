@@ -36,37 +36,37 @@ in
       keep-outputs = true
       keep-derivations = true
     '';
-    gc = {
-      automatic = true;
-      dates = "daily";
-      randomizedDelaySec = "14m";
-      options = "--delete-older-than 10d";
-    };
     optimise = {
       automatic = true;
       dates = [ "weekly" ];
     };
     settings = {
       auto-optimise-store = true;
-      trusted-users = [ "root" "iammrinal0" ];
+      trusted-users = [ "root" config.users.users.iammrinal0.name ];
     };
+  };
+
+  programs.nh = {
+    enable = true;
+    flake = "/home/" + config.users.users.iammrinal0.name + "/nix-config";
   };
 
   time.timeZone = "Europe/Stockholm";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    extraLocaleSettings = {
+      LC_ADDRESS = "en_US.UTF-8";
+      LC_IDENTIFICATION = "en_US.UTF-8";
+      LC_MEASUREMENT = "en_US.UTF-8";
+      LC_MONETARY = "en_US.UTF-8";
+      LC_NAME = "en_US.UTF-8";
+      LC_NUMERIC = "en_US.UTF-8";
+      LC_PAPER = "en_US.UTF-8";
+      LC_TELEPHONE = "en_US.UTF-8";
+      LC_TIME = "en_US.UTF-8";
+    };
   };
 
   environment = {
@@ -99,6 +99,8 @@ in
       pkgs.vim
       pkgs.yubikey-personalization
       pkgs.bitwarden
+      pkgs.android-studio
+      pkgs.kdePackages.kdenlive
     ];
     variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
   };
@@ -165,7 +167,7 @@ in
       defaultSession = "none+i3";
       autoLogin = {
         enable = false;
-        user = "iammrinal0";
+        user = config.users.users.iammrinal0.name;
       };
     };
     
