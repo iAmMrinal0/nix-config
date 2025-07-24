@@ -74,5 +74,27 @@ in {
         eDP-1 = t14s // { position = "0x1440"; };
       };
     };
+    "bzt-dual-alt" = {
+      inherit fingerprint;
+      config = {
+        DVI-I-2-2 = {
+          enable = true;
+          primary = true;
+          crtc = 0;
+          mode = "2560x1440";
+          position = "0x0";
+          rate = "75.00";
+        };
+        DVI-I-1-1 = {
+          enable = true;
+          primary = false;
+          crtc = 5;
+          mode = "2560x1440";
+          position = "2560x0";
+          rate = "75.00";
+        };
+        eDP-1 = t14s // { position = "0x1440"; };
+      };
+    };
   };
 }

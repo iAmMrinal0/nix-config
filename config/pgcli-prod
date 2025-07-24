@@ -194,7 +194,7 @@ keyring = True
 
 # Automatically set the session time zone to the local time zone
 # If unset, uses the server's time zone, which is the Postgres default
-use_local_timezone = True
+use_local_timezone = False
 
 # Custom colors for the completion menu, toolbar, etc.
 [colors]
