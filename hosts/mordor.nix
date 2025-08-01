@@ -102,4 +102,8 @@
   users.groups.plugdev.members = [ config.users.users.iammrinal0.name ];
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
+  environment.systemPackages = [
+    pkgs.android-studio
+  ];
 }
