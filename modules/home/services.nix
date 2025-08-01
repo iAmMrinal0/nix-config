@@ -26,5 +26,13 @@
     enable = true;
     inactiveInterval = 5;
     lockCmd = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
+    xautolock = {
+      extraOptions = [
+        "-corners" "---+" "-cornerdelay" "1"
+        "-notify" "10"
+        "-notifier"
+        "'${pkgs.libnotify}/bin/notify-send \"⚠️ Locking in 10 seconds...\"'"
+      ];
+    };
   };
 }
