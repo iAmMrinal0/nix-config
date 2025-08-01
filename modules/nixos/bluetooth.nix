@@ -9,7 +9,15 @@ in {
 
     settings = mkOption {
       type = types.attrsOf (types.attrsOf types.str);
-      default = { General = { Enable = "Source,Sink,Media,Socket"; }; };
+      default = {
+        General = {
+          Enable = "Source,Sink,Media,Socket";
+          Privacy = "device";
+          JustWorksRepairing = "always";
+          Class = "0x000100";
+          FastConnectable = true;
+        };
+      };
       description = "Bluetooth settings";
     };
 
@@ -28,5 +36,7 @@ in {
     };
 
     services.blueman.enable = true;
+
+    hardware.xpadneo.enable = true;
   };
 }
