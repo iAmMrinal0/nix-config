@@ -103,7 +103,5 @@
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  environment.systemPackages = [
-    pkgs.android-studio
-  ];
+  environment.systemPackages = [ pkgs.android-studio ];
 }

@@ -28,10 +28,21 @@
     lockCmd = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
     xautolock = {
       extraOptions = [
-        "-corners" "---+" "-cornerdelay" "1"
-        "-notify" "10"
+        # lock on top left instantly
+        # don't lock when on top right or bottom left
+        # do nothing when on bottom right (default locking behavior)
+        "-corners"
+        "+--0"
+        # lock a second after when on top left
+        "-cornerdelay"
+        "1"
+        # relock after 30 seconds of unlocking if mouse still on top left
+        "-cornerredelay"
+        "30"
+        "-notify"
+        "60"
         "-notifier"
-        "'${pkgs.libnotify}/bin/notify-send \"⚠️ Locking in 10 seconds...\"'"
+        "'${pkgs.libnotify}/bin/notify-send \"⚠️ Locking soon...\"'"
       ];
     };
   };
