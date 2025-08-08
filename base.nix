@@ -136,47 +136,17 @@ in
     seahorse = { enable = true; };
   };
 
-  fonts = {
-    packages = [
-      pkgs.cantarell-fonts
-      pkgs.font-awesome
-      pkgs.hasklig
-      pkgs.iosevka
-      pkgs.source-code-pro
-    ];
-    fontconfig = { enable = true; };
-  };
-  
   modules = {
-    audio = {
-      enable = true;
-      pulseaudio = true;
-      alsa = {
-        enable = true;
-        support32Bit = true;
-      };
-    };
+    audio.enable = true;
+
+    bluetooth.enable = true;
     
-    bluetooth = {
-      enable = true;
-      settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
-    };
-    
-    displayManager = {
-      enable = true;
-      defaultSession = "none+i3";
-      autoLogin = {
-        enable = false;
-        user = config.users.users.iammrinal0.name;
-      };
-    };
-    
-    docker = {
-      enable = true;
-      addUserToGroup = true;
-      installCompose = true;
-    };
-    
+    displayManager.enable = true;
+
+    docker.enable = true;
+
+    fonts.enable = true;
+
     networking = {
       enable = true;
       networkManager = {
@@ -209,26 +179,10 @@ in
       '';
     };
     
-    openrazer = {
-      enable = true;
-      addUser = true;
-      installRazergenie = true;
-    };
-    
-    printing = {
-      enable = true;
-    };
-    
-    tailscale = {
-      enable = true;
-      openFirewall = true;
-      useRoutingFeatures = "both";
-      installPackage = true;
-    };
-    
-    touchegg = {
-      enable = true;
-    };
+    openrazer.enable = true;
+    printing.enable = true;
+    tailscale.enable = true;
+    touchegg.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
