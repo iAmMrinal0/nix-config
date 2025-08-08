@@ -8,6 +8,7 @@
     ./display-manager.nix
     ./docker.nix
     ./emacs.nix
+    ./fonts.nix
     ./gc.nix
     ./networking.nix
     ./openrazer.nix
