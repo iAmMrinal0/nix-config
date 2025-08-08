@@ -45,8 +45,8 @@ writeShellScriptBin "shutdown-menu" ''
   menu=(
     [Shutdown]="systemctl poweroff"
     [Reboot]="systemctl reboot"
-    [Hibernate]="${i3lock-custom}/bin/i3lock-custom && systemctl hibernate"
-    [Suspend]="${i3lock-custom}/bin/i3lock-custom && systemctl suspend"
+    [Hibernate]="systemctl hibernate"
+    [Suspend]="systemctl suspend"
     [Halt]="systemctl halt"
     [Lock]="${i3lock-custom}/bin/i3lock-custom"
     [Logout]="i3-msg exit"
