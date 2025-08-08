@@ -26,6 +26,10 @@
     enable = true;
     inactiveInterval = 5;
     lockCmd = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
+    xss-lock = {
+      # This ensures the screen locks before suspend/hibernate
+      extraOptions = [ "--transfer-sleep-lock" ];
+    };
     xautolock = {
       extraOptions = [
         # lock on top left instantly
