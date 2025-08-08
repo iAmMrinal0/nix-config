@@ -19,10 +19,6 @@ in
       lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
   };
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot = { enable = true; };
-  boot.loader.efi.canTouchEfiVariables = true;
-
   nixpkgs.config = {
     allowUnfree = true;
     chromium = { enableWideVine = true; };
@@ -140,6 +136,8 @@ in
     audio.enable = true;
 
     bluetooth.enable = true;
+
+    boot.enable = true;
     
     displayManager.enable = true;
 
@@ -206,8 +204,4 @@ in
       ${pkgs.nix}/bin/nix store diff-closures /run/current-system "$systemConfig"
     fi
   '';
-
-  boot.tmp.useTmpfs = true;
-  boot.tmp.cleanOnBoot = true;
-  boot.plymouth.enable = true;
 }

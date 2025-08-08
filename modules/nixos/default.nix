@@ -5,6 +5,7 @@
     ./adb.nix
     ./audio.nix
     ./bluetooth.nix
+    ./boot.nix
     ./display-manager.nix
     ./docker.nix
     ./emacs.nix
