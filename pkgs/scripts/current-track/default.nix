@@ -8,10 +8,10 @@ writeShellScriptBin "current-track" ''
       format=$(${playerctl}/bin/playerctl $ARGS metadata --format='{{status}}')
       if [ "$format" = "Playing" ]
       then
-         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}')
+         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}')
       elif [ "$format" = "Paused" ]
       then
-         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}')
+         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}')
       elif [ "$format" = "No players found" ]
       then
          echo ""
