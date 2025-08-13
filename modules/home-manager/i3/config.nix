@@ -100,6 +100,10 @@ in {
         {
           command = "${pkgs.xorg.xset}/bin/xset -b";
         }
+        {
+          # Standby after 5 minutes, Suspend after 10 minutes, Off after 15 minutes
+          command = "${pkgs.xorg.xset}/bin/xset dpms 300 600 900";
+        }
         # { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
         {
           command =
