@@ -8,7 +8,8 @@ in {
     enable = mkEnableOption "Enable bluetooth configuration";
 
     settings = mkOption {
-      type = types.attrsOf (types.attrsOf (types.oneOf [ types.str types.bool ]));
+      type =
+        types.attrsOf (types.attrsOf (types.oneOf [ types.str types.bool ]));
       default = {
         General = {
           Enable = "Source,Sink,Media,Socket";
