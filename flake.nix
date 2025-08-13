@@ -38,8 +38,8 @@
       url = "github:chisui/zsh-nix-shell";
       flake = false;
     };
-    nix-vscode-extensions = {
-      url = "github:nix-community/nix-vscode-extensions";
+    nix4vscode = {
+      url = "github:nix-community/nix4vscode";
     };
     keepmenu = { url = "github:firecat53/keepmenu"; };
     haskell-yesod-quasiquotes = {
@@ -53,10 +53,10 @@
   };
 
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
-    , nixos-hardware, emacsConfiguration, nix-vscode-extensions
+    , nixos-hardware, emacsConfiguration
     , zsh-autosuggestions, zsh-autosuggestions-abbreviations-strategy
     , zsh-you-should-use, zsh-nix-shell, keepmenu
-    , haskell-yesod-quasiquotes, nixpkgs-unstable }: {
+    , haskell-yesod-quasiquotes, nixpkgs-unstable, nix4vscode }: {
       nixosConfigurations = {
         betazed = let hostname = "betazed";
         in nixpkgs.lib.nixosSystem {
@@ -70,7 +70,7 @@
               nixpkgs.overlays = [
                 nur.overlays.default
                 emacs-overlay.overlay
-                nix-vscode-extensions.overlays.default
+                nix4vscode.overlays.default
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
@@ -94,7 +94,7 @@
               nixpkgs.overlays = [
                 nur.overlays.default
                 emacs-overlay.overlay
-                nix-vscode-extensions.overlays.default
+                nix4vscode.overlays.default
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
