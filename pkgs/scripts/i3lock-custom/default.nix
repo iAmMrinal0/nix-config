@@ -22,8 +22,8 @@ in pkgs.writeShellScriptBin "i3lock-custom" ''
 
   ${pkgs.playerctl}/bin/playerctl pause
   ${pkgs.maim}/bin/maim --hidecursor /tmp/screen.png
-  ${pkgs.imagemagick}/bin/magick convert /tmp/screen.png -scale 10% -scale 1000% /tmp/screen.png
-  ${pkgs.imagemagick}/bin/convert /tmp/screen.png ${lockImagePath} -gravity center -composite -matte /tmp/screen_pixel.png
+  ${pkgs.imagemagick}/bin/magick /tmp/screen.png -scale 10% -scale 1000% /tmp/screen.png
+  ${pkgs.imagemagick}/bin/magick /tmp/screen.png ${lockImagePath} -gravity center -composite -alpha set /tmp/screen_pixel.png
   rm -f /tmp/screen.png
   ${pkgs.dunst}/bin/dunstctl set-paused true
   ${pkgs.i3lock}/bin/i3lock -u -i /tmp/screen_pixel.png --nofork
