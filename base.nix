@@ -67,9 +67,6 @@ in
 
   environment = {
     systemPackages = [
-      (pkgs.writeShellScriptBin "nixFlakes" ''
-        exec ${pkgs.nixVersions.latest}/bin/nix --experimental-features "nix-command flakes" "$@"
-      '')
       pkgs.atop
       pkgs.android-file-transfer
       pkgs.binutils
@@ -97,6 +94,7 @@ in
       pkgs.bitwarden
       pkgs.android-studio
       pkgs.kdePackages.kdenlive
+      pkgs.cryptomator
     ];
     variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
   };
@@ -204,4 +202,6 @@ in
       ${pkgs.nix}/bin/nix store diff-closures /run/current-system "$systemConfig"
     fi
   '';
+
+  zramSwap.enable = true;
 }
