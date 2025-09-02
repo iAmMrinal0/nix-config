@@ -84,7 +84,6 @@ in
       pkgs.razergenie
       pkgs.sops
       pkgs.stow
-      pkgs.tailscale
       pkgs.tcpdump
       pkgs.traceroute
       pkgs.usbutils

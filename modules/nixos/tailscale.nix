@@ -29,11 +29,12 @@ in {
   config = mkIf cfg.enable {
     services.tailscale = {
       enable = true;
+      package = pkgs.unstable.tailscale;
       openFirewall = cfg.openFirewall;
       useRoutingFeatures = cfg.useRoutingFeatures;
     };
 
-    environment.systemPackages = mkIf cfg.installPackage [ pkgs.tailscale ];
+    environment.systemPackages = mkIf cfg.installPackage [ pkgs.unstable.tailscale ];
 
     networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
