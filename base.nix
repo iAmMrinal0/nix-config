@@ -10,8 +10,7 @@ let
     };
   };
 
-in
-{
+in {
 
   sops = {
     defaultSopsFile = ./sops/secrets.yaml;
@@ -91,7 +90,6 @@ in
       pkgs.vim
       pkgs.yubikey-personalization
       pkgs.bitwarden
-      pkgs.android-studio
       pkgs.kdePackages.kdenlive
       pkgs.cryptomator
     ];
@@ -135,7 +133,7 @@ in
     bluetooth.enable = true;
 
     boot.enable = true;
-    
+
     displayManager.enable = true;
 
     docker.enable = true;
@@ -148,9 +146,7 @@ in
         enable = true;
         wifi.macAddressRandomization = "random";
       };
-      firewall = {
-        enable = true;
-      };
+      firewall = { enable = true; };
       extraHosts = ''
         127.0.0.1 bankid.local
         127.0.0.1 swish.local
@@ -173,7 +169,7 @@ in
         127.0.0.1 api.nordeaopenbanking.local
       '';
     };
-    
+
     openrazer.enable = true;
     printing.enable = true;
     tailscale.enable = true;
