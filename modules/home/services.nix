@@ -31,6 +31,7 @@
       extraOptions = [ "--transfer-sleep-lock" ];
     };
     xautolock = {
+      enable = false;
       extraOptions = [
         # lock on top left instantly
         # don't lock when on top right or bottom left
@@ -43,6 +44,7 @@
         # relock after 30 seconds of unlocking if mouse still on top left
         "-cornerredelay"
         "30"
+        "-resetsaver"
         "-notify"
         "60"
         "-notifier"

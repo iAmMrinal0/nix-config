@@ -13,7 +13,7 @@
 
   modules = {
     emacs = {
-      enable = true;
+      enable = false;
       package = pkgs.emacs-unstable;
       defaultEditor = false;
     };
@@ -73,4 +73,10 @@
     host = "0.0.0.0";
     acceleration = "cuda";
   };
+
+  environment.systemPackages = [
+    pkgs.rpi-imager
+    pkgs.ansible
+  ];
+
 }
