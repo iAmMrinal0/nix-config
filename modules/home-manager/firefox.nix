@@ -26,7 +26,6 @@
         reddit-enhancement-suite
         ublock-origin
         multi-account-containers
-        keepassxc-browser
         vimium
         octotree
         refined-github

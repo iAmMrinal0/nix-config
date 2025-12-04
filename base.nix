@@ -21,7 +21,8 @@ in {
   nixpkgs.config = {
     allowUnfree = true;
     chromium = { enableWideVine = true; };
-    permittedInsecurePackages = [ ];
+    permittedInsecurePackages = [ 
+    ];
   };
 
   nix = {
@@ -89,7 +90,7 @@ in {
       pkgs.v4l-utils
       pkgs.vim
       pkgs.yubikey-personalization
-      pkgs.bitwarden
+      pkgs.bitwarden-desktop
       pkgs.kdePackages.kdenlive
       pkgs.cryptomator
     ];
@@ -110,7 +111,8 @@ in {
     };
     udev.packages = [ pkgs.yubikey-personalization ];
     davfs2.enable = true;
-    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.seahorse ];
+    colord.enable = true;
+    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.seahorse pkgs.cups pkgs.cups-pk-helper ];
     dnsmasq = { enable = true; };
     openssh = { enable = true; };
     upower = { enable = true; };
@@ -118,6 +120,7 @@ in {
     libinput = { enable = true; };
     gvfs = { enable = true; };
     gnome.gnome-keyring.enable = true;
+    gnome.gcr-ssh-agent.enable = false;
   };
 
   programs = {
@@ -167,6 +170,7 @@ in {
         127.0.0.1 enablebanking.local
         127.0.0.1 przelewy24.local
         127.0.0.1 api.nordeaopenbanking.local
+        127.0.0.1 trustly.local
       '';
     };
 

@@ -13,6 +13,7 @@ in {
     defaultKeymap = "emacs";
     history.expireDuplicatesFirst = true;
     history.extended = true;
+    syntaxHighlighting = { enable = true; };
 
     shellAliases = shellAliases;
     initContent = ''
