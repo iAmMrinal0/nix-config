@@ -2,11 +2,11 @@
   description = "NixOS configurations for my machines";
 
   inputs = {
-    nixpkgs = { url = "github:NixOS/nixpkgs/nixos-25.05"; };
+    nixpkgs = { url = "github:NixOS/nixpkgs/nixos-25.11"; };
     nixpkgs-unstable = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
     nur = { url = "github:nix-community/NUR"; };
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
@@ -58,9 +58,9 @@
       nixosConfigurations = {
         betazed = let hostname = "betazed";
         in nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
           specialArgs = { inherit inputs hostname; };
           modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/${hostname}.nix
             ./cache.nix
             sops-nix.nixosModules.sops
@@ -68,7 +68,7 @@
               nixpkgs.overlays = [
                 nur.overlays.default
                 emacs-overlay.overlay
-                nix4vscode.overlays.default
+                nix4vscode.overlays.forVscode
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
@@ -82,9 +82,9 @@
         };
         mordor = let hostname = "mordor";
         in nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
           specialArgs = { inherit inputs hostname; };
           modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/${hostname}.nix
             ./cache.nix
             sops-nix.nixosModules.sops

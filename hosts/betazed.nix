@@ -74,9 +74,6 @@
     acceleration = "cuda";
   };
 
-  environment.systemPackages = [
-    pkgs.rpi-imager
-    pkgs.ansible
-  ];
+  environment.systemPackages = [ pkgs.rpi-imager pkgs.ansible ];
 
 }

@@ -34,7 +34,8 @@ in {
       useRoutingFeatures = cfg.useRoutingFeatures;
     };
 
-    environment.systemPackages = mkIf cfg.installPackage [ pkgs.unstable.tailscale ];
+    environment.systemPackages =
+      mkIf cfg.installPackage [ pkgs.unstable.tailscale ];
 
     networking.firewall.trustedInterfaces = [ "tailscale0" ];
 

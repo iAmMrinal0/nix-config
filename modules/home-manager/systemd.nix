@@ -17,8 +17,7 @@ let
 
           # Ensure mount path and cache directory exist
           ExecStartPre = ''
-            /run/current-system/sw/bin/mkdir -p ${mountPath}
-            /run/current-system/sw/bin/mkdir -p ${cacheDir}
+            /run/current-system/sw/bin/mkdir -p ${mountPath} ${cacheDir}
           '';
 
           ExecStart = ''

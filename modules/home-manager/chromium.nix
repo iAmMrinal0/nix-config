@@ -2,7 +2,6 @@
   programs.chromium = {
     enable = true;
     extensions = [
-      "oboonakemofpalcgghocfoadofidjkkk" # Keepassxc Browser
       "pkehgijcmpdhfbdbbnkijodmdjhbjlgp" # Privacy Badger
       "cjpalhdlnbpafiamejdnhcphjbkeiagm" # uBlock Origin
       "edacconmaakjimmfgnblocblbcdcpbko" # Session Buddy

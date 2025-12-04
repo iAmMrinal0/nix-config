@@ -9,7 +9,7 @@ in {
 
     drivers = mkOption {
       type = types.listOf types.package;
-      default = [ ];
+      default = [ pkgs.hplip pkgs.gutenprint pkgs.foomatic-db-ppds ];
       description = "Additional printer drivers to install";
     };
   };

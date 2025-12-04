@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./programs/delta.nix
     ./programs/gpg.nix
 
     ./programs/shell-tools.nix

@@ -1,10 +1,9 @@
 { pkgs, ... }: {
   programs.git = {
     enable = true;
-    delta.enable = true;
-    userName = "Mrinal Purohit";
-    userEmail = "github@mrinalpurohit.in";
-    extraConfig = {
+    settings = {
+      user.email = "github@mrinalpurohit.in";
+      user.name = "Mrinal Purohit";
       commit = { gpgSign = true; };
       user.signingKey = "E27C4BC509095144";
       fetch = { prune = true; };

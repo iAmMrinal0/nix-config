@@ -28,7 +28,7 @@
       gruvbox-theme
       haskell-mode
       helm
-      helm-ag
+      # helm-ag
       helm-projectile
       hungry-delete
       hydra
