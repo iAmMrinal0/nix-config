@@ -28,8 +28,7 @@ in {
   nixpkgs.config = {
     allowUnfree = true;
     chromium = { enableWideVine = true; };
-    permittedInsecurePackages = [ 
-    ];
+    permittedInsecurePackages = [ ];
   };
 
   nix = {
@@ -100,6 +99,7 @@ in {
       pkgs.bitwarden-desktop
       pkgs.kdePackages.kdenlive
       pkgs.cryptomator
+      pkgs.nfs-utils
       pkgs.bitwarden-cli
       (pkgs.writeShellApplication {
         name = "connect-kronor-vpn";
@@ -135,7 +135,14 @@ in {
     udev.packages = [ pkgs.yubikey-personalization ];
     davfs2.enable = true;
     colord.enable = true;
-    dbus.packages = [ pkgs.blueman pkgs.dconf pkgs.gcr pkgs.seahorse pkgs.cups pkgs.cups-pk-helper ];
+    dbus.packages = [
+      pkgs.blueman
+      pkgs.dconf
+      pkgs.gcr
+      pkgs.seahorse
+      pkgs.cups
+      pkgs.cups-pk-helper
+    ];
     dnsmasq = { enable = true; };
     openssh = { enable = true; };
     upower = { enable = true; };
@@ -226,4 +233,7 @@ in {
   '';
 
   zramSwap.enable = true;
+
+  # for mounting NFS shares
+  boot.supportedFilesystems = [ "nfs" ];
 }

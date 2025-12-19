@@ -38,7 +38,10 @@
       url = "github:chisui/zsh-nix-shell";
       flake = false;
     };
-    nix4vscode = { url = "github:nix-community/nix4vscode"; };
+    nix4vscode = {
+      url = "github:nix-community/nix4vscode";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     keepmenu = { url = "github:firecat53/keepmenu"; };
     haskell-yesod-quasiquotes = {
       url = "github:kronor-io/haskell-yesod-quasiquotes";
@@ -64,7 +67,7 @@
             ./hosts/${hostname}.nix
             ./cache.nix
             sops-nix.nixosModules.sops
-            {
+            ({ pkgs, inputs, ... }: {
               nixpkgs.overlays = [
                 nur.overlays.default
                 emacs-overlay.overlay
@@ -72,12 +75,12 @@
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
-                    system = final.system;
+                    localSystem = pkgs.stdenv.hostPlatform;
                     config = final.config;
                   };
                 })
               ];
-            }
+            })
           ];
         };
         mordor = let hostname = "mordor";
@@ -88,20 +91,20 @@
             ./hosts/${hostname}.nix
             ./cache.nix
             sops-nix.nixosModules.sops
-            {
+            ({ pkgs, inputs, ... }: {
               nixpkgs.overlays = [
                 nur.overlays.default
                 emacs-overlay.overlay
-                nix4vscode.overlays.default
+                nix4vscode.overlays.forVscode
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
-                    system = final.system;
+                    localSystem = pkgs.stdenv.hostPlatform;
                     config = final.config;
                   };
                 })
               ];
-            }
+            })
           ];
         };
       };
