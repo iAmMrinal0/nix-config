@@ -1,7 +1,14 @@
 { lib, config, inputs, pkgs, ... }:
 
 let
-  secrets = [ "service-access-host" "service-access-key" "nixpkgs-review" ];
+  secrets = [
+    "service-access-host"
+    "service-access-key"
+    "nixpkgs-review"
+    "kronor-openvpn-staging"
+    "kronor-openvpn-production"
+    "bw-session-key"
+  ];
   defaultPermissions = secret: {
     ${secret} = {
       mode = "0440";
@@ -93,6 +100,22 @@ in {
       pkgs.bitwarden-desktop
       pkgs.kdePackages.kdenlive
       pkgs.cryptomator
+      pkgs.bitwarden-cli
+      (pkgs.writeShellApplication {
+        name = "connect-kronor-vpn";
+        runtimeInputs = [ pkgs.openvpn pkgs.bitwarden-cli ];
+        text = ''
+          echo "mrinal@kronor.io" > /tmp/kronor_vpn.pass
+
+          if [[ "''${1:-staging}" == "staging" ]]; then
+              bw get totp "pritunl staging" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> /tmp/kronor_vpn.pass
+              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-staging.path} --auth-user-pass /tmp/kronor_vpn.pass
+          elif [[ "$1" == "production" ]]; then
+              bw get totp "pritunl prod" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> /tmp/kronor_vpn.pass
+              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-production.path} --auth-user-pass /tmp/kronor_vpn.pass
+          fi
+        '';
+      })
     ];
     variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
   };
