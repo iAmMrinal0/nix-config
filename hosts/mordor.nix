@@ -87,6 +87,7 @@
   security.pam.services.login.fprintAuth = true;
   security.pam.services.sudo.fprintAuth = true;
   security.pam.services.i3lock.fprintAuth = true;
+  security.pam.services.polkit-1.fprintAuth = true;
 
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {
@@ -103,5 +104,5 @@
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  environment.systemPackages = [ pkgs.android-studio ];
+  environment.systemPackages = [ pkgs.android-studio pkgs.polkit_gnome ];
 }

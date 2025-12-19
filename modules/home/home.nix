@@ -9,8 +9,9 @@ in {
       packages = userPackages;
       stateVersion = "24.05";
       sessionVariables = {
-        # SSH_AUTH_SOCK = "${config.xdg.dataHome}/ssh-agent";
-        # BITWARDEN_SSH_AUTH_SOCK = "${config.home.sessionVariables.SSH_AUTH_SOCK}";
+        SSH_AUTH_SOCK = "${config.xdg.dataHome}/ssh-agent";
+        BITWARDEN_SSH_AUTH_SOCK =
+          "${config.home.sessionVariables.SSH_AUTH_SOCK}";
       };
     };
   };

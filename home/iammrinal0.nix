@@ -11,7 +11,7 @@
   modules.emacs = {
     enable = false;
     package = pkgs.emacs-unstable;
-    configureGitWithEmacs = true;
+    configureGitWithEmacs = false;
     i3Integration = true;
   };
 

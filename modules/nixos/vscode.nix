@@ -1,7 +1,7 @@
 { pkgs, inputs, ... }:
 
 let
-  vscodeExtensions = pkgs.nix4vscode.forVscode [
+  vscodeExtensions = pkgs.nix4vscode.forVscodeVersion "1.106.2" [
     "ms-vscode-remote.vscode-remote-extensionpack"
     "ms-vscode.remote-explorer"
     "ms-vsliveshare.vsliveshare"
