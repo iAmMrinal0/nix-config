@@ -111,8 +111,10 @@ in {
           command =
             "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ 25%";
         }
-        { command = "${pkgs.numlockx}/bin/numlockx on"; }
-        { command = "${pkgs.keepassxc}/bin/keepassxc"; }
+        {
+          command = "${pkgs.numlockx}/bin/numlockx on";
+        }
+        { command = "${pkgs.bitwarden-desktop}/bin/bitwarden"; }
       ];
       modes = {
         resize = {
