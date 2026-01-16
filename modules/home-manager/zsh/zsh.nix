@@ -2,6 +2,7 @@
 
 let
   shellAliases = {
+    cal = "cal -mw"; # show week numbers and Monday as first day of week
     tmuxnew = "tmux -u attach -t play || tmux -u new -s play";
     tmuxdir = "new-tmux-from-dir-name";
   };
@@ -13,7 +14,6 @@ in {
     defaultKeymap = "emacs";
     history.expireDuplicatesFirst = true;
     history.extended = true;
-    syntaxHighlighting = { enable = true; };
 
     shellAliases = shellAliases;
     initContent = ''
@@ -24,6 +24,8 @@ in {
         ${pkgs.tmux}/bin/tmux new-session -As $dir_name
       }
       ZSH_AUTOSUGGEST_STRATEGY=( abbreviations $ZSH_AUTOSUGGEST_STRATEGY )
+
+      source "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
     '';
     oh-my-zsh = {
       enable = true;
@@ -43,10 +45,6 @@ in {
       {
         name = "nix-zsh-completions";
         src = "${pkgs.nix-zsh-completions}/share/zsh/site-functions";
-      }
-      {
-        name = "fast-syntax-highlighting";
-        src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
       }
       {
         name = "you-should-use";
