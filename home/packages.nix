@@ -110,9 +110,6 @@ in with pkgs; [
   dconf
   dconf-editor
 
-  # Custom inputs
-  inputs.keepmenu
-
   # Language & Spellcheck
   aspell
   aspellDicts.en
