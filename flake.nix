@@ -42,7 +42,6 @@
       url = "github:nix-community/nix4vscode";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    keepmenu = { url = "github:firecat53/keepmenu"; };
     haskell-yesod-quasiquotes = {
       url = "github:kronor-io/haskell-yesod-quasiquotes";
       flake = false;
@@ -56,7 +55,7 @@
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
     , nixos-hardware, emacsConfiguration, zsh-autosuggestions
     , zsh-autosuggestions-abbreviations-strategy, zsh-you-should-use
-    , zsh-nix-shell, keepmenu, haskell-yesod-quasiquotes, nixpkgs-unstable
+    , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable
     , nix4vscode }: {
       nixosConfigurations = {
         betazed = let hostname = "betazed";
