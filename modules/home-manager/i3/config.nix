@@ -4,6 +4,8 @@ let
   lock = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
   shutdownMenu = "${pkgs.scripts.shutdown-menu}/bin/shutdown-menu";
   rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
+  rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
+  rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
   i3blocksConf = pkgs.callPackage ./i3blocks.nix { };
 
   fontSize = 10.8;
@@ -201,6 +203,8 @@ in {
         "Control+w" = "exec ${pkgs.rofi}/bin/rofi -show window";
         "Control+s" = "exec ${pkgs.rofi}/bin/rofi -show ssh";
         "p" = "exec ${rofiAutorandr}";
+        "Shift+e" = "exec ${rofiTailscaleExitNode}";
+        "Shift+t" = "exec ${rofiTailscaleAccount}";
         "e" = "layout toggle stacking tabbed splith splitv";
         "f" = "fullscreen toggle";
         "Tab" = "workspace back_and_forth";
