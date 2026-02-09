@@ -23,5 +23,11 @@
       toggle_fullscreen = "f";
       save_filelist = "F";
     };
+    themes = {
+      feh = [
+        "--scale-down"
+        "--auto-zoom"
+      ];
+    };
   };
 }
