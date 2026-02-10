@@ -15,7 +15,6 @@ let
   };
   t14s = {
     enable = true;
-    crtc = 1;
     mode = "2560x1440";
     position = "0x0";
     rate = "59.96";
@@ -23,7 +22,6 @@ let
   };
   dellU2724DE = {
     enable = false;
-    crtc = 0;
     mode = "2560x1440";
     position = "0x0";
     rate = "120.00";
@@ -35,7 +33,6 @@ in {
       inherit fingerprint;
       config = {
         eDP-1 = t14s // {
-          crtc = 0;
           primary = true;
         };
       };
@@ -58,7 +55,6 @@ in {
         DVI-I-1-1 = {
           enable = true;
           primary = true;
-          crtc = 0;
           mode = "2560x1440";
           position = "0x0";
           rate = "75.00";
@@ -66,7 +62,6 @@ in {
         DVI-I-2-2 = {
           enable = true;
           primary = false;
-          crtc = 5;
           mode = "2560x1440";
           position = "2560x0";
           rate = "75.00";
@@ -80,7 +75,6 @@ in {
         DVI-I-2-2 = {
           enable = true;
           primary = true;
-          crtc = 0;
           mode = "2560x1440";
           position = "0x0";
           rate = "75.00";
@@ -88,7 +82,6 @@ in {
         DVI-I-1-1 = {
           enable = true;
           primary = false;
-          crtc = 5;
           mode = "2560x1440";
           position = "2560x0";
           rate = "75.00";
