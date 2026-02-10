@@ -11,7 +11,6 @@ let
   };
   t480 = {
     enable = true;
-    crtc = 1;
     mode = "1920x1080";
     position = "0x0";
     rate = "60.02";
@@ -19,7 +18,6 @@ let
   };
   dellU2724DE = {
     enable = false;
-    crtc = 0;
     mode = "2560x1440";
     position = "0x0";
     rate = "120.00";
@@ -40,7 +38,6 @@ in {
           position = "0x0";
         };
         eDP-1 = t480 // {
-          crtc = 1;
           position = "2560x0";
         };
       };
