@@ -1,7 +1,8 @@
 { pkgs, inputs, ... }:
 
 let
-  vscodeExtensions = pkgs.nix4vscode.forVscodeVersion "1.106.2" [
+  vscode = pkgs.unstable.vscode;
+  vscodeExtensions = pkgs.nix4vscode.forVscodeVersion vscode.version [
     "ms-vscode-remote.vscode-remote-extensionpack"
     "ms-vscode.remote-explorer"
     "ms-vsliveshare.vsliveshare"
@@ -41,13 +42,15 @@ let
     "graphql.vscode-graphql-syntax"
     "tootone.org-mode"
     "tailscale.vscode-tailscale"
-    "ms-ossdata.vscode-pgsql"
     "github.vscode-pull-request-github"
     "github.copilot-chat"
     "github.copilot"
+    "anthropic.claude-code"
+    "datadog.datadog-vscode"
   ];
 
-  vscode-with-extensions = pkgs.vscode-with-extensions.override {
+  vscode-with-extensions = pkgs.unstable.vscode-with-extensions.override {
+    vscode = vscode;
     vscodeExtensions = vscodeExtensions ++ [
       ((pkgs.vscode-utils.buildVscodeExtension {
         name = "haskell-yesod-quasiquotes-0.1.2";
