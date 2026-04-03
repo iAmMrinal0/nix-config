@@ -28,7 +28,9 @@ in {
   nixpkgs.config = {
     allowUnfree = true;
     chromium = { enableWideVine = true; };
-    permittedInsecurePackages = [ ];
+    permittedInsecurePackages = [
+      "xpdf-4.06"
+    ];
   };
 
   nix = {
@@ -101,6 +103,8 @@ in {
       pkgs.cryptomator
       pkgs.nfs-utils
       pkgs.bitwarden-cli
+      pkgs.xpdf
+      pkgs.claude-code
       (pkgs.writeShellApplication {
         name = "connect-kronor-vpn";
         runtimeInputs = [ pkgs.openvpn pkgs.bitwarden-cli ];
@@ -109,10 +113,10 @@ in {
 
           if [[ "''${1:-staging}" == "staging" ]]; then
               bw get totp "pritunl staging" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> /tmp/kronor_vpn.pass
-              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-staging.path} --auth-user-pass /tmp/kronor_vpn.pass
+              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-staging.path} --auth-user-pass /tmp/kronor_vpn.pass --auth-nocache
           elif [[ "$1" == "production" ]]; then
               bw get totp "pritunl prod" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> /tmp/kronor_vpn.pass
-              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-production.path} --auth-user-pass /tmp/kronor_vpn.pass
+              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-production.path} --auth-user-pass /tmp/kronor_vpn.pass --auth-nocache
           fi
         '';
       })
