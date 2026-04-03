@@ -46,6 +46,10 @@
       url = "github:kronor-io/haskell-yesod-quasiquotes";
       flake = false;
     };
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # nixos-06cb-009a-fingerprint-sensor = {
     #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor?ref=25.05";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -56,7 +60,7 @@
     , nixos-hardware, emacsConfiguration, zsh-autosuggestions
     , zsh-autosuggestions-abbreviations-strategy, zsh-you-should-use
     , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable
-    , nix4vscode }: {
+    , nix4vscode, claude-code }: {
       nixosConfigurations = {
         betazed = let hostname = "betazed";
         in nixpkgs.lib.nixosSystem {
@@ -71,6 +75,7 @@
                 nur.overlays.default
                 emacs-overlay.overlay
                 nix4vscode.overlays.forVscode
+                claude-code.overlays.default
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
