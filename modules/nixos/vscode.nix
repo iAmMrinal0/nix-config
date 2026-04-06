@@ -1,6 +1,10 @@
-{ pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
+
+with lib;
 
 let
+  cfg = config.modules.editors.vscode;
+  
   vscode = pkgs.unstable.vscode;
   vscodeExtensions = pkgs.nix4vscode.forVscodeVersion vscode.version [
     "ms-vscode-remote.vscode-remote-extensionpack"
@@ -64,4 +68,12 @@ let
     ];
   };
 
-in { environment.systemPackages = [ vscode-with-extensions ]; }
+in {
+  options.modules.editors.vscode = {
+    enable = mkEnableOption "Visual Studio Code";
+  };
+
+  config = mkIf cfg.enable {
+    environment.systemPackages = [ vscode-with-extensions ];
+  };
+}

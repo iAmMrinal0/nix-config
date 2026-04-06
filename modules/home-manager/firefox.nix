@@ -19,6 +19,7 @@
         "signon.importedFromSqlite" = true;
         "signon.rememberSignons" = false;
         "signon.usage.hasEntry" = true;
+        "extensions.openPopupWithoutUserGesture.enabled" = true;
       };
       default.extensions.packages = (with pkgs.nur.repos.rycee.firefox-addons; [
         darkreader

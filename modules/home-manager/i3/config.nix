@@ -101,10 +101,13 @@ in {
       startup = [
         { command = "${pkgs.xorg.xset}/bin/xset -b"; }
         {
+          command = "${pkgs.cryptomator}/bin/cryptomator &";
+        }
+        {
           # Standby after 5 minutes, Suspend after 10 minutes, Off after 15 minutes
           command = "${pkgs.xorg.xset}/bin/xset dpms 300 600 900";
         }
-        # { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
+        { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
         {
           command =
             "${pkgs.kdePackages.kdeconnect-kde}/bin/kdeconnect-indicator";
