@@ -1,34 +1,59 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
-{
-  services.xserver = {
-    enable = true;
-    exportConfiguration = true;
-    # dpi = 160;
-    xkb = {
-      layout = "us,se";
-      variant = "";
-      options = "grp:switch";
+with lib;
+
+let cfg = config.modules.xserver;
+in {
+  options.modules.xserver = {
+    enable = mkEnableOption "Enable XServer";
+
+    videoDrivers = mkOption {
+      type = types.listOf types.str;
+      default = [ "modesetting" "displaylink" ];
+      description = "Video drivers to use";
     };
-    desktopManager = { xterm.enable = false; };
-    displayManager = {
-      sessionCommands = ''
-        ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
-      '';
-    };
-    videoDrivers = [ "modesetting" "displaylink" ];
-    windowManager.i3 = {
-      enable = true;
-      extraPackages = [
-        pkgs.dmenu
-        pkgs.rofi
-        pkgs.i3status
-        pkgs.i3lock
-        pkgs.i3blocks
-        pkgs.xkb-switch
-      ];
-      # package = pkgs.i3-gaps;
+
+    windowManager = {
+      i3 = {
+        enable = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Enable i3 window manager";
+        };
+      };
     };
   };
-  security.pam.services.i3lock.enable = true;
+
+  config = mkIf cfg.enable {
+    services.xserver = {
+      enable = true;
+      exportConfiguration = true;
+      # dpi = 160;
+      xkb = {
+        layout = "us,se";
+        variant = "";
+        options = "grp:switch";
+      };
+      desktopManager = { xterm.enable = false; };
+      displayManager = {
+        sessionCommands = ''
+          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
+        '';
+      };
+      videoDrivers = cfg.videoDrivers;
+      windowManager.i3 = mkIf cfg.windowManager.i3.enable {
+        enable = true;
+        extraPackages = [
+          pkgs.dmenu
+          pkgs.rofi
+          pkgs.i3status
+          pkgs.i3lock
+          pkgs.i3blocks
+          pkgs.xkb-switch
+        ];
+        # package = pkgs.i3-gaps;
+      };
+    };
+    security.pam.services.i3lock.enable = mkIf cfg.windowManager.i3.enable true;
+  };
 }
