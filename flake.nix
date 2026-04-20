@@ -100,6 +100,7 @@
                 nur.overlays.default
                 emacs-overlay.overlay
                 nix4vscode.overlays.forVscode
+                claude-code.overlays.default
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
