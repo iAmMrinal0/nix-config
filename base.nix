@@ -52,33 +52,19 @@ in {
 
   programs.nh = {
     enable = true;
-    flake = "/home/" + config.users.users.iammrinal0.name + "/nix-config";
+    flake = "${config.users.users.iammrinal0.home}/nix-config";
   };
 
   time.timeZone = "Europe/Stockholm";
 
   # Select internationalisation properties.
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    extraLocaleSettings = {
-      LC_ADDRESS = "en_US.UTF-8";
-      LC_IDENTIFICATION = "en_US.UTF-8";
-      LC_MEASUREMENT = "en_US.UTF-8";
-      LC_MONETARY = "en_US.UTF-8";
-      LC_NAME = "en_US.UTF-8";
-      LC_NUMERIC = "en_US.UTF-8";
-      LC_PAPER = "en_US.UTF-8";
-      LC_TELEPHONE = "en_US.UTF-8";
-      LC_TIME = "en_US.UTF-8";
-    };
-  };
+  i18n.defaultLocale = "en_GB.UTF-8";
 
   environment = {
     systemPackages = [
       pkgs.atop
       pkgs.android-file-transfer
       pkgs.binutils
-      pkgs.coreutils-full
       pkgs.docker-compose
       pkgs.git
       pkgs.libsecret
@@ -87,7 +73,6 @@ in {
       pkgs.ntfs3g
       pkgs.openjdk
       pkgs.openssl
-      pkgs.pinentry-gnome3
       pkgs.pptp
       pkgs.razergenie
       pkgs.sops
@@ -121,7 +106,7 @@ in {
         '';
       })
     ];
-    variables = { QT_STYLE_OVERRIDE = lib.mkDefault "gtk2"; };
+    variables = { QT_STYLE_OVERRIDE = "gtk2"; };
   };
 
   security.pam.services.lightdm.enableGnomeKeyring = true;
@@ -141,13 +126,11 @@ in {
     colord.enable = true;
     dbus.packages = [
       pkgs.blueman
-      pkgs.dconf
       pkgs.gcr
       pkgs.seahorse
-      pkgs.cups
-      pkgs.cups-pk-helper
     ];
     dnsmasq = { enable = true; };
+    geoclue2.enable = true;
     openssh = { enable = true; };
     upower = { enable = true; };
     fwupd = { enable = true; };

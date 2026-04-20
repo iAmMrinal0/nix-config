@@ -86,6 +86,8 @@
 
       set -g mouse on
 
+      set -g focus-events on
+
       set-option -g allow-rename off
 
       # Automatically re-number windows after one of them is closed

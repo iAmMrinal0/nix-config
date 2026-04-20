@@ -20,8 +20,6 @@
     };
   };
 
-  services.gnome-keyring.enable = true;
-
   services.screen-locker = {
     enable = true;
     inactiveInterval = 5;
@@ -54,4 +52,14 @@
   };
 
   services.mpris-proxy.enable = true;
+
+  services.redshift = {
+    enable = true;
+    tray = true;
+    provider = "geoclue2";
+    temperature = {
+      day = 5600;
+      night = 3000;
+    };
+  };
 }
