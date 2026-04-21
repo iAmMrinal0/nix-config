@@ -60,24 +60,24 @@ in {
           statusline = theme.fg;
           separator = theme.comment;
           inactiveWorkspace = {
-            border = theme.bg2;
-            background = theme.bg2;
-            text = theme.fg;
+            border = theme.bg0;
+            background = theme.bg0;
+            text = theme.fgMuted;
           };
           activeWorkspace = {
             border = theme.bg0;
             background = theme.bg0;
-            text = theme.fg;
+            text = theme.fgMuted;
           };
           focusedWorkspace = {
             border = theme.bg0;
             background = theme.bg0;
-            text = theme.fg;
+            text = theme.accent;
           };
           urgentWorkspace = {
-            border = theme.urgent;
-            background = theme.urgent;
-            text = theme.fg;
+            border = theme.bg0;
+            background = theme.bg0;
+            text = theme.urgent;
           };
         };
       }];
@@ -97,8 +97,8 @@ in {
         ];
       };
       gaps = {
-        inner = 0;
-        outer = 0;
+        inner = 8;
+        outer = 4;
         smartGaps = true;
         smartBorders = "on";
       };
