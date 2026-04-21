@@ -97,8 +97,8 @@ in {
         ];
       };
       gaps = {
-        inner = 8;
-        outer = 4;
+        inner = 0;
+        outer = 0;
         smartGaps = true;
         smartBorders = "on";
       };
@@ -146,28 +146,30 @@ in {
         };
       };
       colors = {
+        background = theme.bg0;
+
         unfocused = {
-          border = theme.bg2;
-          background = theme.bg2;
-          text = theme.fg;
-          indicator = theme.blue;
-          childBorder = theme.bg2;
+          border = theme.bg1;
+          background = theme.bg1;
+          text = theme.fgMuted;
+          indicator = theme.bg1;
+          childBorder = theme.bg1;
         };
 
         focusedInactive = {
           border = theme.bg1;
           background = theme.bg1;
-          text = theme.fg;
-          indicator = theme.comment;
+          text = theme.fgMuted;
+          indicator = theme.bg1;
           childBorder = theme.bg1;
         };
 
         focused = {
-          border = theme.borderFocused;
+          border = theme.bg0;
           background = theme.bg0;
           text = theme.fg;
-          indicator = theme.borderFocused;
-          childBorder = theme.borderFocused;
+          indicator = theme.bg0;
+          childBorder = theme.bg0;
         };
 
         urgent = {
