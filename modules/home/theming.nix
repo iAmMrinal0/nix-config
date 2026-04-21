@@ -10,27 +10,27 @@ in {
     enable = mkEnableOption "personal theme settings";
 
     colors = {
-      # Base surfaces (darkest to lightest)
+      # Base surfaces (darkest to lightest). Gruvbox Material medium-dark.
       bg0 = mkOption {
         type = types.str;
-        default = "#1d2021";
+        default = "#282828";
         description = "Primary background (darkest).";
       };
       bg1 = mkOption {
         type = types.str;
-        default = "#282828";
+        default = "#32302f";
         description = "Secondary background surface.";
       };
       bg2 = mkOption {
         type = types.str;
-        default = "#3c3836";
+        default = "#45403d";
         description = "Tertiary background / subtle border.";
       };
 
       # Foreground variants
       fg = mkOption {
         type = types.str;
-        default = "#ebdbb2";
+        default = "#d4be98";
         description = "Primary foreground text color.";
       };
       fgMuted = mkOption {
@@ -44,35 +44,35 @@ in {
         description = "Comment / low-emphasis foreground.";
       };
 
-      # Semantic palette
+      # Semantic palette — pastel Material accents.
       red = mkOption {
         type = types.str;
-        default = "#fb4933";
+        default = "#ea6962";
         description = "Red / error / urgent.";
       };
       orange = mkOption {
         type = types.str;
-        default = "#fe8019";
+        default = "#e78a4e";
         description = "Orange / accent / warn.";
       };
       yellow = mkOption {
         type = types.str;
-        default = "#fabd2f";
+        default = "#d8a657";
         description = "Yellow.";
       };
       green = mkOption {
         type = types.str;
-        default = "#b8bb26";
+        default = "#a9b665";
         description = "Green / success.";
       };
       aqua = mkOption {
         type = types.str;
-        default = "#8ec07c";
+        default = "#89b482";
         description = "Aqua / teal.";
       };
       blue = mkOption {
         type = types.str;
-        default = "#83a598";
+        default = "#7daea3";
         description = "Blue / info.";
       };
       purple = mkOption {
