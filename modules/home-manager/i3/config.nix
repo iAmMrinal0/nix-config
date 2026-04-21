@@ -7,7 +7,6 @@ let
   rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
   rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
-  i3blocksConf = pkgs.callPackage ./i3blocks.nix { theming = config.personal.theming; };
 
   fontSize = 10.8;
   workspaces = [
@@ -55,7 +54,7 @@ in {
         inherit fonts;
         position = "top";
         trayOutput = "primary";
-        statusCommand = "${pkgs.i3blocks}/bin/i3blocks -c ${i3blocksConf}";
+        statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-default.toml";
         colors = {
           background = theme.bg0;
           statusline = theme.fg;
