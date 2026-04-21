@@ -1,6 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, theming, ... }:
 
 let
+  colors = theming.colors;
   currentTrack = "${pkgs.scripts.current-track}/bin/current-track";
   dunstNotifToggle = "${pkgs.scripts.i3dunst-toggle}/bin/i3dunst-toggle";
   bluetooth_battery = "${pkgs.scripts.bluetooth-battery}/bin/bluetooth-battery";
@@ -46,7 +47,7 @@ in pkgs.writeTextFile {
     command=${currentTrack}
     # label=
     interval=1
-    color=#87AFAF
+    color=${colors.aqua}
 
     [volume]
     label= 
@@ -54,15 +55,15 @@ in pkgs.writeTextFile {
     #instance=PCM
     interval=1
     signal=10
-    color=#FFAF00
+    color=${colors.yellow}
 
     [iface]
-    color=#87AF87
+    color=${colors.green}
     interval=10
 
     [wifi]
     command=echo " $(${pkgs.wirelesstools}/bin/iwgetid -r)"
-    color=#00FF00
+    color=${colors.green}
     interval=10
 
     #[cpu_usage]
