@@ -3,7 +3,7 @@
 let
   theme = config.personal.theming.colors;
   lock = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
-  shutdownMenu = "${pkgs.scripts.shutdown-menu}/bin/shutdown-menu";
+  shutdownMenu = ''${pkgs.rofi}/bin/rofi -show power-menu -modi "power-menu:${pkgs.rofi-power-menu}/bin/rofi-power-menu"'';
   rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
   rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
