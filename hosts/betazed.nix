@@ -8,7 +8,7 @@
     ../modules/nixos
     ../home.nix
     ../hardware/${hostname}.nix
-    ../modules/nixos/nvidia.nix
+    # ../modules/nixos/nvidia.nix
   ];
 
   modules = {
@@ -18,13 +18,10 @@
       defaultEditor = false;
     };
 
-    bluetooth.enable = true;
     gc = {
       enable = true;
       method = "nh";
     };
-    openrazer.enable = true;
-    touchegg.enable = true;
   };
 
   networking.hostName = hostname;
@@ -68,12 +65,10 @@
   # };
   ## end of fingerprint reader config
 
-  services.ollama = {
-    enable = true;
-    host = "0.0.0.0";
-    acceleration = "cuda";
-  };
-
-  environment.systemPackages = [ pkgs.rpi-imager pkgs.ansible ];
-
+  environment.systemPackages = [
+    pkgs.ansible
+    pkgs.handbrake
+    pkgs.smartmontools
+    pkgs.xdg-utils
+  ];
 }
