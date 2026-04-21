@@ -62,17 +62,17 @@ in {
           inactiveWorkspace = {
             border = theme.bg0;
             background = theme.bg0;
-            text = theme.fgMuted;
+            text = theme.comment;
           };
           activeWorkspace = {
             border = theme.bg0;
             background = theme.bg0;
-            text = theme.fgMuted;
+            text = theme.comment;
           };
           focusedWorkspace = {
             border = theme.bg0;
             background = theme.bg0;
-            text = theme.accent;
+            text = theme.fg;
           };
           urgentWorkspace = {
             border = theme.bg0;
