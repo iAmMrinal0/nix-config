@@ -21,7 +21,7 @@ let
     " bg"
   ];
   fonts = {
-    names = [ "Symbols Nerd Font" "Iosevka Nerd Font" ];
+    names = [ "Iosevka" "Symbols Nerd Font" ];
     style = "Medium";
     size = fontSize;
   };
@@ -54,7 +54,7 @@ in {
         inherit fonts;
         position = "top";
         trayOutput = "primary";
-        statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-default.toml";
+        statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs $HOME/.config/i3status-rust/config-default.toml";
         colors = {
           background = theme.bg0;
           statusline = theme.fg;

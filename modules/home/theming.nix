@@ -94,7 +94,7 @@ in {
       };
       borderFocused = mkOption {
         type = types.str;
-        default = colors.orange;
+        default = colors.fgMuted;
         description = "Focused window / UI border.";
       };
 

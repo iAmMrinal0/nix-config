@@ -13,7 +13,7 @@ in {
         pkgs.cantarell-fonts
         pkgs.hasklig
         pkgs.source-code-pro
-        pkgs.nerd-fonts.iosevka
+        pkgs.iosevka
         pkgs.nerd-fonts.symbols-only
       ];
       description = "List of font packages to install";
