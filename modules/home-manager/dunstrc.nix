@@ -4,8 +4,8 @@ let colors = config.personal.theming.colors;
 in {
   services.dunst = {
     enable = true;
-    iconTheme.package = pkgs.numix-icon-theme;
-    iconTheme.name = "Numix";
+    iconTheme.package = pkgs.papirus-icon-theme;
+    iconTheme.name = "Papirus-Dark";
     iconTheme.size = "48";
     settings = {
       global = {
