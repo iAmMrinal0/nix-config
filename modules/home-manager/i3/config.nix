@@ -22,7 +22,7 @@ let
     " bg"
   ];
   fonts = {
-    names = [ "Font Awesome 5 Free" "Source Code Pro" ];
+    names = [ "Symbols Nerd Font" "Iosevka Nerd Font" ];
     style = "Medium";
     size = fontSize;
   };

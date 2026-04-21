@@ -5,7 +5,7 @@ in {
   programs.zathura = {
     enable = true;
     extraConfig = ''
-      set font                        "Source Code Pro 10"
+      set font                        "Iosevka Nerd Font 10"
       set default-bg                  "${colors.bg1}"
       set default-fg                  "${colors.fg}"
 

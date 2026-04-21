@@ -21,9 +21,9 @@
       # Colors come from modules/home/theming.nix defaults
       # (Gruvbox Material medium-dark). Override here if per-host.
       font = {
-        regular = "Iosevka"; # Match the font name from kitty.nix
-        size = 16; # Match the font size that was previously in kitty.nix
-        package = pkgs.iosevka; # Specify the font package
+        regular = "Iosevka Nerd Font";
+        size = 16;
+        package = pkgs.nerd-fonts.iosevka;
       };
       rofi = { theme = "gruvbox-dark-hard"; };
       kitty = { theme = "GruvboxMaterialDarkMedium"; };

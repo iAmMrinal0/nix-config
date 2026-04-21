@@ -11,10 +11,10 @@ in {
       type = types.listOf types.package;
       default = [
         pkgs.cantarell-fonts
-        pkgs.font-awesome
         pkgs.hasklig
-        pkgs.iosevka
         pkgs.source-code-pro
+        pkgs.nerd-fonts.iosevka
+        pkgs.nerd-fonts.symbols-only
       ];
       description = "List of font packages to install";
     };
