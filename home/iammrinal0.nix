@@ -18,18 +18,15 @@
   personal = {
     theming = {
       enable = true;
-      colors = {
-        primary = "#ebdbb2"; # Gruvbox foreground
-        background = "#1d2021"; # Gruvbox background
-        accent = "#fe8019"; # Gruvbox orange
-      };
+      # Colors come from modules/home/theming.nix defaults
+      # (Gruvbox Material medium-dark). Override here if per-host.
       font = {
-        regular = "Iosevka"; # Match the font name from kitty.nix
-        size = 16; # Match the font size that was previously in kitty.nix
-        package = pkgs.iosevka; # Specify the font package
+        regular = "Iosevka";
+        size = 14;
+        package = pkgs.iosevka;
       };
       rofi = { theme = "gruvbox-dark-hard"; };
-      kitty = { theme = "gruvbox-dark-hard"; };
+      kitty = { theme = "GruvboxMaterialDarkMedium"; };
     };
 
     shell-tools = {

@@ -1,21 +1,23 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
-{
+let colors = config.personal.theming.colors;
+in {
   services.dunst = {
     enable = true;
-    iconTheme.package = pkgs.numix-icon-theme;
-    iconTheme.name = "Numix";
+    iconTheme.package = pkgs.papirus-icon-theme;
+    iconTheme.name = "Papirus-Dark";
     iconTheme.size = "48";
     settings = {
       global = {
-        font = "SourceCodePro 12";
+        font = "Iosevka 12";
         markup = "yes";
         # plain_text = "no";
         format = "<b>%s</b>\\n%b";
         transparency = "10";
+        corner_radius = 10;
         ignore_newline = "no";
         show_indicators = "yes";
-        separator_color = "#585858";
+        separator_color = "frame";
         sort = "yes";
         alignment = "center";
         word_wrap = "yes";
@@ -39,25 +41,28 @@
         icon_position = "left";
         max_icon_size = 65;
         # startup_notification = "true";
-        frame_width = "1";
-        frame_color = "#333333";
+        frame_width = "2";
+        frame_color = colors.accent;
       };
 
       urgency_low = {
-        background = "#171717";
-        foreground = "#B2A181";
+        background = colors.bg1;
+        foreground = colors.fgMuted;
+        frame_color = colors.blue;
         timeout = 10;
       };
 
       urgency_normal = {
-        background = "#171717";
-        foreground = "#B2A181";
+        background = colors.bg1;
+        foreground = colors.fg;
+        frame_color = colors.aqua;
         timeout = 5;
       };
 
       urgency_critical = {
-        background = "#dc322f";
-        foreground = "#eee8d5";
+        background = colors.bg1;
+        foreground = colors.fg;
+        frame_color = colors.red;
         timeout = 0;
       };
     };

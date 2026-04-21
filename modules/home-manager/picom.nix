@@ -13,6 +13,12 @@
     fadeDelta = 4;
     # blur = true;
     # blurExclude = [ "window_type = 'dock'" "window_type = 'desktop'" ];
+    settings = {
+      inactive-dim = 0.15;
+      mark-wmwin-focused = true;
+      mark-ovredir-focused = true;
+      detect-client-opacity = true;
+    };
     shadowExclude = [
       "! name~=''"
       "name = 'Notification'"

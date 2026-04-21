@@ -46,9 +46,7 @@ in {
         extraPackages = [
           pkgs.dmenu
           pkgs.rofi
-          pkgs.i3status
           pkgs.i3lock
-          pkgs.i3blocks
           pkgs.xkb-switch
         ];
         # package = pkgs.i3-gaps;

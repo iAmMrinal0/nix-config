@@ -1,12 +1,12 @@
-{ lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
+  theme = config.personal.theming.colors;
   lock = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
-  shutdownMenu = "${pkgs.scripts.shutdown-menu}/bin/shutdown-menu";
+  shutdownMenu = ''${pkgs.rofi}/bin/rofi -show power-menu -modi "power-menu:${pkgs.rofi-power-menu}/bin/rofi-power-menu"'';
   rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
   rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
-  i3blocksConf = pkgs.callPackage ./i3blocks.nix { };
 
   fontSize = 10.8;
   workspaces = [
@@ -21,12 +21,12 @@ let
     " bg"
   ];
   fonts = {
-    names = [ "Font Awesome 5 Free" "Source Code Pro" ];
+    names = [ "Source Code Pro" "Symbols Nerd Font Mono" ];
     style = "Medium";
     size = fontSize;
   };
   numbers = map toString (lib.range 1 9);
-  workspaceNumbers = lib.zipListsWith (x: y: x + " " + y) numbers workspaces;
+  workspaceNumbers = lib.zipListsWith (x: y: x + " " + y + " ·") numbers workspaces;
   useWithModifier = mod:
     lib.mapAttrs' (k: v: lib.nameValuePair (mod + "+" + k) v);
   appendExecToCommand = lib.mapAttrs' (k: v: lib.nameValuePair k ("exec " + v));
@@ -54,40 +54,38 @@ in {
         inherit fonts;
         position = "top";
         trayOutput = "primary";
-        statusCommand = "${pkgs.i3blocks}/bin/i3blocks -c ${i3blocksConf}";
+        statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs $HOME/.config/i3status-rust/config-default.toml";
         colors = {
-          background = "#1d2021";
-          statusline = "#ebdbb2";
-          separator = "#666666";
+          background = theme.bg0;
+          statusline = theme.fg;
+          separator = theme.comment;
           inactiveWorkspace = {
-            border = "#504945";
-            background = "#504945";
-            text = "#ebdbb2";
+            border = theme.bg0;
+            background = theme.bg0;
+            text = theme.comment;
           };
           activeWorkspace = {
-            border = "#1d2021";
-            background = "#1d2021";
-            text = " #ebdbb2";
+            border = theme.bg0;
+            background = theme.bg0;
+            text = theme.comment;
           };
           focusedWorkspace = {
-            border = "#1d2021";
-            background = "#1d2021";
-            text = " #ebdbb2";
+            border = theme.bg0;
+            background = theme.bg0;
+            text = theme.fgBright;
           };
           urgentWorkspace = {
-            border = "#fb4933";
-            background = "#fb4933";
-            text = "#ebdbb2";
+            border = theme.urgent;
+            background = theme.urgent;
+            text = theme.fgBright;
           };
         };
       }];
       window = {
+        border = 0;
+        titlebar = false;
         hideEdgeBorders = "both";
         commands = [
-          {
-            command = "border pixel 0";
-            criteria = { class = "^.*"; };
-          }
           {
             command = ''move to workspace "${lib.elemAt workspaceNumbers 3}"'';
             criteria = { class = "Spotify"; };
@@ -97,6 +95,12 @@ in {
             criteria = { title = "Picture-in-Picture"; };
           }
         ];
+      };
+      gaps = {
+        inner = 8;
+        outer = 4;
+        smartGaps = true;
+        smartBorders = "on";
       };
       startup = [
         { command = "${pkgs.xorg.xset}/bin/xset -b"; }
@@ -142,44 +146,46 @@ in {
         };
       };
       colors = {
+        background = theme.bg0;
+
         unfocused = {
-          border = "#665c54";
-          background = "#665c54";
-          text = "#eddbb2";
-          indicator = "#2e9ef4";
-          childBorder = "#665c54";
+          border = theme.bg2;
+          background = theme.bg2;
+          text = theme.fgMuted;
+          indicator = theme.bg2;
+          childBorder = theme.bg2;
         };
 
         focusedInactive = {
-          border = "#282828";
-          background = "#5f676a";
-          text = "#ffffff";
-          indicator = "#484e50";
-          childBorder = "#5f676a";
+          border = theme.bg2;
+          background = theme.bg2;
+          text = theme.fgMuted;
+          indicator = theme.bg2;
+          childBorder = theme.bg2;
         };
 
         focused = {
-          border = "#1d2021";
-          background = "#1d2021";
-          text = "#a89984";
-          indicator = "#292d2e";
-          childBorder = "#222222";
+          border = theme.bg0;
+          background = theme.bg0;
+          text = theme.fgBright;
+          indicator = theme.bg0;
+          childBorder = theme.bg0;
         };
 
         urgent = {
-          border = "#fb4933";
-          background = "#fb4933";
-          text = "#ebdbb2";
-          indicator = "#fb4933";
-          childBorder = "#fb4933";
+          border = theme.urgent;
+          background = theme.urgent;
+          text = theme.fgBright;
+          indicator = theme.urgent;
+          childBorder = theme.urgent;
         };
 
         placeholder = {
-          border = "#000000";
-          background = "#0c0c0c";
-          text = "#ffffff";
-          indicator = "#000000";
-          childBorder = "#0c0c0c";
+          border = theme.bg0;
+          background = theme.bg0;
+          text = theme.fg;
+          indicator = theme.bg0;
+          childBorder = theme.bg0;
         };
       };
       keybindings = useWithModifier modifier ({
