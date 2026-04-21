@@ -82,7 +82,7 @@ in {
         };
       }];
       window = {
-        border = 2;
+        border = 0;
         titlebar = false;
         hideEdgeBorders = "both";
         commands = [

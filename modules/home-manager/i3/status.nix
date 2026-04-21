@@ -14,18 +14,21 @@ in {
       icons = "awesome6";
       theme = "plain";
       settings.theme = {
-        theme = "slick";
+        theme = "plain";
         overrides = {
           idle_bg = colors.bg0;
           idle_fg = colors.fg;
-          info_bg = colors.bg1;
+          info_bg = colors.bg0;
           info_fg = colors.aqua;
-          good_bg = colors.bg1;
+          good_bg = colors.bg0;
           good_fg = colors.green;
-          warning_bg = colors.bg1;
+          warning_bg = colors.bg0;
           warning_fg = colors.yellow;
-          critical_bg = colors.bg1;
+          critical_bg = colors.bg0;
           critical_fg = colors.red;
+          separator = " · ";
+          separator_bg = colors.bg0;
+          separator_fg = colors.comment;
         };
       };
       blocks = [
@@ -65,7 +68,8 @@ in {
           format = " $icon $percentage ";
           charging_format = " $icon $percentage ";
           empty_format = " $icon $percentage ";
-          full_format = " $icon ";
+          full_format = " $icon $percentage ";
+          not_charging_format = " $icon $percentage ";
         }
         {
           block = "custom";
