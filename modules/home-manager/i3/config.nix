@@ -149,19 +149,19 @@ in {
         background = theme.bg0;
 
         unfocused = {
-          border = theme.bg1;
-          background = theme.bg1;
+          border = theme.bg2;
+          background = theme.bg2;
           text = theme.fgMuted;
-          indicator = theme.bg1;
-          childBorder = theme.bg1;
+          indicator = theme.bg2;
+          childBorder = theme.bg2;
         };
 
         focusedInactive = {
-          border = theme.bg1;
-          background = theme.bg1;
+          border = theme.bg2;
+          background = theme.bg2;
           text = theme.fgMuted;
-          indicator = theme.bg1;
-          childBorder = theme.bg1;
+          indicator = theme.bg2;
+          childBorder = theme.bg2;
         };
 
         focused = {
