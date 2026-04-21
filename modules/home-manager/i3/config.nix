@@ -21,7 +21,7 @@ let
     " bg"
   ];
   fonts = {
-    names = [ "Iosevka" "Symbols Nerd Font" ];
+    names = [ "Source Code Pro" "Symbols Nerd Font" ];
     style = "Medium";
     size = fontSize;
   };

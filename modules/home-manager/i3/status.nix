@@ -14,21 +14,18 @@ in {
       icons = "awesome6";
       theme = "plain";
       settings.theme = {
-        theme = "plain";
+        theme = "slick";
         overrides = {
           idle_bg = colors.bg0;
           idle_fg = colors.fg;
-          info_bg = colors.bg0;
+          info_bg = colors.bg1;
           info_fg = colors.aqua;
-          good_bg = colors.bg0;
+          good_bg = colors.bg1;
           good_fg = colors.green;
-          warning_bg = colors.bg0;
+          warning_bg = colors.bg1;
           warning_fg = colors.yellow;
-          critical_bg = colors.bg0;
+          critical_bg = colors.bg1;
           critical_fg = colors.red;
-          separator = " ";
-          separator_bg = "auto";
-          separator_fg = "auto";
         };
       };
       blocks = [
@@ -45,7 +42,7 @@ in {
         }
         {
           block = "sound";
-          format = " $icon $volume ";
+          format = " $icon {$volume.eng(w:2)|muted} ";
           click = [
             { button = "left"; cmd = "${pkgs.pavucontrol}/bin/pavucontrol"; }
           ];
