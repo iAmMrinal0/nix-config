@@ -83,12 +83,10 @@ in {
         };
       }];
       window = {
+        border = 2;
+        titlebar = false;
         hideEdgeBorders = "both";
         commands = [
-          {
-            command = "border pixel 0";
-            criteria = { class = "^.*"; };
-          }
           {
             command = ''move to workspace "${lib.elemAt workspaceNumbers 3}"'';
             criteria = { class = "Spotify"; };
@@ -98,6 +96,12 @@ in {
             criteria = { title = "Picture-in-Picture"; };
           }
         ];
+      };
+      gaps = {
+        inner = 8;
+        outer = 4;
+        smartGaps = true;
+        smartBorders = "on";
       };
       startup = [
         { command = "${pkgs.xorg.xset}/bin/xset -b"; }
@@ -160,11 +164,11 @@ in {
         };
 
         focused = {
-          border = theme.bg0;
+          border = theme.borderFocused;
           background = theme.bg0;
-          text = theme.fgMuted;
-          indicator = theme.comment;
-          childBorder = theme.bg1;
+          text = theme.fg;
+          indicator = theme.borderFocused;
+          childBorder = theme.borderFocused;
         };
 
         urgent = {
