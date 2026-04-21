@@ -14,9 +14,10 @@ in {
         # plain_text = "no";
         format = "<b>%s</b>\\n%b";
         transparency = "10";
+        corner_radius = 10;
         ignore_newline = "no";
         show_indicators = "yes";
-        separator_color = colors.comment;
+        separator_color = "frame";
         sort = "yes";
         alignment = "center";
         word_wrap = "yes";
@@ -40,25 +41,28 @@ in {
         icon_position = "left";
         max_icon_size = 65;
         # startup_notification = "true";
-        frame_width = "1";
-        frame_color = colors.bg2;
+        frame_width = "2";
+        frame_color = colors.accent;
       };
 
       urgency_low = {
         background = colors.bg1;
         foreground = colors.fgMuted;
+        frame_color = colors.blue;
         timeout = 10;
       };
 
       urgency_normal = {
         background = colors.bg1;
-        foreground = colors.fgMuted;
+        foreground = colors.fg;
+        frame_color = colors.aqua;
         timeout = 5;
       };
 
       urgency_critical = {
-        background = colors.red;
+        background = colors.bg1;
         foreground = colors.fg;
+        frame_color = colors.red;
         timeout = 0;
       };
     };
