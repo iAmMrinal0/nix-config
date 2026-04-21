@@ -5,9 +5,10 @@
     enable = true;
     font.package = pkgs.cantarell-fonts;
     font.name = "Cantarell Regular 12";
-    iconTheme.package = pkgs.paper-icon-theme;
-    iconTheme.name = "Paper";
-    theme.name = "Adwaita-dark";
+    iconTheme.package = pkgs.papirus-icon-theme;
+    iconTheme.name = "Papirus-Dark";
+    theme.package = pkgs.gruvbox-gtk-theme;
+    theme.name = "Gruvbox-Dark";
     gtk2.extraConfig = ''
       gtk-cursor-theme-size=0
       gtk-toolbar-style=GTK_TOOLBAR_BOTH
@@ -22,7 +23,7 @@
       gtk-xft-rgba=rgb'';
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = "1";
-      gtk-cursor-theme-name = "Paper";
+      gtk-cursor-theme-name = "Adwaita";
       gtk-cursor-theme-size = "0";
       gtk-toolbar-style = "GTK_TOOLBAR_BOTH";
       gtk-toolbar-icon-size = "GTK_ICON_SIZE_LARGE_TOOLBAR";
