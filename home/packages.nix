@@ -121,4 +121,8 @@ in with pkgs; [
   # System Information
   neofetch
   nix-prefetch-github
+
+  gemini-cli
+  python3
+  python3Packages.pip
 ]
