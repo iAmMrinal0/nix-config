@@ -9,7 +9,7 @@ in {
     iconTheme.size = "48";
     settings = {
       global = {
-        font = "Iosevka Nerd Font 12";
+        font = "Iosevka 12";
         markup = "yes";
         # plain_text = "no";
         format = "<b>%s</b>\\n%b";
