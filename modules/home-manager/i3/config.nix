@@ -1,12 +1,13 @@
-{ lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
+  theme = config.personal.theming.colors;
   lock = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
   shutdownMenu = "${pkgs.scripts.shutdown-menu}/bin/shutdown-menu";
   rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
   rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
-  i3blocksConf = pkgs.callPackage ./i3blocks.nix { };
+  i3blocksConf = pkgs.callPackage ./i3blocks.nix { theming = config.personal.theming; };
 
   fontSize = 10.8;
   workspaces = [
@@ -56,28 +57,28 @@ in {
         trayOutput = "primary";
         statusCommand = "${pkgs.i3blocks}/bin/i3blocks -c ${i3blocksConf}";
         colors = {
-          background = "#1d2021";
-          statusline = "#ebdbb2";
-          separator = "#666666";
+          background = theme.bg0;
+          statusline = theme.fg;
+          separator = theme.comment;
           inactiveWorkspace = {
-            border = "#504945";
-            background = "#504945";
-            text = "#ebdbb2";
+            border = theme.bg2;
+            background = theme.bg2;
+            text = theme.fg;
           };
           activeWorkspace = {
-            border = "#1d2021";
-            background = "#1d2021";
-            text = " #ebdbb2";
+            border = theme.bg0;
+            background = theme.bg0;
+            text = theme.fg;
           };
           focusedWorkspace = {
-            border = "#1d2021";
-            background = "#1d2021";
-            text = " #ebdbb2";
+            border = theme.bg0;
+            background = theme.bg0;
+            text = theme.fg;
           };
           urgentWorkspace = {
-            border = "#fb4933";
-            background = "#fb4933";
-            text = "#ebdbb2";
+            border = theme.urgent;
+            background = theme.urgent;
+            text = theme.fg;
           };
         };
       }];
@@ -143,43 +144,43 @@ in {
       };
       colors = {
         unfocused = {
-          border = "#665c54";
-          background = "#665c54";
-          text = "#eddbb2";
-          indicator = "#2e9ef4";
-          childBorder = "#665c54";
+          border = theme.bg2;
+          background = theme.bg2;
+          text = theme.fg;
+          indicator = theme.blue;
+          childBorder = theme.bg2;
         };
 
         focusedInactive = {
-          border = "#282828";
-          background = "#5f676a";
-          text = "#ffffff";
-          indicator = "#484e50";
-          childBorder = "#5f676a";
+          border = theme.bg1;
+          background = theme.bg1;
+          text = theme.fg;
+          indicator = theme.comment;
+          childBorder = theme.bg1;
         };
 
         focused = {
-          border = "#1d2021";
-          background = "#1d2021";
-          text = "#a89984";
-          indicator = "#292d2e";
-          childBorder = "#222222";
+          border = theme.bg0;
+          background = theme.bg0;
+          text = theme.fgMuted;
+          indicator = theme.comment;
+          childBorder = theme.bg1;
         };
 
         urgent = {
-          border = "#fb4933";
-          background = "#fb4933";
-          text = "#ebdbb2";
-          indicator = "#fb4933";
-          childBorder = "#fb4933";
+          border = theme.urgent;
+          background = theme.urgent;
+          text = theme.fg;
+          indicator = theme.urgent;
+          childBorder = theme.urgent;
         };
 
         placeholder = {
-          border = "#000000";
-          background = "#0c0c0c";
-          text = "#ffffff";
-          indicator = "#000000";
-          childBorder = "#0c0c0c";
+          border = theme.bg0;
+          background = theme.bg0;
+          text = theme.fg;
+          indicator = theme.bg0;
+          childBorder = theme.bg0;
         };
       };
       keybindings = useWithModifier modifier ({
