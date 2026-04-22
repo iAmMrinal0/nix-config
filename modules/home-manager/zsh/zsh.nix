@@ -17,6 +17,18 @@ in {
 
     shellAliases = shellAliases;
     initContent = ''
+      # Reload zsh completions from direnv-exported KRONOR_ZSH_COMPLETIONS
+      typeset -g _kronor_completions_loaded=""
+      _kronor_completions_hook() {
+        local dir="$KRONOR_ZSH_COMPLETIONS"
+        [[ -n "$dir" && -d "$dir" && "$_kronor_completions_loaded" != "$dir" ]] || return 0
+        fpath=("$dir" $fpath)
+        autoload -Uz compinit
+        compinit -i
+        _kronor_completions_loaded="$dir"
+      }
+      autoload -Uz add-zsh-hook
+      add-zsh-hook precmd _kronor_completions_hook
       setopt HIST_FIND_NO_DUPS
       setopt HIST_IGNORE_ALL_DUPS
       function new-tmux-from-dir-name {
