@@ -1,6 +1,7 @@
 self: super:
 {
   scripts = import ../pkgs/scripts { pkgs = super; };
+  nix-direnv = self.unstable.nix-direnv;
 
 } // (if super ? obsidian then {
   # Only apply the Obsidian wrapper if obsidian package exists

@@ -48,7 +48,6 @@ let
     "tailscale.vscode-tailscale"
     "github.vscode-pull-request-github"
     "github.copilot-chat"
-    "github.copilot"
     "anthropic.claude-code"
     "datadog.datadog-vscode"
   ];
