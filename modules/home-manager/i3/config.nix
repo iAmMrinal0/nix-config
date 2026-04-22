@@ -173,11 +173,11 @@ in {
         };
 
         urgent = {
-          border = theme.urgent;
-          background = theme.urgent;
-          text = theme.fg;
+          border = theme.bg2;
+          background = theme.bg2;
+          text = theme.urgent;
           indicator = theme.urgent;
-          childBorder = theme.urgent;
+          childBorder = theme.bg2;
         };
 
         placeholder = {
