@@ -21,12 +21,12 @@ let
     " bg"
   ];
   fonts = {
-    names = [ "Source Code Pro" "Symbols Nerd Font" ];
+    names = [ "Source Code Pro" "Symbols Nerd Font Mono" ];
     style = "Medium";
     size = fontSize;
   };
   numbers = map toString (lib.range 1 9);
-  workspaceNumbers = lib.zipListsWith (x: y: x + " " + y) numbers workspaces;
+  workspaceNumbers = lib.zipListsWith (x: y: x + " " + y + " ·") numbers workspaces;
   useWithModifier = mod:
     lib.mapAttrs' (k: v: lib.nameValuePair (mod + "+" + k) v);
   appendExecToCommand = lib.mapAttrs' (k: v: lib.nameValuePair k ("exec " + v));
