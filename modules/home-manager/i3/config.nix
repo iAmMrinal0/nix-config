@@ -72,7 +72,7 @@ in {
           focusedWorkspace = {
             border = theme.bg0;
             background = theme.bg0;
-            text = theme.fg;
+            text = theme.fgBright;
           };
           urgentWorkspace = {
             border = theme.bg0;
@@ -167,7 +167,7 @@ in {
         focused = {
           border = theme.bg0;
           background = theme.bg0;
-          text = theme.fg;
+          text = theme.fgBright;
           indicator = theme.bg0;
           childBorder = theme.bg0;
         };

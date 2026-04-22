@@ -33,6 +33,11 @@ in {
         default = "#d4be98";
         description = "Primary foreground text color.";
       };
+      fgBright = mkOption {
+        type = types.str;
+        default = "#ebdbb2";
+        description = "Brighter foreground for focused / emphasized text.";
+      };
       fgMuted = mkOption {
         type = types.str;
         default = "#a89984";
