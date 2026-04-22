@@ -107,6 +107,12 @@ in {
           # Standby after 5 minutes, Suspend after 10 minutes, Off after 15 minutes
           command = "${pkgs.xorg.xset}/bin/xset dpms 300 600 900";
         }
+        {
+          # Trigger X screensaver at 5 minutes idle; xss-lock catches the event
+          # and runs the lock command. Honors org.freedesktop.ScreenSaver
+          # inhibits, so videos (mpv/Firefox/Chromium) won't trigger a lock.
+          command = "${pkgs.xorg.xset}/bin/xset s 300 300";
+        }
         { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
         {
           command =
