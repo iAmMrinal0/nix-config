@@ -83,21 +83,21 @@
     };
   };
 
-  services.fprintd.enable = true;
-  security.pam.services.login.fprintAuth = true;
-  security.pam.services.sudo.fprintAuth = true;
-  security.pam.services.i3lock.fprintAuth = true;
-  security.pam.services.polkit-1.fprintAuth = true;
+  # services.fprintd.enable = true;
+  # security.pam.services.login.fprintAuth = true;
+  # security.pam.services.sudo.fprintAuth = true;
+  # security.pam.services.i3lock.fprintAuth = true;
+  # security.pam.services.polkit-1.fprintAuth = true;
 
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-      if ((action.id == "net.reactivated.fprint.device.enroll") ||
-          (action.id == "net.reactivated.fprint.device.verify") ||
-          (action.id == "net.reactivated.fprint.device.delete")) {
-        return polkit.Result.YES;
-      }
-    });
-  '';
+  # security.polkit.extraConfig = ''
+  #   polkit.addRule(function(action, subject) {
+  #     if ((action.id == "net.reactivated.fprint.device.enroll") ||
+  #         (action.id == "net.reactivated.fprint.device.verify") ||
+  #         (action.id == "net.reactivated.fprint.device.delete")) {
+  #       return polkit.Result.YES;
+  #     }
+  #   });
+  # '';
 
   # Ensure users in these groups can access the fingerprint reader
   users.groups.plugdev.members = [ config.users.users.iammrinal0.name ];
@@ -105,4 +105,6 @@
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   environment.systemPackages = [ pkgs.android-studio pkgs.polkit_gnome ];
+
+  programs.nix-ld.enable = true;
 }
