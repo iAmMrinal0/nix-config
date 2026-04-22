@@ -75,9 +75,9 @@ in {
             text = theme.fgBright;
           };
           urgentWorkspace = {
-            border = theme.bg0;
-            background = theme.bg0;
-            text = theme.urgent;
+            border = theme.urgent;
+            background = theme.urgent;
+            text = theme.fgBright;
           };
         };
       }];
@@ -173,11 +173,11 @@ in {
         };
 
         urgent = {
-          border = theme.bg0;
-          background = theme.bg0;
-          text = theme.urgent;
+          border = theme.urgent;
+          background = theme.urgent;
+          text = theme.fgBright;
           indicator = theme.urgent;
-          childBorder = theme.bg0;
+          childBorder = theme.urgent;
         };
 
         placeholder = {
