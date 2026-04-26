@@ -29,7 +29,5 @@ in {
       defaultEditor = cfg.defaultEditor;
       install = true;
     };
-
-    fonts.packages = [ pkgs.emacs-all-the-icons-fonts ];
   };
 }
