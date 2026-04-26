@@ -6,6 +6,7 @@
     ../modules/home-manager
     ../modules/home/theming.nix
     ../modules/home/host-specific.nix
+    ../modules/home/workspaces.nix
   ];
 
   modules.emacs = {
