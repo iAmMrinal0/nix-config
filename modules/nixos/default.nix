@@ -11,6 +11,7 @@
     ./emacs.nix
     ./fonts.nix
     ./gc.nix
+    ./memory-safeguards.nix
     ./networking.nix
     ./openrazer.nix
     ./printing.nix
