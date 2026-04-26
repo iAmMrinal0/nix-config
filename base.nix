@@ -197,6 +197,8 @@ in {
     touchegg.enable = true;
     xserver.enable = true;
     editors.vscode.enable = true;
+
+    memorySafeguards.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

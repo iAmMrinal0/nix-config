@@ -61,6 +61,13 @@
     ];
   };
 
+  # No swap partition on mordor; add a 4 GB swap file to back up zram and
+  # widen the window for systemd-oomd to react before memory is exhausted.
+  swapDevices = [{
+    device = "/var/swapfile";
+    size = 4 * 1024;
+  }];
+
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
   services.tlp = {
