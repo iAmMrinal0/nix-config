@@ -9,7 +9,7 @@
   ];
 
   modules.emacs = {
-    enable = false;
+    enable = true;
     package = pkgs.emacs-unstable;
     configureGitWithEmacs = false;
     i3Integration = true;

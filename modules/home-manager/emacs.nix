@@ -4,66 +4,15 @@ with lib;
 
 let
   cfg = config.modules.emacs;
-  emacsWithPackagesFromUsePackage = (pkgs.emacsWithPackagesFromUsePackage {
-    config = "${inputs.emacsConfiguration}/init.el";
-    defaultInitFile = true;
+  emacsConfigPath = if cfg.useLocalConfig
+    then cfg.localConfigPath
+    else "${inputs.emacsConfiguration}/config.org";
+  emacsWithPackagesFromUsePackage = pkgs.emacsWithPackagesFromUsePackage {
+    config = emacsConfigPath;
     package = cfg.package;
-    extraEmacsPackages = epkgs:
-      (with epkgs; [
-        ace-window
-        ag
-        all-the-icons
-        anzu
-        avy
-        company
-        bind-key
-        dhall-mode
-        diminish
-        direnv
-        dockerfile-mode
-        editorconfig
-        exec-path-from-shell
-        expand-region
-        flycheck
-        free-keys
-        git-gutter
-        good-scroll
-        groovy-mode
-        gruvbox-theme
-        haskell-mode
-        helm
-        # helm-ag
-        helm-projectile
-        hungry-delete
-        hydra
-        keychain-environment
-        keyfreq
-        lsp-haskell
-        lsp-mode
-        lsp-ui
-        magit
-        markdown-mode
-        multiple-cursors
-        nix-buffer
-        nix-mode
-        org-bullets
-        pdf-tools
-        projectile
-        psc-ide
-        purescript-mode
-        rainbow-delimiters
-        rainbow-mode
-        smart-mode-line
-        smartparens
-        use-package
-        web-mode
-        which-key
-        yaml-mode
-        yasnippet
-        zerodark-theme
-        zop-to-char
-      ]);
-  });
+    alwaysEnsure = true;
+    alwaysTangle = true;
+  };
 in {
   options.modules.emacs = {
     enable = mkEnableOption "Enable Emacs configuration";
@@ -85,15 +34,36 @@ in {
       default = true;
       description = "Whether to add Emacs keybinding to i3 config";
     };
+
+    useLocalConfig = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        If true, build Emacs against a local on-disk config path
+        (see localConfigPath) instead of the pinned remote
+        emacsConfiguration flake input. Useful while iterating on
+        Emacs config changes before pushing them. Requires --impure
+        evaluation because the path lives outside the flake.
+      '';
+    };
+
+    localConfigPath = mkOption {
+      type = types.str;
+      default = "${config.home.homeDirectory}/.emacs.d/config.org";
+      description = "Local Emacs config path used when useLocalConfig = true.";
+    };
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ emacsWithPackagesFromUsePackage ];
+    home.packages = [
+      emacsWithPackagesFromUsePackage
+      pkgs.emacs-all-the-icons-fonts
+    ];
 
     programs.git.extraConfig = mkIf cfg.configureGitWithEmacs {
       core.editor = "emacs";
       mergetool.ediff.cmd =
-        "${pkgs.emacs}/bin/emacsclient -a '' --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"";
+        "${emacsWithPackagesFromUsePackage}/bin/emacsclient -a '' --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"";
     };
 
     # Add i3 keybinding and workspace assignment for Emacs if i3Integration is enabled
@@ -102,7 +72,7 @@ in {
       in mkIf cfg.i3Integration {
         keybindings = {
           "${modifier}+Control+e" =
-            "exec ${cfg.package}/bin/emacsclient -a '' -c";
+            "exec ${emacsWithPackagesFromUsePackage}/bin/emacsclient -a '' -c";
         };
 
         # Add Emacs to code workspace (workspace 2)
