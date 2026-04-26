@@ -9,24 +9,14 @@ let
   rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
 
   fontSize = 10.8;
-  workspaces = [
-    " term"
-    " code"
-    " web"
-    "♪ music"
-    " avoid"
-    "scratch"
-    "scratch"
-    "scratch"
-    " bg"
-  ];
   fonts = {
     names = [ "Source Code Pro" "Symbols Nerd Font Mono" ];
     style = "Medium";
     size = fontSize;
   };
-  numbers = map toString (lib.range 1 9);
-  workspaceNumbers = lib.zipListsWith (x: y: x + " " + y + " ·") numbers workspaces;
+  workspaceNumbers = config.personal.workspaces.numbered;
+  workspacesByKey = config.personal.workspaces.byKey;
+  numbers = map toString (lib.range 1 (lib.length workspaceNumbers));
   useWithModifier = mod:
     lib.mapAttrs' (k: v: lib.nameValuePair (mod + "+" + k) v);
   appendExecToCommand = lib.mapAttrs' (k: v: lib.nameValuePair k ("exec " + v));
@@ -42,9 +32,9 @@ in {
       terminal = "kitty";
       workspaceLayout = "tabbed";
       assigns = {
-        "\"${lib.elemAt workspaceNumbers 1}\"" = [{ class = "^Code$"; }];
-        "\"${lib.elemAt workspaceNumbers 3}\"" = [{ class = "Vlc"; }];
-        "\"${lib.elemAt workspaceNumbers 4}\"" = [
+        "\"${workspacesByKey.code}\"" = [{ class = "^Code$"; }];
+        "\"${workspacesByKey.music}\"" = [{ class = "Vlc"; }];
+        "\"${workspacesByKey.avoid}\"" = [
           { class = "Slack"; }
           { class = "discord"; }
           { class = "Element"; }
@@ -87,7 +77,7 @@ in {
         hideEdgeBorders = "both";
         commands = [
           {
-            command = ''move to workspace "${lib.elemAt workspaceNumbers 3}"'';
+            command = ''move to workspace "${workspacesByKey.music}"'';
             criteria = { class = "Spotify"; };
           }
           {

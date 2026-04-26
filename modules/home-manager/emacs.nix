@@ -68,15 +68,17 @@ in {
 
     # Add i3 keybinding and workspace assignment for Emacs if i3Integration is enabled
     xsession.windowManager.i3.config =
-      let modifier = config.xsession.windowManager.i3.config.modifier;
+      let
+        modifier = config.xsession.windowManager.i3.config.modifier;
+        codeWorkspace = config.personal.workspaces.byKey.code;
       in mkIf cfg.i3Integration {
         keybindings = {
           "${modifier}+Control+e" =
             "exec ${emacsWithPackagesFromUsePackage}/bin/emacsclient -a '' -c";
         };
 
-        # Add Emacs to code workspace (workspace 2)
-        assigns."\"2  code\"" = [{ class = "Emacs"; }];
+        # Assign Emacs windows to the 'code' workspace
+        assigns."\"${codeWorkspace}\"" = [{ class = "Emacs"; }];
       };
   };
 }
