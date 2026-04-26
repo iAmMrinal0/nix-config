@@ -14,6 +14,16 @@ in {
         description = "Whether to enable systemd-boot";
       };
 
+      systemd-boot.configurationLimit = mkOption {
+        type = types.nullOr types.int;
+        default = 10;
+        description = ''
+          Maximum number of NixOS generations to keep as boot loader entries
+          on /boot. Older entries are pruned on each rebuild. Set to null
+          to keep all generations (the upstream default).
+        '';
+      };
+
       efi.canTouchEfiVariables = mkOption {
         type = types.bool;
         default = true;
@@ -46,6 +56,7 @@ in {
     boot = {
       loader = {
         systemd-boot.enable = cfg.loader.systemd-boot.enable;
+        systemd-boot.configurationLimit = cfg.loader.systemd-boot.configurationLimit;
         efi.canTouchEfiVariables = cfg.loader.efi.canTouchEfiVariables;
       };
 
