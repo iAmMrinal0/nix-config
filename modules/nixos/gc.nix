@@ -13,6 +13,17 @@ in {
       description = "The method to use for garbage collection";
     };
 
+    pinLastSuccessfulBoot = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Create a persistent GC root at
+        /nix/var/nix/gcroots/last-successful-system pointing at the
+        currently booted system, refreshed on every successful boot.
+        Survives nix-env --delete-generations and nix-collect-garbage -d.
+      '';
+    };
+
     nix = {
       gc = mkOption {
         type = types.submodule {
@@ -55,6 +66,19 @@ in {
     programs.nh = mkIf (cfg.method == "nh") {
       clean.enable = true;
       clean.extraArgs = "--keep-since 4d --keep 3";
+    };
+
+    systemd.services.pin-last-successful-system = mkIf cfg.pinLastSuccessfulBoot {
+      description = "Pin the last successfully-booted NixOS system as a GC root";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        ${config.nix.package}/bin/nix-store --add-root /nix/var/nix/gcroots/last-successful-system -r /run/booted-system >/dev/null
+      '';
     };
   };
 }
