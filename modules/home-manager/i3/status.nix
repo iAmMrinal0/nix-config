@@ -87,7 +87,7 @@ in {
         {
           block = "time";
           interval = 60;
-          format = " $icon $timestamp.datetime(f:'%a %d %b %H:%M') ";
+          format = " $icon $timestamp.datetime(f:'W%V · %a %d %b · %H:%M') ";
         }
       ];
     };

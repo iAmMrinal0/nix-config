@@ -2,7 +2,7 @@
 
 let
   shellAliases = {
-    cal = "cal -mw"; # show week numbers and Monday as first day of week
+    cal = "cal -w"; # show week numbers (Monday-start comes from en_GB locale)
     tmuxnew = "tmux -u attach -t play || tmux -u new -s play";
     tmuxdir = "new-tmux-from-dir-name";
   };

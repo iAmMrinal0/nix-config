@@ -195,7 +195,7 @@ in {
         "Control+k" = "exec ${pkgs.rofi-rbw}/bin/rofi-rbw";
         "Control+p" = "exec ${pkgs.rofimoji}/bin/rofimoji --action copy";
         "t" = ''
-          exec ${pkgs.libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%U`"'';
+          exec ${pkgs.libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%V`"'';
         "a" = "focus child";
         "Control+Down" = "move workspace to output down";
         "Control+Up" = "move workspace to output up";
