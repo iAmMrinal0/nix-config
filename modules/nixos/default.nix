@@ -13,6 +13,7 @@
     ./gc.nix
     ./memory-safeguards.nix
     ./networking.nix
+    ./nfs.nix
     ./openrazer.nix
     ./printing.nix
     ./tailscale.nix

@@ -1,4 +1,4 @@
-{ lib, config, inputs, pkgs, ... }:
+{ lib, config, inputs, pkgs, username, ... }:
 
 let
   secrets = [
@@ -12,8 +12,8 @@ let
   defaultPermissions = secret: {
     ${secret} = {
       mode = "0440";
-      owner = config.users.users.iammrinal0.name;
-      group = config.users.users.iammrinal0.group;
+      owner = config.users.users.${username}.name;
+      group = config.users.users.${username}.group;
     };
   };
 
@@ -46,13 +46,13 @@ in {
     };
     settings = {
       auto-optimise-store = true;
-      trusted-users = [ "root" config.users.users.iammrinal0.name ];
+      trusted-users = [ "root" config.users.users.${username}.name ];
     };
   };
 
   programs.nh = {
     enable = true;
-    flake = "${config.users.users.iammrinal0.home}/nix-config";
+    flake = "${config.users.users.${username}.home}/nix-config";
   };
 
   time.timeZone = "Europe/Stockholm";
@@ -202,7 +202,7 @@ in {
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.iammrinal0 = {
+  users.users.${username} = {
     isNormalUser = true;
     extraGroups = [
       "adbusers"

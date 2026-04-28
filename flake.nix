@@ -60,11 +60,13 @@
     , nixos-hardware, emacsConfiguration, zsh-autosuggestions
     , zsh-autosuggestions-abbreviations-strategy, zsh-you-should-use
     , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable
-    , nix4vscode, claude-code }: {
+    , nix4vscode, claude-code }:
+    let username = "iammrinal0";
+    in {
       nixosConfigurations = {
         betazed = let hostname = "betazed";
         in nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs hostname; };
+          specialArgs = { inherit inputs hostname username; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/${hostname}.nix
@@ -89,7 +91,7 @@
         };
         mordor = let hostname = "mordor";
         in nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs hostname; };
+          specialArgs = { inherit inputs hostname username; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/${hostname}.nix

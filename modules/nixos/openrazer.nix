@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 with lib;
 
@@ -23,7 +23,7 @@ in {
   config = mkIf cfg.enable {
     hardware.openrazer = {
       enable = true;
-      users = mkIf cfg.addUser [ config.users.users.iammrinal0.name ];
+      users = mkIf cfg.addUser [ config.users.users.${username}.name ];
     };
 
     environment.systemPackages = mkIf cfg.installRazergenie [ pkgs.razergenie ];

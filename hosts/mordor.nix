@@ -1,5 +1,5 @@
 # NixOS config for work laptop
-{ config, lib, pkgs, inputs, hostname, ... }:
+{ config, lib, pkgs, inputs, hostname, username, ... }:
 
 {
   networking.hostName = hostname;
@@ -23,6 +23,7 @@
       enable = true;
       method = "nh";
     };
+    nfs.enable = true;
     openrazer.enable = true;
     touchegg.enable = true;
   };
@@ -107,7 +108,7 @@
   # '';
 
   # Ensure users in these groups can access the fingerprint reader
-  users.groups.plugdev.members = [ config.users.users.iammrinal0.name ];
+  users.groups.plugdev.members = [ config.users.users.${username}.name ];
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 

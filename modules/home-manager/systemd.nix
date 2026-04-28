@@ -1,8 +1,8 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, username, ... }:
 
 let
   mkRcloneMountService = { name, description, remote, mountPath
-    , cacheDir ? "/home/iammrinal0/.cache/rclone/${name}" }: {
+    , cacheDir ? "/home/${username}/.cache/rclone/${name}" }: {
       "rclone-${name}-mount" = {
         Unit = {
           Description = description;
@@ -45,14 +45,14 @@ in {
         name = "gdrive";
         description = "Google Drive mount";
         remote = "gdrive";
-        mountPath = "/home/iammrinal0/gdrive";
+        mountPath = "/home/${username}/gdrive";
       })
 
       (mkRcloneMountService {
         name = "tdrive";
         description = "WebDAV tailscale taildrive mount";
         remote = "tdrive";
-        mountPath = "/home/iammrinal0/tdrive";
+        mountPath = "/home/${username}/tdrive";
       })
 
       { # for bitwarden desktop app to unlock via system authentication
