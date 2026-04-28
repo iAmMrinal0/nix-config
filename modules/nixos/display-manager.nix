@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 with lib;
 
@@ -23,7 +23,7 @@ in {
 
       user = mkOption {
         type = types.str;
-        default = config.users.users.iammrinal0.name;
+        default = config.users.users.${username}.name;
         description = "The user to auto login";
       };
     };

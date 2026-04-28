@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, username, ... }:
 
 {
   gtk = {
@@ -47,13 +47,13 @@
       }
     '';
     gtk3.bookmarks = [
-      "file:///home/iammrinal0/Documents"
-      "file:///home/iammrinal0/Downloads"
-      "file:///home/iammrinal0/Pictures"
-      "file:///home/iammrinal0/Videos"
-      "file:///home/iammrinal0/oss"
-      "file:///home/iammrinal0/play"
-      "file:///home/iammrinal0/work"
+      "file:///home/${username}/Documents"
+      "file:///home/${username}/Downloads"
+      "file:///home/${username}/Pictures"
+      "file:///home/${username}/Videos"
+      "file:///home/${username}/oss"
+      "file:///home/${username}/play"
+      "file:///home/${username}/work"
     ];
   };
 }

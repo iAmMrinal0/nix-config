@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 with lib;
 
@@ -29,7 +29,7 @@ in {
     })
 
     (mkIf (cfg.enable && cfg.addUserToGroup) {
-      users.users.iammrinal0.extraGroups = [ "docker" ];
+      users.users.${username}.extraGroups = [ "docker" ];
     })
   ];
 }

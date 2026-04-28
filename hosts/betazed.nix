@@ -22,13 +22,15 @@
       enable = true;
       method = "nh";
     };
+
+    nfs.enable = true;
   };
 
   networking.hostName = hostname;
   powerManagement.resumeCommands =
     "${pkgs.kmod}/bin/rmmod atkbd; ${pkgs.kmod}/bin/modprobe atkbd reset=1";
 
-  # keep this in sync with swapDevices in hardware/${hostname}.nix  
+  # keep this in sync with swapDevices in hardware/${hostname}.nix
   boot.resumeDevice = "/dev/disk/by-uuid/34266fca-fc14-434a-bc58-fb50a883256b";
 
   # This value determines the NixOS release with which your system is to be
