@@ -147,11 +147,11 @@ in {
         };
 
         focusedInactive = {
-          border = theme.bg2;
-          background = theme.bg2;
-          text = theme.fgMuted;
-          indicator = theme.bg2;
-          childBorder = theme.bg2;
+          border = theme.bg0;
+          background = theme.bg0;
+          text = theme.fg;
+          indicator = theme.bg0;
+          childBorder = theme.bg0;
         };
 
         focused = {

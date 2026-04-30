@@ -36,6 +36,9 @@ in with pkgs; [
   nix-diff
   xorg.xkill
   nvd
+  socat
+  bubblewrap
+  sshuttle
 
   # Security & Authentication
   keepassxc

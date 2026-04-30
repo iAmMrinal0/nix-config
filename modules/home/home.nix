@@ -10,6 +10,7 @@ in {
       stateVersion = "24.05";
       sessionPath = [
         "$HOME/.local/bin"
+        "$HOME/.npm_global/bin"
       ];
       sessionVariables = {
         SSH_AUTH_SOCK = "${config.xdg.dataHome}/ssh-agent";
