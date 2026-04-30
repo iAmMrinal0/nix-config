@@ -49,7 +49,6 @@ let
     "github.vscode-pull-request-github"
     "github.copilot-chat"
     "anthropic.claude-code"
-    "datadog.datadog-vscode"
   ];
 
   vscode-with-extensions = pkgs.unstable.vscode-with-extensions.override {
