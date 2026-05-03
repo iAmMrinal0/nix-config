@@ -13,6 +13,7 @@
     fadeDelta = 4;
     # blur = true;
     # blurExclude = [ "window_type = 'dock'" "window_type = 'desktop'" ];
+    backend = "glx";
     settings = {
       inactive-dim = 0.15;
       mark-wmwin-focused = true;
@@ -22,6 +23,11 @@
       rounded-corners-exclude = [
         "window_type = 'dock'"
         "window_type = 'desktop'"
+        "window_type = 'notification'"
+        "window_type = 'popup_menu'"
+        "window_type = 'dropdown_menu'"
+        "class_g = 'Rofi'"
+        "class_g = 'Dunst'"
         "_NET_WM_STATE@:32a *= '_NET_WM_STATE_FULLSCREEN'"
       ];
     };

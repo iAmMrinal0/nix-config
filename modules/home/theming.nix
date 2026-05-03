@@ -179,7 +179,13 @@ in {
       themeFile = cfg.kitty.theme;
     };
 
-    programs.rofi.theme = mkIf config.programs.rofi.enable cfg.rofi.theme;
+    programs.rofi.theme = mkIf config.programs.rofi.enable {
+      "@import" = cfg.rofi.theme;
+
+      window = {
+        border-radius = config.lib.formats.rasi.mkLiteral "15px";
+      };
+    };
     programs.rofi.extraConfig = mkIf config.programs.rofi.enable {
       color-normal = "${colors.bg0},${colors.fg}";
       color-active = "${colors.bg0},${colors.accent}";
