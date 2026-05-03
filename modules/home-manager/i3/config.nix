@@ -89,7 +89,7 @@ in {
       gaps = {
         inner = 8;
         outer = 4;
-        smartGaps = true;
+        smartGaps = false;
         smartBorders = "on";
       };
       startup = [

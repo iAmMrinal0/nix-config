@@ -18,6 +18,12 @@
       mark-wmwin-focused = true;
       mark-ovredir-focused = true;
       detect-client-opacity = true;
+      corner-radius = 15;
+      rounded-corners-exclude = [
+        "window_type = 'dock'"
+        "window_type = 'desktop'"
+        "_NET_WM_STATE@:32a *= '_NET_WM_STATE_FULLSCREEN'"
+      ];
     };
     shadowExclude = [
       "! name~=''"
