@@ -18,24 +18,16 @@ in {
       default = "both";
       description = "Enable Tailscale subnet routing and exit node features";
     };
-
-    installPackage = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Whether to install the tailscale package";
-    };
   };
 
   config = mkIf cfg.enable {
+    # services.tailscale auto-adds cfg.package to environment.systemPackages.
     services.tailscale = {
       enable = true;
       package = pkgs.unstable.tailscale;
       openFirewall = cfg.openFirewall;
       useRoutingFeatures = cfg.useRoutingFeatures;
     };
-
-    environment.systemPackages =
-      mkIf cfg.installPackage [ pkgs.unstable.tailscale ];
 
     networking.firewall.trustedInterfaces = [ "tailscale0" ];
 

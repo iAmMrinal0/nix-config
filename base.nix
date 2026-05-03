@@ -74,7 +74,6 @@ in {
       pkgs.openjdk
       pkgs.openssl
       pkgs.pptp
-      pkgs.razergenie
       pkgs.sops
       pkgs.stow
       pkgs.tcpdump

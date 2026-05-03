@@ -36,11 +36,6 @@ in {
   };
 
   config = mkIf cfg.enable (mkMerge [
-    # Base configuration that applies to all hosts
-    {
-      # Common settings
-    }
-
     # Laptop-specific configuration
     (mkIf cfg.isLaptop {
       services.cbatticon = mkIf (cfg.batteryDevice != null) {

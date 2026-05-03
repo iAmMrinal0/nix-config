@@ -23,7 +23,7 @@ in {
 
       user = mkOption {
         type = types.str;
-        default = config.users.users.${username}.name;
+        default = username;
         description = "The user to auto login";
       };
     };
