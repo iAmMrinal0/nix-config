@@ -46,9 +46,12 @@
       url = "github:kronor-io/haskell-yesod-quasiquotes";
       flake = false;
     };
-    claude-code = {
-      url = "github:sadjow/claude-code-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+      # Intentionally not following our nixpkgs — numtide pre-builds against
+      # its own pinned nixpkgs and pushes those exact paths to cache.numtide.com.
+      # Following our nixpkgs would (a) miss the cache and (b) break packages
+      # like `apm` that use newer-than-25.11 nixpkgs APIs.
     };
     # nixos-06cb-009a-fingerprint-sensor = {
     #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor?ref=25.05";
@@ -60,7 +63,7 @@
     , nixos-hardware, emacsConfiguration, zsh-autosuggestions
     , zsh-autosuggestions-abbreviations-strategy, zsh-you-should-use
     , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable
-    , nix4vscode, claude-code }:
+    , nix4vscode, llm-agents }:
     let username = "iammrinal0";
     in {
       nixosConfigurations = {
@@ -77,7 +80,6 @@
                 nur.overlays.default
                 emacs-overlay.overlay
                 nix4vscode.overlays.forVscode
-                claude-code.overlays.default
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
@@ -102,7 +104,6 @@
                 nur.overlays.default
                 emacs-overlay.overlay
                 nix4vscode.overlays.forVscode
-                claude-code.overlays.default
                 (import ./overlays)
                 (final: prev: {
                   unstable = import nixpkgs-unstable {

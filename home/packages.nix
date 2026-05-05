@@ -126,6 +126,7 @@ in with pkgs; [
   nix-prefetch-github
 
   gemini-cli
+  inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.rtk
   python3
   python3Packages.pip
 ]

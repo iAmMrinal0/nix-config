@@ -88,7 +88,7 @@ in {
       pkgs.nfs-utils
       pkgs.bitwarden-cli
       pkgs.xpdf
-      pkgs.claude-code
+      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
       (pkgs.writeShellApplication {
         name = "connect-kronor-vpn";
         runtimeInputs = [ pkgs.openvpn pkgs.bitwarden-cli ];
