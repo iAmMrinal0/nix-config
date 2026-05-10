@@ -32,17 +32,6 @@ in {
       default = true;
       description = "Whether to enable rtkit for audio";
     };
-
-    switchOnConnect = mkOption {
-      type = types.bool;
-      default = true;
-      description = ''
-        Load PulseAudio's module-switch-on-connect so a newly-connected
-        device (e.g. Bluetooth headset) automatically becomes the default
-        sink/source and existing streams move to it. Requires pulse
-        compatibility.
-      '';
-    };
   };
 
   config = mkIf cfg.enable {
@@ -52,14 +41,34 @@ in {
       alsa.enable = cfg.alsa.enable;
       alsa.support32Bit = cfg.alsa.support32Bit;
 
-      extraConfig.pipewire-pulse."92-switch-on-connect" =
-        mkIf (cfg.pulseaudio && cfg.switchOnConnect) {
-          "pulse.cmd" = [{
-            cmd = "load-module";
-            args = "module-switch-on-connect";
-            flags = [ ];
-          }];
-        };
+      wireplumber.extraConfig."51-internal-audio" = {
+        "monitor.alsa.rules" = [
+          # Force the unified UCM profile so Speaker and Headphones share
+          # one profile and switch via jack auto-detection. Without this,
+          # the card comes up in a Headphones-only profile and laptop
+          # speakers are unreachable.
+          {
+            matches = [{ "device.name" = "~alsa_card\\..*"; }];
+            actions = {
+              update-props = {
+                "api.alsa.split-enable" = false;
+              };
+            };
+          }
+          # Demote HDMI/DP outputs so an external monitor never auto-becomes
+          # the default sink. Bluetooth sinks have a higher priority.session
+          # by default, so they'll still take over when connected.
+          {
+            matches = [{ "node.name" = "~alsa_output\\..*HDMI.*"; }];
+            actions = {
+              update-props = {
+                "priority.session" = -100;
+                "priority.driver" = -100;
+              };
+            };
+          }
+        ];
+      };
     };
 
     security.rtkit.enable = cfg.rtkit;
