@@ -55,6 +55,28 @@ in {
         mountPath = "/home/${username}/tdrive";
       })
 
+      { # Start tmux server at login so continuum auto-restore runs in the
+        # background. Without this, the first `tmuxdir` invocation has to
+        # boot the server, which triggers a full continuum restore of all
+        # saved panes/sessions before returning.
+        tmux-server = {
+          Unit = {
+            Description = "tmux server (pre-warm for continuum restore)";
+          };
+          Install = { WantedBy = [ "default.target" ]; };
+          Service = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            # Starts a session named after the user rooted in $HOME (same
+            # shape continuum already restores). Starting the server here
+            # also triggers continuum auto-restore in the background so the
+            # first `tmuxdir` call is fast.
+            ExecStart =
+              "${pkgs.tmux}/bin/tmux new-session -d -s ${username} -c %h";
+          };
+        };
+      }
+
       { # for bitwarden desktop app to unlock via system authentication
         polkit-gnome-authentication-agent-1 = {
           Unit = {
