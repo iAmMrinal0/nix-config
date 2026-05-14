@@ -18,6 +18,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware = { url = "github:NixOS/nixos-hardware/master"; };
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     emacsConfiguration = {
       url = "github:iammrinal0/.emacs.d";
       flake = false;
@@ -63,7 +67,7 @@
     , nixos-hardware, emacsConfiguration, zsh-autosuggestions
     , zsh-autosuggestions-abbreviations-strategy, zsh-you-should-use
     , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable
-    , nix4vscode, llm-agents }:
+    , nix4vscode, llm-agents, nix-index-database }:
     let username = "iammrinal0";
     in {
       nixosConfigurations = {

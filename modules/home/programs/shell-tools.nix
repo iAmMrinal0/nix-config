@@ -68,7 +68,7 @@ in {
 
       enabledTools = mkOption {
         type = with types; listOf str;
-        default = [ "broot" "command-not-found" "jq" ];
+        default = [ "broot" "nix-index" "jq" ];
         description = "List of simple tools to enable";
         example = ''[ "broot" "jq" ]'';
       };
@@ -96,8 +96,13 @@ in {
       broot.enable = mkIf
         (cfg.simpleTools.enable && elem "broot" cfg.simpleTools.enabledTools)
         true;
-      command-not-found.enable = mkIf (cfg.simpleTools.enable
-        && elem "command-not-found" cfg.simpleTools.enabledTools) true;
+      nix-index = mkIf (cfg.simpleTools.enable
+        && elem "nix-index" cfg.simpleTools.enabledTools) {
+          enable = true;
+          enableZshIntegration = true;
+        };
+      nix-index-database.comma.enable = mkIf (cfg.simpleTools.enable
+        && elem "nix-index" cfg.simpleTools.enabledTools) true;
       jq.enable =
         mkIf (cfg.simpleTools.enable && elem "jq" cfg.simpleTools.enabledTools)
         true;

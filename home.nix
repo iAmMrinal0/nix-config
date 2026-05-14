@@ -6,6 +6,7 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.backupFileExtension = "hm-backup";
+  home-manager.sharedModules = [ inputs.nix-index-database.homeModules.nix-index ];
   home-manager.users.${username} = import ./home/${username}.nix;
   home-manager.extraSpecialArgs = { inherit inputs hostname username; };
 }

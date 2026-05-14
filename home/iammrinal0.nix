@@ -38,7 +38,7 @@
         nix-direnv.enable = true;
       };
       fzf.enable = true;
-      simpleTools = { enabledTools = [ "broot" "command-not-found" "jq" ]; };
+      simpleTools = { enabledTools = [ "broot" "nix-index" "jq" ]; };
     };
 
     host-specific = { enable = true; };
