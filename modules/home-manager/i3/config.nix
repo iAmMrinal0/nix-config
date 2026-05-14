@@ -8,6 +8,15 @@ let
   rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
 
+  # i3's `move workspace to output <dir>` doesn't trigger mouse_warping, so
+  # the cursor stays put. Warp it onto the focused workspace's rect after
+  # the move — works for any monitor count or layout.
+  warpToFocused = pkgs.writeShellScript "i3-warp-to-focused" ''
+    ${pkgs.i3}/bin/i3-msg -t get_workspaces \
+      | ${pkgs.jq}/bin/jq -r '.[] | select(.focused) | "\(.rect.x) \(.rect.y)"' \
+      | xargs ${pkgs.xdotool}/bin/xdotool mousemove
+  '';
+
   fontSize = 10.8;
   fonts = {
     names = [ "Source Code Pro" "Symbols Nerd Font Mono" ];
@@ -197,10 +206,10 @@ in {
         "t" = ''
           exec ${pkgs.libnotify}/bin/notify-send -t 5000 "`date +%H:%M`" "`date +%A` `date +%d` `date +%B` `date +%Y` - Week `date +%V`"'';
         "a" = "focus child";
-        "Control+Down" = "move workspace to output down";
-        "Control+Up" = "move workspace to output up";
-        "Control+Left" = "move workspace to output left";
-        "Control+Right" = "move workspace to output right";
+        "Control+Down" = "move workspace to output down; exec --no-startup-id ${warpToFocused}";
+        "Control+Up" = "move workspace to output up; exec --no-startup-id ${warpToFocused}";
+        "Control+Left" = "move workspace to output left; exec --no-startup-id ${warpToFocused}";
+        "Control+Right" = "move workspace to output right; exec --no-startup-id ${warpToFocused}";
         "Shift+c" = "reload";
         "Shift+r" = "restart";
         "d" = "exec ${pkgs.rofi}/bin/rofi -show run";
