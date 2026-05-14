@@ -16,15 +16,22 @@ in {
     history.extended = true;
 
     shellAliases = shellAliases;
+    sessionVariables = {
+      # Skip oh-my-zsh's compaudit security check on every startup
+      # (saves ~100ms; nix store paths are already trusted).
+      ZSH_DISABLE_COMPFIX = "true";
+    };
     initContent = ''
-      # Reload zsh completions from direnv-exported KRONOR_ZSH_COMPLETIONS
+      # Reload zsh completions from direnv-exported KRONOR_ZSH_COMPLETIONS.
+      # Uses compinit -C: the dump was already built by oh-my-zsh's compinit at
+      # startup, and adding an fpath entry doesn't require re-auditing.
       typeset -g _kronor_completions_loaded=""
       _kronor_completions_hook() {
         local dir="$KRONOR_ZSH_COMPLETIONS"
         [[ -n "$dir" && -d "$dir" && "$_kronor_completions_loaded" != "$dir" ]] || return 0
         fpath=("$dir" $fpath)
         autoload -Uz compinit
-        compinit -i
+        compinit -C
         _kronor_completions_loaded="$dir"
       }
       autoload -Uz add-zsh-hook
@@ -41,7 +48,7 @@ in {
     '';
     oh-my-zsh = {
       enable = true;
-      plugins = [ "command-not-found" "docker" "extract" "git" "sudo" ];
+      plugins = [ "extract" "git" "sudo" ];
       theme = "mod_steeef";
       custom = "${pkgs.callPackage ./modSteeefZsh.nix { }}";
     };
