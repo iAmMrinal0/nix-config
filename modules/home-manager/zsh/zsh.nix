@@ -1,13 +1,48 @@
-{ pkgs, inputs, ... }:
+{ pkgs, lib, inputs, ... }:
 
 let
   shellAliases = {
     cal = "cal -w"; # show week numbers (Monday-start comes from en_GB locale)
     tmuxnew = "tmux -u attach -t play || tmux -u new -s play";
     tmuxdir = "new-tmux-from-dir-name";
+    proc = "ps aux | rg";
   };
+
+  # Copy a plugin directory into a derivation, then zcompile the named
+  # entrypoint inside it so `source` uses the precompiled wordcode. The whole
+  # directory is copied so plugins that read sibling files (e.g.
+  # fast-syntax-highlighting needs fast-highlight, .fast-* helpers) still work.
+  zcompileDir = name: srcDir:
+    pkgs.runCommandLocal name { } ''
+      mkdir -p $out
+      cp -r ${srcDir}/. $out/
+      chmod -R u+w $out
+      ${pkgs.zsh}/bin/zsh -c "zcompile $out/${name}"
+    '';
+
+  # Bake `atuin init zsh` into a static file at build time so we don't pay
+  # the ~8ms fork+exec at every shell start. Source order matters: this
+  # must defer-load before zsh-autosuggestions (atuin prepends itself to
+  # ZSH_AUTOSUGGEST_STRATEGY, which autosuggestions reads at init time).
+  atuinInit = pkgs.runCommandLocal "atuin-init.zsh" { } ''
+    export HOME=$(mktemp -d)
+    mkdir -p $out
+    ${pkgs.atuin}/bin/atuin init zsh > $out/atuin-init.zsh
+    ${pkgs.zsh}/bin/zsh -c "zcompile $out/atuin-init.zsh"
+  '';
 in {
   home.packages = with pkgs; [ tmux ripgrep ];
+
+  # Pre-build ~/.zcompdump during activation so the first interactive shell
+  # after a rebuild doesn't pay compinit's ~1s dump-rebuild cost (Nix bumps
+  # fpath mtimes on every switch, marking the dump stale).
+  # stderr is intentionally not suppressed: if zsh prints startup errors,
+  # they surface in the `nixos-rebuild switch` output instead of greeting
+  # the next terminal you open.
+  home.activation.warmZcompdump = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD ${pkgs.zsh}/bin/zsh -i -c exit > /dev/null
+  '';
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -42,9 +77,25 @@ in {
         dir_name=$(echo `basename $PWD` | tr '.' '-')
         ${pkgs.tmux}/bin/tmux new-session -As $dir_name
       }
-      ZSH_AUTOSUGGEST_STRATEGY=( abbreviations $ZSH_AUTOSUGGEST_STRATEGY )
 
-      source "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+      # Defer heavy plugins until after the first prompt renders. They
+      # initialize a few ms later via a precmd hook — invisible unless you
+      # type the instant the prompt appears (autosuggestions/syntax colors
+      # would be a beat late on that first keystroke).
+      # Order matters: atuin must load before autosuggestions so it can
+      # register itself as a suggestion strategy.
+      source ${pkgs.zsh-defer}/share/zsh-defer/zsh-defer.plugin.zsh
+      zsh-defer source ${atuinInit}/atuin-init.zsh
+      zsh-defer source ${
+        zcompileDir "zsh-autosuggestions.zsh" inputs.zsh-autosuggestions
+      }/zsh-autosuggestions.zsh
+      zsh-defer source ${
+        zcompileDir "nix-shell.plugin.zsh" inputs.zsh-nix-shell
+      }/nix-shell.plugin.zsh
+      zsh-defer source ${
+        zcompileDir "fast-syntax-highlighting.plugin.zsh"
+        "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting"
+      }/fast-syntax-highlighting.plugin.zsh
     '';
     oh-my-zsh = {
       enable = true;
@@ -52,32 +103,10 @@ in {
       theme = "mod_steeef";
       custom = "${pkgs.callPackage ./modSteeefZsh.nix { }}";
     };
-    zsh-abbr = {
-      enable = true;
-      abbreviations = { proc = "ps aux | rg"; } // shellAliases;
-    };
-    plugins = [
-      {
-        name = "zsh-autosuggestions";
-        src = "${inputs.zsh-autosuggestions}";
-      }
-      {
-        name = "nix-zsh-completions";
-        src = "${pkgs.nix-zsh-completions}/share/zsh/site-functions";
-      }
-      {
-        name = "you-should-use";
-        src = inputs.zsh-you-should-use;
-      }
-      {
-        name = "zsh-autosuggestions-abbreviations-strategy";
-        src = inputs.zsh-autosuggestions-abbreviations-strategy;
-      }
-      {
-        name = "zsh-nix-shell";
-        file = "nix-shell.plugin.zsh";
-        src = inputs.zsh-nix-shell;
-      }
-    ];
+    # Only sync plugins here — heavy ones are deferred in initContent above.
+    plugins = [{
+      name = "nix-zsh-completions";
+      src = "${pkgs.nix-zsh-completions}/share/zsh/site-functions";
+    }];
   };
 }

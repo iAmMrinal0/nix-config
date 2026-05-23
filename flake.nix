@@ -30,14 +30,6 @@
       url = "github:zsh-users/zsh-autosuggestions";
       flake = false;
     };
-    zsh-you-should-use = {
-      url = "github:MichaelAquilina/zsh-you-should-use";
-      flake = false;
-    };
-    zsh-autosuggestions-abbreviations-strategy = {
-      url = "github:olets/zsh-autosuggestions-abbreviations-strategy";
-      flake = false;
-    };
     zsh-nix-shell = {
       url = "github:chisui/zsh-nix-shell";
       flake = false;
@@ -64,10 +56,9 @@
   };
 
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
-    , nixos-hardware, emacsConfiguration, zsh-autosuggestions
-    , zsh-autosuggestions-abbreviations-strategy, zsh-you-should-use
-    , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable
-    , nix4vscode, llm-agents, nix-index-database }:
+    , nixos-hardware, emacsConfiguration, zsh-autosuggestions, zsh-nix-shell
+    , haskell-yesod-quasiquotes, nixpkgs-unstable, nix4vscode, llm-agents
+    , nix-index-database }:
     let username = "iammrinal0";
     in {
       nixosConfigurations = {

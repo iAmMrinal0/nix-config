@@ -33,6 +33,9 @@
     shell-tools = {
       enable = true;
       atuin.enable = true;
+      # Loaded via zsh-defer in modules/home-manager/zsh — disable HM's
+      # synchronous eval at the end of .zshrc.
+      atuin.enableZshIntegration = false;
       direnv = {
         enable = true;
         nix-direnv.enable = true;
