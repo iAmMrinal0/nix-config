@@ -97,6 +97,16 @@ in {
       extraHosts = cfg.extraHosts;
     };
 
+    # nm-applet's tray icon uses GtkStatusIcon, so on Wayland it has to
+    # run via XWayland — but its right-click menu (checkbox toggles for
+    # Enable Wi-Fi / Enable Networking / Enable Notifications) is the
+    # lightweight radio-toggle UI we want, and neither waybar's network
+    # module nor nm-connection-editor expose those toggles. Previous
+    # iteration of this block skipped nm-applet on Wayland on the
+    # assumption that waybar covered everything; that assumption missed
+    # the radio toggles, so we keep nm-applet enabled everywhere
+    # NetworkManager is. XWayland-tray pattern matches kdeconnect-indicator
+    # and transmission-qt, which also publish SNI items via XWayland.
     programs.nm-applet.enable = cfg.networkManager.enable;
   };
 }

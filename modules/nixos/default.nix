@@ -23,5 +23,6 @@
     ./touchegg.nix
     ./vscode.nix
     ./xserver.nix
+    ./wayland-session.nix
   ];
 }

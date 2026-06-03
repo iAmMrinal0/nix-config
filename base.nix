@@ -142,7 +142,14 @@ in {
         '';
       })
     ];
-    variables = { QT_STYLE_OVERRIDE = "gtk2"; };
+    # Qt style is now configured per-session via the home-manager qt module
+    # (modules/home-manager/qt.nix → Adwaita-Dark) and re-asserted at the
+    # system level for sway-exec'd apps (modules/nixos/wayland-session.nix
+    # → environment.sessionVariables.QT_STYLE_OVERRIDE). The previous
+    # `QT_STYLE_OVERRIDE = "gtk2"` here loaded qtstyleplugins-style-gtk2 for
+    # Qt5 apps, but that plugin doesn't exist for Qt6 — KF6 apps saw it,
+    # rejected it as "invalid style override", and fell back to Fusion.
+    variables = { };
   };
 
   security.pam.services.lightdm.enableGnomeKeyring = true;
@@ -313,6 +320,20 @@ in {
     tailscale.enable = true;
     touchegg.enable = true;
     xserver.enable = true;
+    # Phase 1 of i3 → SwayFX migration. `enable` installs Wayland userspace
+    # tools (swayfx, kanshi, grim, etc.) without touching lightdm's session
+    # list — safe to switch into without rebooting.
+    # `registerSession` registers sway as a login session, sets up xdg-portal
+    # and PAM for swaylock; flipping this requires `systemctl restart
+    # display-manager` or a reboot BEFORE logging out (see
+    # modules/nixos/wayland-session.nix for why).
+    wayland = {
+      enable = true;
+      # registerSession is per-host: betazed flips it on (Phase 2), mordor
+      # stays on lightdm + i3 until Phase 3. mkDefault lets the host file
+      # override without needing mkForce there.
+      registerSession = lib.mkDefault false;
+    };
     editors.vscode.enable = true;
 
     memorySafeguards.enable = true;

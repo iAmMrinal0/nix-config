@@ -1,5 +1,24 @@
 { pkgs, config, ... }:
 
+let
+  # Runtime-dispatching clipboard wrappers: pick wl-clipboard under Wayland,
+  # xclip under X11. Lets the same tmux config work on betazed (sway) and
+  # mordor (i3) without conditional nix.
+  clipCopy = pkgs.writeShellScript "tmux-clip-copy" ''
+    if [ -n "$WAYLAND_DISPLAY" ]; then
+      exec ${pkgs.wl-clipboard}/bin/wl-copy
+    else
+      exec ${pkgs.xclip}/bin/xclip -i -sel c
+    fi
+  '';
+  clipPaste = pkgs.writeShellScript "tmux-clip-paste" ''
+    if [ -n "$WAYLAND_DISPLAY" ]; then
+      exec ${pkgs.wl-clipboard}/bin/wl-paste
+    else
+      exec ${pkgs.xclip}/bin/xclip -o -sel c
+    fi
+  '';
+in
 {
   programs.tmux = {
     enable = true;
@@ -147,10 +166,10 @@
       #
       # Copy paste with Emacs bindings for Linux
       #
-      bind-key -n -T copy-mode 'C-w' send -X copy-pipe-and-cancel "${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c "
-      bind-key -n -T copy-mode 'M-w' send -X copy-pipe-and-cancel "${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c "
-      bind-key -n -T copy-mode Enter send -X copy-pipe-and-cancel "${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c "
-      bind-key -n C-y run "${pkgs.xclip}/bin/xclip -o | ${pkgs.tmux}/bin/tmux load-buffer - ; ${pkgs.tmux}/bin/tmux paste-buffer"
+      bind-key -n -T copy-mode 'C-w' send -X copy-pipe-and-cancel "${clipCopy}"
+      bind-key -n -T copy-mode 'M-w' send -X copy-pipe-and-cancel "${clipCopy}"
+      bind-key -n -T copy-mode Enter send -X copy-pipe-and-cancel "${clipCopy}"
+      bind-key -n C-y run "${clipPaste} | ${pkgs.tmux}/bin/tmux load-buffer - ; ${pkgs.tmux}/bin/tmux paste-buffer"
       #
       #
       ##########

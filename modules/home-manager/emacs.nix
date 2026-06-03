@@ -41,6 +41,12 @@ in {
       description = "Whether to add Emacs keybinding to i3 config";
     };
 
+    swayIntegration = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Whether to add Emacs keybinding and assign to sway config";
+    };
+
     useLocalConfig = mkOption {
       type = types.bool;
       default = false;
@@ -84,6 +90,22 @@ in {
         };
 
         # Assign Emacs windows to the 'code' workspace
+        assigns."\"${codeWorkspace}\"" = [{ class = "Emacs"; }];
+      };
+
+    # Mirror the i3 integration for sway. Emacs typically runs via XWayland
+    # so `class = "Emacs"` still matches; if you switch to native-Wayland
+    # Emacs (PGTK), the criterion would need to become `app_id`.
+    wayland.windowManager.sway.config =
+      let
+        modifier = config.wayland.windowManager.sway.config.modifier;
+        codeWorkspace = config.personal.workspaces.byKey.code;
+      in mkIf cfg.swayIntegration {
+        keybindings = {
+          "${modifier}+Control+e" =
+            "exec ${emacsWithPackagesFromUsePackage}/bin/emacsclient -a '' -c";
+        };
+
         assigns."\"${codeWorkspace}\"" = [{ class = "Emacs"; }];
       };
   };

@@ -27,6 +27,13 @@ in {
         "_netdev"
         "soft"
         "timeo=50"
+        # Hide from GVFS / Thunar / udisks2. Without this, Thunar sees the
+        # fstab entry and tries to mount it itself by g_spawn-ing `mount`,
+        # which fails because the sway-launched session's PATH doesn't
+        # include /run/wrappers/bin where NixOS keeps the setuid mount.
+        # systemd-automount handles the actual mounting transparently on
+        # first access (cd / ls / stat), so Thunar doesn't need to.
+        "x-gvfs-hide"
       ];
     };
   };
