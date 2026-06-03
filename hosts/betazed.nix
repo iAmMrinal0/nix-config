@@ -28,6 +28,15 @@
     gfn.enable = true;
 
     connectiq.enable = true;
+
+    # Session toggle: true → sway+greetd (Wayland), false → i3+lightdm (X11).
+    # Both stacks are kept fully configured in this repo (the sway home-
+    # manager modules in modules/home-manager/sway/ and the i3 modules in
+    # modules/home-manager/i3/ are imported unconditionally; they generate
+    # config files but only one is actually used per session). Flip this
+    # one flag and rebuild to switch. See HANDOFF.md for the history,
+    # the SNI/tray quirks, and what's tested vs. untested.
+    wayland.registerSession = true;
   };
 
   networking.hostName = hostname;
@@ -76,6 +85,7 @@
     pkgs.handbrake
     pkgs.lm_sensors
     pkgs.smartmontools
+    pkgs.transmission_4-qt
     pkgs.xdg-utils
   ];
 }

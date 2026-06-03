@@ -1,6 +1,11 @@
-{ pkgs, lib, inputs }:
+{ pkgs, lib, inputs, osConfig }:
 
 let
+  # On Wayland hosts (betazed) transmission_4-qt is the GUI of choice (it
+  # publishes a proper SNI tray item; the GTK build's StatusIcon API is
+  # X11-only). On X11 hosts (mordor → i3) transmission_4-gtk stays in for
+  # parity with the i3 setup.
+  isWayland = osConfig.modules.wayland.registerSession or false;
 in with pkgs; [
   # Development Tools
   eza
@@ -72,6 +77,13 @@ in with pkgs; [
   imagemagick
   ffmpeg-full
   gnome-screenshot
+  # flameshot is the Wayland-era replacement for gnome-screenshot's
+  # interactive picker. It uses xdg-desktop-portal (configured in
+  # modules/nixos/wayland-session.nix) to ask sway for the frames, then
+  # opens its annotation editor for save-or-copy. Bound to Print in
+  # modules/home-manager/sway/config.nix. gnome-screenshot stays for the
+  # mordor (X11/i3) host where Print is bound to gnome-screenshot -i.
+  flameshot
 
   # File Management
   xarchiver
@@ -114,6 +126,15 @@ in with pkgs; [
   # Qt & Desktop Integration
   libsForQt5.qtstyleplugins
   libsForQt5.qt5ct
+  # Kirigami / KF6 styling so KDE apps render correctly outside Plasma:
+  # qqc2-desktop-style is the QtQuick Controls QML plugin that lets
+  # Kirigami widgets pick up the desktop look (referenced via the
+  # QT_QUICK_CONTROLS_STYLE=org.kde.desktop env in wayland-session.nix);
+  # breeze ships the BreezeDark color scheme that kdeglobals points at
+  # (see modules/home-manager/qt.nix). Without both, kdeconnect-app
+  # falls back to default Fusion light.
+  kdePackages.qqc2-desktop-style
+  kdePackages.breeze
   dconf
   dconf-editor
 
@@ -121,9 +142,6 @@ in with pkgs; [
   aspell
   aspellDicts.en
   aspellDicts.en-computers
-
-  # Network & Communication
-  transmission_4-gtk
 
   # System Information
   # neofetch was removed in 26.05 (unmaintained upstream); fastfetch is
@@ -135,4 +153,4 @@ in with pkgs; [
   inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.rtk
   python3
   python3Packages.pip
-]
+] ++ lib.optional (!isWayland) pkgs.transmission_4-gtk

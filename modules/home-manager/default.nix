@@ -9,6 +9,7 @@
     ./emacs.nix
     ./feh.nix
     ./firefox.nix
+    ./flameshot.nix
     ./git.nix
     ./gtk.nix
     ./home-manager.nix
@@ -22,6 +23,8 @@
     ./systemd.nix
     ./tmux.nix
     ./xsession.nix
+    ./wayland-session.nix
+    ./kanshi.nix
     ./zathura.nix
     ./zsh
   ];

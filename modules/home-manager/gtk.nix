@@ -6,7 +6,10 @@
     font.package = pkgs.cantarell-fonts;
     font.name = "Cantarell Regular 12";
     iconTheme.package = pkgs.papirus-icon-theme;
-    iconTheme.name = "Papirus-Dark";
+    iconTheme.name = "Papirus";
+    cursorTheme.package = pkgs.bibata-cursors;
+    cursorTheme.name = "Bibata-Modern-Classic";
+    cursorTheme.size = 24;
     theme.package = pkgs.gruvbox-gtk-theme;
     theme.name = "Gruvbox-Dark";
     # 26.05 changed the default of gtk4.theme from config.gtk.theme to
@@ -15,7 +18,6 @@
     # otherwise leave them unthemed).
     gtk4.theme = config.gtk.theme;
     gtk2.extraConfig = ''
-      gtk-cursor-theme-size=0
       gtk-toolbar-style=GTK_TOOLBAR_BOTH
       gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
       gtk-button-images=1
@@ -28,8 +30,6 @@
       gtk-xft-rgba=rgb'';
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = "1";
-      gtk-cursor-theme-name = "Adwaita";
-      gtk-cursor-theme-size = "0";
       gtk-toolbar-style = "GTK_TOOLBAR_BOTH";
       gtk-toolbar-icon-size = "GTK_ICON_SIZE_LARGE_TOOLBAR";
       gtk-button-images = "1";
@@ -50,6 +50,18 @@
       .thunar {
         -gtk-icon-style: regular;
       }
+      /* Spacious popup menus — nm-applet's right-click checkbox menu
+         (Enable Wi-Fi / Enable Networking) and other GTK tray/context
+         menus default to compact rows under Gruvbox-Dark, which makes
+         the toggles fiddly to click. The theme uses `menu menuitem`
+         (specificity 2) which beats a bare `menuitem` rule from user
+         CSS, so we match that selector and add !important as belt-and-
+         suspenders. min-height intentionally generous (28px) — easy to
+         dial back to 22 once we've confirmed the rule actually binds. */
+      /* Diagnostic: make every label text red. window-background was a
+         bad test because child widgets cover the window's pixels. */
+      * { color: red !important; }
+      label { color: red !important; }
     '';
     gtk3.bookmarks = [
       "file:///home/${username}/Documents"

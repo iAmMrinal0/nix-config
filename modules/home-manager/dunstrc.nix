@@ -5,7 +5,7 @@ in {
   services.dunst = {
     enable = true;
     iconTheme.package = pkgs.papirus-icon-theme;
-    iconTheme.name = "Papirus-Dark";
+    iconTheme.name = "Papirus";
     iconTheme.size = "48";
     settings = {
       global = {
