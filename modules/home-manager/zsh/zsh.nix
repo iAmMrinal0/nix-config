@@ -1,4 +1,4 @@
-{ pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 let
   shellAliases = {
@@ -47,6 +47,14 @@ in {
     enable = true;
     enableCompletion = true;
     defaultKeymap = "emacs";
+    # 26.05 changes the dotDir default from $HOME to $XDG_CONFIG_HOME/zsh;
+    # adopt the new XDG location. HM regenerates .zshrc/.zshenv there and
+    # drops a $HOME/.zshenv stub that points ZDOTDIR at it, so this is
+    # transparent — EXCEPT history.path defaults to "${dotDir}/.zsh_history",
+    # which would orphan the existing ~/.zsh_history. Pin it to $HOME so
+    # accumulated history survives the move.
+    dotDir = "${config.xdg.configHome}/zsh";
+    history.path = "${config.home.homeDirectory}/.zsh_history";
     history.expireDuplicatesFirst = true;
     history.extended = true;
 

@@ -30,6 +30,12 @@ in {
     chromium = { enableWideVine = true; };
     permittedInsecurePackages = [
       "xpdf-4.06"
+      # Pulled in by bitwarden-desktop (an Electron app). 26.05 ships a
+      # bundled Electron that upstream has marked EOL; nothing in our
+      # config can bump it independently, so allow it until bitwarden-
+      # desktop in nixpkgs moves to a supported Electron. Bump this string
+      # when the bundled version changes.
+      "electron-39.8.10"
     ];
   };
 
@@ -120,7 +126,13 @@ in {
         addresses = true;
       };
     };
-    udev.packages = [ pkgs.yubikey-personalization ];
+    # brightnessctl replaces the removed programs.light/pkgs.light (26.05).
+    # Its udev rules chgrp the backlight sysfs nodes to `video` + add group
+    # write, granting access without setuid (the user is in `video`). Same
+    # access model programs.light had; also what the i3 brightness
+    # keybinds rely on. The package must be registered with udev for the
+    # rules to apply — installing it to PATH alone wouldn't.
+    udev.packages = [ pkgs.yubikey-personalization pkgs.brightnessctl ];
     davfs2.enable = true;
     colord.enable = true;
     dbus.packages = [
@@ -140,7 +152,6 @@ in {
   };
 
   programs = {
-    light = { enable = true; };
     ssh.startAgent = true;
     zsh = { enable = true; };
     seahorse = { enable = true; };
@@ -204,7 +215,9 @@ in {
   users.users.${username} = {
     isNormalUser = true;
     extraGroups = [
-      "adbusers"
+      # "adbusers" dropped: programs.adb (which created this group) was
+      # removed in 26.05; systemd 258 grants adb device access via uaccess,
+      # so the group is gone and listing it would warn.
       "audio"
       "docker"
       "keys"

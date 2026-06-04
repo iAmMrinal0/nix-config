@@ -46,7 +46,10 @@ in {
         lowLevelPercent = 20;
       };
 
-      home.packages = with pkgs; [ light acpi tlp ];
+      # `light` was removed in 26.05 (unmaintained); brightnessctl is the
+      # replacement and matches the i3 brightness keybinds + the udev
+      # rules in base.nix.
+      home.packages = with pkgs; [ brightnessctl acpi tlp ];
     })
 
     # Bluetooth configuration

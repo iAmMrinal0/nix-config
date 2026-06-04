@@ -1,8 +1,14 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   programs.firefox = {
     enable = true;
+    # 26.05 moves the firefox profile root from ~/.mozilla/firefox to the
+    # XDG path. This option only tells HM/firefox where to look — it does
+    # NOT move existing data. The one-time migration must be done manually
+    # with firefox closed (see the rebuild note); otherwise firefox starts
+    # from an empty profile (old data stays at ~/.mozilla/firefox).
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
     profiles = {
       default.settings = {
         "accessibility.typeaheadfind.soundURL" = "";

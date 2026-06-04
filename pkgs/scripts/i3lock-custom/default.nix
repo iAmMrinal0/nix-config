@@ -26,7 +26,7 @@ in pkgs.writeShellScriptBin "i3lock-custom" ''
   fi
 
   # exit if DPMS is already off (screen appears off/locked)
-  dpms_status=$(${pkgs.xorg.xset}/bin/xset -q | ${pkgs.gnugrep}/bin/grep "Monitor is" | ${pkgs.gawk}/bin/awk '{print $3}')
+  dpms_status=$(${pkgs.xset}/bin/xset -q | ${pkgs.gnugrep}/bin/grep "Monitor is" | ${pkgs.gawk}/bin/awk '{print $3}')
   if [[ "$dpms_status" == "Off" ]]; then
     exit 0
   fi
@@ -48,7 +48,7 @@ in pkgs.writeShellScriptBin "i3lock-custom" ''
   fi
 
   # Full-screen black canvas
-  SCREEN_SIZE=$(${pkgs.xorg.xdpyinfo}/bin/xdpyinfo | ${pkgs.gawk}/bin/awk '/dimensions:/ {print $2; exit}')
+  SCREEN_SIZE=$(${pkgs.xdpyinfo}/bin/xdpyinfo | ${pkgs.gawk}/bin/awk '/dimensions:/ {print $2; exit}')
   SCREEN_SIZE=''${SCREEN_SIZE:-1920x1080}
   ${pkgs.imagemagick}/bin/magick -size "$SCREEN_SIZE" "xc:${bgColor}" "$TMPDIR/bg.png"
 

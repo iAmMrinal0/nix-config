@@ -13,7 +13,9 @@ in with pkgs; [
   silver-searcher
   awscli
   shellcheck
-  nixfmt-classic
+  # nixfmt-classic is deprecated in 26.05; nixfmt is the maintained
+  # RFC-style formatter (note: output style differs from the classic one).
+  nixfmt
   gh
   nil
   btop
@@ -34,7 +36,7 @@ in with pkgs; [
   lsof
   netcat-gnu
   nix-diff
-  xorg.xkill
+  xkill
   nvd
   socat
   bubblewrap
@@ -73,11 +75,12 @@ in with pkgs; [
 
   # File Management
   xarchiver
-  xfce.thunar
-  xfce.thunar-volman
-  xfce.thunar-archive-plugin
-  xfce.tumbler
-  xfce.xfconf
+  # These moved out of the xfce set to top-level in 26.05.
+  thunar
+  thunar-volman
+  thunar-archive-plugin
+  tumbler
+  xfconf
   rclone
 
   # System Appearance
@@ -99,9 +102,10 @@ in with pkgs; [
   playerctl
 
   # Display
-  xorg.xdpyinfo
+  # 26.05 deprecated the `xorg` package set; xdpyinfo is now top-level.
+  xdpyinfo
   arandr
-  xorg.libxcvt
+  libxcvt
 
   # Notification
   libnotify
@@ -122,7 +126,9 @@ in with pkgs; [
   transmission_4-gtk
 
   # System Information
-  neofetch
+  # neofetch was removed in 26.05 (unmaintained upstream); fastfetch is
+  # the maintained replacement.
+  fastfetch
   nix-prefetch-github
 
   gemini-cli

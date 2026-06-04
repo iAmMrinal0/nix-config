@@ -102,19 +102,19 @@ in {
         smartBorders = "on";
       };
       startup = [
-        { command = "${pkgs.xorg.xset}/bin/xset -b"; }
+        { command = "${pkgs.xset}/bin/xset -b"; }
         {
           command = "${pkgs.cryptomator}/bin/cryptomator &";
         }
         {
           # Standby after 5 minutes, Suspend after 10 minutes, Off after 15 minutes
-          command = "${pkgs.xorg.xset}/bin/xset dpms 300 600 900";
+          command = "${pkgs.xset}/bin/xset dpms 300 600 900";
         }
         {
           # Trigger X screensaver at 5 minutes idle; xss-lock catches the event
           # and runs the lock command. Honors org.freedesktop.ScreenSaver
           # inhibits, so videos (mpv/Firefox/Chromium) won't trigger a lock.
-          command = "${pkgs.xorg.xset}/bin/xset s 300 300";
+          command = "${pkgs.xset}/bin/xset s 300 300";
         }
         { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
         {
@@ -267,8 +267,10 @@ in {
         "XF86AudioNext" = "${pkgs.playerctl}/bin/playerctl next";
         "XF86AudioPrev" = "${pkgs.playerctl}/bin/playerctl previous";
 
-        "XF86MonBrightnessUp" = "${pkgs.light}/bin/light -A 10";
-        "XF86MonBrightnessDown" = "${pkgs.light}/bin/light -U 10";
+        # pkgs.light was removed in 26.05; use brightnessctl (backed by
+        # the udev rules set in base.nix).
+        "XF86MonBrightnessUp" = "${pkgs.brightnessctl}/bin/brightnessctl set +10%";
+        "XF86MonBrightnessDown" = "${pkgs.brightnessctl}/bin/brightnessctl set 10%-";
 
         "XF86AudioMicMute" =
           "${pkgs.pulseaudio}/bin/pactl set-source-mute 0 toggle";
