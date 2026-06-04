@@ -1,11 +1,34 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 with lib;
 
-let cfg = config.modules.boot;
+let
+  cfg = config.modules.boot;
+
+  # Identify this build in the systemd-boot menu by the flake's git short
+  # rev and commit timestamp (YYYYMMDDHHMMSS). When the working tree is
+  # dirty, the rev becomes "dirty" + the dirty short rev. This lets you
+  # scroll through generations and recognize which commit each one came
+  # from. Pair with a short `labelSuffix` ("stable", "pre-upgrade", etc.)
+  # for explicitly named recovery checkpoints.
+  flakeRev = inputs.self.shortRev or inputs.self.dirtyShortRev or "dirty";
+  flakeDate = inputs.self.lastModifiedDate or "unknown";
 in {
   options.modules.boot = {
     enable = mkEnableOption "Enable boot configuration";
+
+    labelSuffix = mkOption {
+      type = types.str;
+      default = "";
+      example = "stable-pre-upgrade";
+      description = ''
+        Optional suffix appended to the systemd-boot generation label,
+        after the git commit and timestamp. Set it to a memorable string
+        before a known-good build (e.g. `"stable-pre-upgrade"`) so the
+        generation is easy to find in the boot menu later. Leave blank
+        for normal builds.
+      '';
+    };
 
     loader = {
       systemd-boot.enable = mkOption {
@@ -67,5 +90,10 @@ in {
 
       plymouth.enable = cfg.plymouth.enable;
     };
+
+    system.nixos.label = mkForce (
+      flakeRev + "-" + flakeDate
+      + optionalString (cfg.labelSuffix != "") ("-" + cfg.labelSuffix)
+    );
   };
 }
