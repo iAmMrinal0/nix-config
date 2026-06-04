@@ -64,6 +64,24 @@ in {
       # (saves ~100ms; nix store paths are already trusted).
       ZSH_DISABLE_COMPFIX = "true";
     };
+    # Inject the cachix auth token (sops secret) into cachix invocations
+    # ONLY, via a wrapper function — deliberately not a global export:
+    # an env var in .zshenv would put a write-token to the public cache
+    # into the environment of every process (leak-prone via error
+    # reporters, build logs, debug dumps). The token is read from the
+    # secret file at invocation time, never at eval time, so it can't end
+    # up in the nix store. envExtra (.zshenv) so it works in any zsh, not
+    # just interactive ones. $CACHIX_AUTH_TOKEN already set (e.g. CI or a
+    # manual export) wins; missing secret file degrades to plain cachix.
+    envExtra = ''
+      cachix() {
+        if [[ -z "$CACHIX_AUTH_TOKEN" && -r /run/secrets/cachix-auth-token ]]; then
+          CACHIX_AUTH_TOKEN="$(</run/secrets/cachix-auth-token)" command cachix "$@"
+        else
+          command cachix "$@"
+        fi
+      }
+    '';
     initContent = ''
       # Reload zsh completions from direnv-exported KRONOR_ZSH_COMPLETIONS.
       # Uses compinit -C: the dump was already built by oh-my-zsh's compinit at

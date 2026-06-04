@@ -8,6 +8,7 @@ let
     "kronor-openvpn-staging"
     "kronor-openvpn-production"
     "bw-session-key"
+    "cachix-auth-token"
   ];
   defaultPermissions = secret: {
     ${secret} = {
