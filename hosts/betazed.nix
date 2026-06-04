@@ -24,6 +24,8 @@
     };
 
     nfs.enable = true;
+
+    gfn.enable = true;
   };
 
   networking.hostName = hostname;

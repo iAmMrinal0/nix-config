@@ -8,4 +8,5 @@
   i3dunst-toggle = pkgs.callPackage ./i3dunst-toggle { };
   bluetooth-battery = pkgs.callPackage ./bluetooth-battery { };
   i3lock-custom = pkgs.callPackage ./i3lock-custom { };
+  gfn = pkgs.callPackage ./gfn { };
 }

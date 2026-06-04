@@ -11,6 +11,7 @@
     ./emacs.nix
     ./fonts.nix
     ./gc.nix
+    ./gfn.nix
     ./memory-safeguards.nix
     ./networking.nix
     ./nfs.nix

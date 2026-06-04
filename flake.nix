@@ -22,6 +22,13 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Declarative Flatpak management: lets us pin remotes and apps in
+    # nix and reconcile installed state on rebuild. Used by
+    # modules/nixos/gfn.nix to install com.nvidia.geforcenow + its
+    # required org.freedesktop.Platform//24.08 runtime. No
+    # `nixpkgs.follows` — nix-flatpak doesn't import nixpkgs heavily
+    # and pinning it doesn't gain us anything.
+    nix-flatpak = { url = "github:gmodena/nix-flatpak/?ref=latest"; };
     emacsConfiguration = {
       url = "github:iammrinal0/.emacs.d";
       flake = false;
@@ -58,7 +65,7 @@
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
     , nixos-hardware, emacsConfiguration, zsh-autosuggestions, zsh-nix-shell
     , haskell-yesod-quasiquotes, nixpkgs-unstable, nix4vscode, llm-agents
-    , nix-index-database }:
+    , nix-index-database, nix-flatpak }:
     let username = "iammrinal0";
     in {
       nixosConfigurations = {
