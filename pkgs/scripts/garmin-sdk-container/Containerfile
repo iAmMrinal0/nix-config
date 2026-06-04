@@ -1,0 +1,43 @@
+FROM ubuntu:22.04
+
+# Install only what the official Garmin SDK Manager needs at runtime,
+# plus unzip/wget to fetch the manager itself. The crucial bit is
+# libwebkit2gtk-4.0-37 — that's what makes the OAuth login WebView
+# render correctly inside this container even though the same flow is
+# broken on modern hosts. dbus-x11 is needed because the SDK manager
+# falls back to dbus directly when xdg-desktop-portal isn't present.
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libwebkit2gtk-4.0-37 \
+      libgtk-3-0 \
+      libcanberra-gtk3-module \
+      libsm6 \
+      libcurl4 \
+      libsecret-1-0 \
+      libxkbcommon0 \
+      dbus-x11 \
+      libnotify4 \
+      libnss3 \
+      libxss1 \
+      xdg-utils \
+      ca-certificates \
+      wget \
+      unzip \
+ && rm -rf /var/lib/apt/lists/*
+
+# Fetch the official Garmin SDK Manager tarball at build time so the
+# image is self-contained.
+RUN wget -q https://developer.garmin.com/downloads/connect-iq/sdk-manager/connectiq-sdk-manager-linux.zip \
+      -O /tmp/sdk-manager.zip \
+ && unzip /tmp/sdk-manager.zip -d /opt/garmin \
+ && chmod +x /opt/garmin/bin/sdkmanager \
+ && rm /tmp/sdk-manager.zip
+
+# Required when the host is Wayland/sway with XWayland — webkit's
+# hardware-accelerated paths probe DRI nodes that aren't bind-mounted
+# into rootless podman. Disabling both forces the software renderer,
+# which is what makes the login page actually render here.
+ENV WEBKIT_DISABLE_DMABUF_RENDERER=1
+ENV WEBKIT_DISABLE_COMPOSITING_MODE=1
+
+CMD ["/opt/garmin/bin/sdkmanager"]

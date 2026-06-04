@@ -6,6 +6,7 @@
     ./audio.nix
     ./bluetooth.nix
     ./boot.nix
+    ./connectiq.nix
     ./display-manager.nix
     ./docker.nix
     ./emacs.nix

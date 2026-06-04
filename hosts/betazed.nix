@@ -26,6 +26,8 @@
     nfs.enable = true;
 
     gfn.enable = true;
+
+    connectiq.enable = true;
   };
 
   networking.hostName = hostname;
@@ -72,6 +74,7 @@
   environment.systemPackages = [
     pkgs.ansible
     pkgs.handbrake
+    pkgs.lm_sensors
     pkgs.smartmontools
     pkgs.xdg-utils
   ];

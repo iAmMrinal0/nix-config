@@ -5,7 +5,10 @@ with lib;
 let
   cfg = config.modules.editors.vscode;
   
-  vscode = pkgs.unstable.vscode;
+  # FHS-wrapped variant required for extensions whose native helpers
+  # expect a Linux FHS layout (e.g. Garmin's Monkey C extension —
+  # plain pkgs.vscode breaks its sideload/build helpers).
+  vscode = pkgs.unstable.vscode-fhs;
   vscodeExtensions = pkgs.nix4vscode.forVscodeVersion vscode.version [
     "ms-vscode-remote.vscode-remote-extensionpack"
     "ms-vscode.remote-explorer"
@@ -49,6 +52,7 @@ let
     "github.vscode-pull-request-github"
     "github.copilot-chat"
     "anthropic.claude-code"
+    "garmin.monkey-c"
   ];
 
   vscode-with-extensions = pkgs.unstable.vscode-with-extensions.override {
