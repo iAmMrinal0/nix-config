@@ -7,7 +7,7 @@ writeShellScriptBin "bluetooth-battery" ''
   ]'
 
   # Iterate over each device in the JSON array
-  for row in $(echo "$devices" | jq -c '.[]'); do
+  for row in $(echo "$devices" | ${jq}/bin/jq -c '.[]'); do
     model=$(echo "$row" | ${jq}/bin/jq -r '.device')
     serial=$(echo "$row" | ${jq}/bin/jq -r '.serial')
     icon=$(echo "$row" | ${jq}/bin/jq -r '.icon')
