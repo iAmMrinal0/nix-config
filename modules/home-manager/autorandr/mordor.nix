@@ -89,6 +89,33 @@ in {
         eDP-1 = t14s // { position = "0x1440"; };
       };
     };
+    # Office dock with the laptop under the centre monitor. One profile
+    # covers both USB enumeration orders of the DisplayLink dock: the udev
+    # service (matchEdid) and the autorandr shell alias (--match-edid) map
+    # monitors by EDID, so the DVI-I-* names below are just labels.
+    # Replaces the hand-saved bzt-alt-left/bzt-alt-proper profiles.
+    "bzt-alt" = {
+      inherit fingerprint;
+      config = {
+        # LS27A600N: left
+        DVI-I-1-1 = {
+          enable = true;
+          primary = false;
+          mode = "2560x1440";
+          position = "0x0";
+          rate = "75.00";
+        };
+        # LS27A600U: centre, primary
+        DVI-I-2-2 = {
+          enable = true;
+          primary = true;
+          mode = "2560x1440";
+          position = "2560x0";
+          rate = "74.97";
+        };
+        eDP-1 = t14s // { position = "2560x1440"; };
+      };
+    };
     # "bzt-cph" = {
     #   inherit fingerprint;
     #   config = {

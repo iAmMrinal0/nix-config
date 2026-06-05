@@ -6,6 +6,9 @@ let
     tmuxnew = "tmux -u attach -t play || tmux -u new -s play";
     tmuxdir = "new-tmux-from-dir-name";
     proc = "ps aux | rg";
+    # DisplayLink renames DVI-I-* outputs between docks/reboots and saved
+    # CRTC/gamma values go stale: match monitors by EDID and let X pick CRTCs.
+    autorandr = "autorandr --match-edid --skip-options crtc,gamma";
   };
 
   # Copy a plugin directory into a derivation, then zcompile the named
