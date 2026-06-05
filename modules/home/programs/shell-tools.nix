@@ -80,11 +80,38 @@ in {
       atuin = mkIf cfg.atuin.enable {
         enable = true;
         enableZshIntegration = cfg.atuin.enableZshIntegration;
+        # Sets daemon.enabled + daemon.systemd_socket in config.toml and
+        # creates the atuin-daemon.{service,socket} systemd user units.
+        daemon.enable = true;
+        # All available settings (with docs) for the pinned atuin version:
+        # https://github.com/atuinsh/atuin/blob/v18.15.2/crates/atuin-client/config.toml
         settings = {
           # E2E sync key comes from sops (see base.nix secrets); a fresh
           # machine only needs `atuin login` + `atuin sync` to restore the
           # full shell history.
           key_path = "/run/secrets/atuin-key";
+          # Settings carried over from the pre-home-manager config.toml
+          # (now config.toml.bak): defining any `settings` makes
+          # home-manager own the whole file, so everything non-default
+          # must be declared here.
+          enter_accept = true;
+          # No filter_mode set: the default is the first applicable entry in
+          # search.filters, so inside a git repo it's "workspace" (whole-repo
+          # history, needs workspaces = true below) and "host" elsewhere.
+          search.filters = [
+            "workspace"
+            "host"
+            "session"
+            "directory"
+          ];
+          filter_mode_shell_up_key_binding = "directory";
+          show_preview = true;
+          sync.records = true;
+          # Filter history to the whole git repo, not just the exact cwd,
+          # when using the directory/workspace filter.
+          workspaces = true;
+          # Open interactive search in a tmux popup (tmux >= 3.2).
+          tmux.enabled = true;
         };
       };
 
