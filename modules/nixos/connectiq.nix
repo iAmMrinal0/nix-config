@@ -111,7 +111,7 @@ in {
       # Ubuntu 22.04 image for the SDK Manager GUI. First invocation
       # builds the image (~5 min); subsequent runs reuse the cached
       # image.
-      home.packages = [ pkgs.scripts.garmin-sdk-manager ];
+      home.packages = [ pkgs.my.scripts.garmin-sdk-manager ];
 
       # Extract the pinned SDK into ~/.Garmin/ConnectIQ/Sdks/ on
       # activation. Idempotent — only extracts if the target dir is

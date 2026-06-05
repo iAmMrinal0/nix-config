@@ -2,11 +2,11 @@
 
 let
   theme = config.personal.theming.colors;
-  lock = "${pkgs.scripts.i3lock-custom}/bin/i3lock-custom";
+  lock = "${pkgs.my.scripts.i3lock-custom}/bin/i3lock-custom";
   shutdownMenu = ''${pkgs.rofi}/bin/rofi -show power-menu -modi "power-menu:${pkgs.rofi-power-menu}/bin/rofi-power-menu"'';
-  rofiAutorandr = "${pkgs.scripts.rofi-autorandr}/bin/rofi-autorandr";
-  rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
-  rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
+  rofiAutorandr = "${pkgs.my.scripts.rofi-autorandr}/bin/rofi-autorandr";
+  rofiTailscaleAccount = "${pkgs.my.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
+  rofiTailscaleExitNode = "${pkgs.my.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
 
   # i3's `move workspace to output <dir>` doesn't trigger mouse_warping, so
   # the cursor stays put. Warp it onto the focused workspace's rect after
@@ -19,7 +19,14 @@ let
 
   fontSize = 10.8;
   fonts = {
-    names = [ "Source Code Pro" "Symbols Nerd Font Mono" ];
+    names = [
+      "Source Code Pro"
+      # FA Free has glyphs that Symbols Nerd Font is missing (e.g.
+      # volume-xmark at U+F6A9, used by i3status-rust `awesome6` icons).
+      # Listed before NF so FA wins for overlapping codepoints.
+      "Font Awesome 7 Free"
+      "Symbols Nerd Font Mono"
+    ];
     style = "Medium";
     size = fontSize;
   };

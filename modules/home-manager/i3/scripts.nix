@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  home.packages = (with pkgs.scripts; [
+  home.packages = (with pkgs.my.scripts; [
     rofi-autorandr
     current-track
     i3dunst-toggle

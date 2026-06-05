@@ -72,7 +72,7 @@ in {
     };
 
     home-manager.users.${username} = {
-      home.packages = [ pkgs.scripts.gfn ];
+      home.packages = [ pkgs.my.scripts.gfn ];
     };
   };
 }

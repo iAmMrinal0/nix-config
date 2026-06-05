@@ -2,9 +2,9 @@
 
 let
   colors = config.personal.theming.colors;
-  currentTrack = "${pkgs.scripts.current-track}/bin/current-track";
-  bluetoothBattery = "${pkgs.scripts.bluetooth-battery}/bin/bluetooth-battery";
-  dunstToggle = "${pkgs.scripts.i3dunst-toggle}/bin/i3dunst-toggle";
+  currentTrack = "${pkgs.my.scripts.current-track}/bin/current-track";
+  bluetoothBattery = "${pkgs.my.scripts.bluetooth-battery}/bin/bluetooth-battery";
+  dunstToggle = "${pkgs.my.scripts.i3dunst-toggle}/bin/i3dunst-toggle";
   playerctl = "${pkgs.playerctl}/bin/playerctl --player=spotify";
   dunstctl = "${pkgs.dunst}/bin/dunstctl";
 in {
