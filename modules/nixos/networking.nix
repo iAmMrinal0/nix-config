@@ -20,6 +20,32 @@ in {
           default = "random";
           description = "MAC address randomization policy";
         };
+
+        profiles = mkOption {
+          type = types.attrsOf types.attrs;
+          default = { };
+          description = ''
+            Declarative NetworkManager wifi profiles, in
+            networking.networkmanager.ensureProfiles.profiles format.
+            Reference PSKs as $VARIABLE; values are substituted from the
+            sops-managed wifi-env secret at activation time.
+          '';
+          example = literalExpression ''
+            {
+              home = {
+                connection = {
+                  id = "home";
+                  type = "wifi";
+                };
+                wifi.ssid = "MyHomeSSID";
+                wifi-security = {
+                  key-mgmt = "wpa-psk";
+                  psk = "$WIFI_HOME_PSK";
+                };
+              };
+            }
+          '';
+        };
       };
     };
 
@@ -55,6 +81,11 @@ in {
       networkmanager = mkIf cfg.networkManager.enable {
         enable = true;
         wifi.macAddress = cfg.networkManager.wifi.macAddressRandomization;
+
+        ensureProfiles = mkIf (cfg.networkManager.wifi.profiles != { }) {
+          environmentFiles = [ config.sops.secrets."wifi-env".path ];
+          profiles = cfg.networkManager.wifi.profiles;
+        };
       };
 
       firewall = mkIf cfg.firewall.enable {

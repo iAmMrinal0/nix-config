@@ -9,6 +9,8 @@ let
     "kronor-openvpn-production"
     "bw-session-key"
     "cachix-auth-token"
+    "atuin-key"
+    "wifi-env"
   ];
   defaultPermissions = secret: {
     ${secret} = {
@@ -175,7 +177,57 @@ in {
       enable = true;
       networkManager = {
         enable = true;
-        wifi.macAddressRandomization = "random";
+        wifi = {
+          macAddressRandomization = "random";
+          # SSIDs and PSKs both come from the wifi-env sops secret via
+          # $VAR substitution, so neither is visible in the repo.
+          profiles = {
+            home = {
+              connection = {
+                id = "home";
+                type = "wifi";
+              };
+              wifi.ssid = "$WIFI_HOME_SSID";
+              wifi-security = {
+                key-mgmt = "wpa-psk";
+                psk = "$WIFI_HOME_PSK";
+              };
+            };
+            home-5ghz = {
+              connection = {
+                id = "home-5ghz";
+                type = "wifi";
+              };
+              wifi.ssid = "$WIFI_HOME_5GHZ_SSID";
+              wifi-security = {
+                key-mgmt = "wpa-psk";
+                psk = "$WIFI_HOME_PSK";
+              };
+            };
+            fika = {
+              connection = {
+                id = "fika";
+                type = "wifi";
+              };
+              wifi.ssid = "$WIFI_FIKA_SSID";
+              wifi-security = {
+                key-mgmt = "wpa-psk";
+                psk = "$WIFI_FIKA_PSK";
+              };
+            };
+            office-guest = {
+              connection = {
+                id = "office-guest";
+                type = "wifi";
+              };
+              wifi.ssid = "$WIFI_OFFICE_GUEST_SSID";
+              wifi-security = {
+                key-mgmt = "wpa-psk";
+                psk = "$WIFI_OFFICE_GUEST_PSK";
+              };
+            };
+          };
+        };
       };
       firewall = { enable = true; };
       extraHosts = ''

@@ -80,6 +80,12 @@ in {
       atuin = mkIf cfg.atuin.enable {
         enable = true;
         enableZshIntegration = cfg.atuin.enableZshIntegration;
+        settings = {
+          # E2E sync key comes from sops (see base.nix secrets); a fresh
+          # machine only needs `atuin login` + `atuin sync` to restore the
+          # full shell history.
+          key_path = "/run/secrets/atuin-key";
+        };
       };
 
       direnv = mkIf cfg.direnv.enable {
