@@ -5,7 +5,10 @@
       user.email = "github@mrinalpurohit.in";
       user.name = "Mrinal Purohit";
       commit = { gpgSign = true; };
-      user.signingKey = "E27C4BC509095144";
+      # add to GitHub as a signing key
+      # gh ssh-key add ~/.ssh/id_ed25519.pub - -type signing - -title ${hostname}
+      gpg = { format = "ssh"; };
+      user.signingKey = "~/.ssh/id_ed25519.pub";
       fetch = { prune = true; };
       rerere = { enabled = true; };
       pull = { rebase = true; };
