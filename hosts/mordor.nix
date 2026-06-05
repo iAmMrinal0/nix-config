@@ -69,6 +69,14 @@
     size = 4 * 1024;
   }];
 
+  # 4 cores / 8 threads: don't let nix run 8 parallel derivations each
+  # entitled to every core — parallel GHC builds were a main driver of
+  # the RAM+swap exhaustion behind various kernel OOM kills.
+  nix.settings = {
+    max-jobs = 2;
+    cores = 4;
+  };
+
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
   services.tlp = {
