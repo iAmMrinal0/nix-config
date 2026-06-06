@@ -50,7 +50,12 @@
     nix-flatpak = { url = "github:gmodena/nix-flatpak/?ref=latest"; };
     emacsConfiguration = {
       url = "github:iammrinal0/.emacs.d";
-      flake = false;
+      # No nixpkgs.follows — the emacs env is prebuilt against .emacs.d's
+      # own locked nixpkgs/emacs-overlay and pushed to iammrinal0.cachix.org;
+      # following our nixpkgs would change the drv hashes and native-compile
+      # everything locally instead of substituting (same reasoning as
+      # llm-agents). This also means `nix flake update` here never rebuilds
+      # emacs — only bumping this input (after a push of .emacs.d) does.
     };
     zsh-autosuggestions = {
       url = "github:zsh-users/zsh-autosuggestions";
