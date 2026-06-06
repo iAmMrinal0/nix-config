@@ -100,6 +100,10 @@ in {
             command = "sticky enable";
             criteria = { title = "Picture-in-Picture"; };
           }
+          {
+            command = "floating enable, border pixel 1";
+            criteria = { class = "Gsimplecal"; };
+          }
         ];
       };
       gaps = {

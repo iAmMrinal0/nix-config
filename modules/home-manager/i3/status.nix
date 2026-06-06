@@ -7,7 +7,32 @@ let
   dunstToggle = "${pkgs.my.scripts.i3dunst-toggle}/bin/i3dunst-toggle";
   playerctl = "${pkgs.playerctl}/bin/playerctl --player=spotify";
   dunstctl = "${pkgs.dunst}/bin/dunstctl";
+  gsimplecal = "${pkgs.gsimplecal}/bin/gsimplecal";
 in {
+  # Popup calendar for the time block; scroll on the block or popup to switch months
+  xdg.configFile."gsimplecal/config".text = ''
+    show_calendar = 1
+    show_timezones = 1
+    show_week_numbers = 1
+    mark_today = 1
+    clock_format = %H:%M
+    clock_label = UTC
+    clock_tz = :UTC
+    clock_label = Stockholm
+    clock_tz = :Europe/Stockholm
+    clock_label = India
+    clock_tz = :Asia/Kolkata
+    # Deliberate: with focus_follows_mouse, unfocus-close fires on mere hover.
+    # Close by clicking the bar's time block again (second invocation toggles).
+    close_on_unfocus = 0
+    mainwindow_decorated = 0
+    mainwindow_keep_above = 1
+    mainwindow_sticky = 1
+    mainwindow_skip_taskbar = 1
+    mainwindow_resizable = 0
+    mainwindow_position = mouse
+  '';
+
   programs.i3status-rust = {
     enable = true;
     bars.default = {
@@ -88,6 +113,11 @@ in {
           block = "time";
           interval = 60;
           format = " $icon $timestamp.datetime(f:'W%V · %a %d %b · %H:%M') ";
+          click = [
+            { button = "left"; cmd = gsimplecal; } # toggle calendar popup
+            { button = "up"; cmd = "${gsimplecal} prev_month"; }
+            { button = "down"; cmd = "${gsimplecal} next_month"; }
+          ];
         }
       ];
     };
