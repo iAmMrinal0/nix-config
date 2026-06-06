@@ -103,6 +103,7 @@ in {
             "host"
             "session"
             "directory"
+            "global"
           ];
           filter_mode_shell_up_key_binding = "directory";
           show_preview = true;
