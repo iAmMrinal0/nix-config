@@ -125,6 +125,18 @@ in {
 
   security.pam.services.lightdm.enableGnomeKeyring = true;
   security.rtkit.enable = true;
+  # fwupd-refresh.service (timer-driven LVFS metadata refresh) runs as a
+  # sessionless DynamicUser; the refresh-remote polkit action defaults to
+  # allow_inactive=no, so the unit fails with "Failed to obtain auth".
+  # Allow exactly that action for exactly that user.
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.freedesktop.fwupd.refresh-remote" &&
+          subject.user == "fwupd-refresh") {
+        return polkit.Result.YES;
+      }
+    });
+  '';
 
   services = {
     avahi = {
