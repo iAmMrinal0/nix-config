@@ -263,19 +263,13 @@ missing_indexes = "SELECT relname, seq_scan-idx_scan AS too_much_seq, case when 
 
 # Here's where you can provide a list of connection string aliases.
 # You can use it by passing the -D option. `pgcli -D example_dsn`
-[alias_dsn]
-# example_dsn = postgresql://[user[:password]@][netloc][:port][/dbname]
-
-# Initial commands to execute when connecting to any database.
+# [alias_dsn] and [alias_dsn.init-commands] are appended from sops at
+# system activation (modules/nixos/pgcli.nix) so the work DSNs stay out
+# of the repo and the world-readable nix store.
 [init-commands]
 # example = "SET search_path TO myschema"
 
 # Initial commands to execute when connecting to a DSN alias.
-[alias_dsn.init-commands]
-
-# Format for number representation
-# for decimal "d" - 12345678, ",d" - 12,345,678
-# for float "g" - 123456.78, ",g" - 123,456.78
 [data_formats]
 decimal = ""
 float = ""

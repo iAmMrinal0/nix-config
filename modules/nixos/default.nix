@@ -17,6 +17,7 @@
     ./networking.nix
     ./nfs.nix
     ./openrazer.nix
+    ./pgcli.nix
     ./printing.nix
     ./tailscale.nix
     ./touchegg.nix
