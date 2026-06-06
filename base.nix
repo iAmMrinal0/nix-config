@@ -44,6 +44,12 @@ in {
 
   nix = {
     package = pkgs.nixVersions.latest;
+    # Drop the default NIX_PATH entry for root's channels (doesn't exist on a
+    # flake-based system, causing "does not exist, ignoring" warnings) and
+    # resolve nixpkgs through the registry instead, pinned to the flake input
+    # so legacy tools (nix-shell -p, comma, …) use the system's nixpkgs.
+    nixPath = [ "nixpkgs=flake:nixpkgs" ];
+    registry.nixpkgs.flake = inputs.nixpkgs;
     extraOptions = ''
       experimental-features = nix-command flakes ca-derivations
       keep-outputs = true
