@@ -1,6 +1,25 @@
 {
   description = "NixOS configurations for my machines";
 
+  # Bootstrap caches: cache.nix only applies on an installed system, so a
+  # fresh `nixos-install` from the ISO wouldn't know about these. Carrying
+  # them in the flake lets the installer use them after the
+  # "accept flake config?" prompt (or --accept-flake-config). Only the
+  # bootstrap subset — see cache-list.nix for why not the full set.
+  # Literals required: the flake parser rejects computed nixConfig values
+  # ("setting is a thunk"), so this cannot import cache-list.nix — keep
+  # the two in sync by hand.
+  nixConfig = {
+    extra-substituters = [
+      "https://iammrinal0.cachix.org"
+      "https://nix-community.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "iammrinal0.cachix.org-1:uWCwkRYptDrFnr4qxYyYFJZb4+e/QebcODAe8Of/ngc="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
+
   inputs = {
     nixpkgs = { url = "github:NixOS/nixpkgs/nixos-26.05"; };
     nixpkgs-unstable = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
