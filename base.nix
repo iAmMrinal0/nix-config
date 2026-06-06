@@ -1,4 +1,4 @@
-{ lib, config, inputs, pkgs, username, ... }:
+{ lib, config, inputs, pkgs, username, hostname, ... }:
 
 let
   secrets = [
@@ -25,7 +25,14 @@ in {
   sops = {
     defaultSopsFile = ./sops/secrets.yaml;
     secrets =
-      lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets);
+      lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets)
+      // {
+        # Decrypted into /run/secrets-for-users *before* users are created,
+        # so it can't carry the user-owned defaultPermissions the secrets
+        # above use — hence declared separately. Per-host key so each
+        # machine has its own password.
+        "user-password-${hostname}".neededForUsers = true;
+      };
   };
 
   nixpkgs.config = {
@@ -282,9 +289,15 @@ in {
     memorySafeguards.enable = true;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Passwords are declarative: the yescrypt hash lives in sops
+  # (user-password-<hostname>, one per machine), so `passwd` changes are
+  # reverted on rebuild — rotate by updating the secret instead. Root has
+  # no declared password and is therefore locked; recovery/admin goes
+  # through sudo (wheel).
+  users.mutableUsers = false;
   users.users.${username} = {
     isNormalUser = true;
+    hashedPasswordFile = config.sops.secrets."user-password-${hostname}".path;
     extraGroups = [
       # "adbusers" dropped: programs.adb (which created this group) was
       # removed in 26.05; systemd 258 grants adb device access via uaccess,
