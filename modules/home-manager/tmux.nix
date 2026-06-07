@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   programs.tmux = {
@@ -156,7 +156,12 @@
       ##########
 
       set -g update-environment "DISPLAY SHELL SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY SSH_AUTH_SOCK"
-      set-environment -g SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent
+      # Pin a stable local agent socket so panes keep a working agent across
+      # reattaches (belt-and-suspenders to update-environment above, which
+      # already pulls the live value on attach). Sourced from home.nix's
+      # SSH_AUTH_SOCK so there's one source of truth — switching agents
+      # (currently gcr-ssh-agent, base.nix) only needs editing it once.
+      set-environment -g SSH_AUTH_SOCK ${config.home.sessionVariables.SSH_AUTH_SOCK}
 
     '';
   };
