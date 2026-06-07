@@ -16,6 +16,7 @@
     ./kitty.nix
     ./picom.nix
     ./qt.nix
+    ./rclone.nix
     ./rofi.nix
     ./ssh.nix
     ./systemd.nix

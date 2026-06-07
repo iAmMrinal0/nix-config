@@ -14,6 +14,12 @@ let
     # Private ssh host blocks (homelab/cloud IPs + usernames), Include'd
     # from the HM-managed ~/.ssh/config (modules/home-manager/ssh.nix)
     "ssh-config-private"
+    # rclone gdrive OAuth fields, injected into ~/.config/rclone/rclone.conf
+    # by programs.rclone (modules/home-manager/rclone.nix). User-readable
+    # (defaultPermissions) since rclone-config.service runs as the user.
+    "rclone-gdrive-client-id"
+    "rclone-gdrive-client-secret"
+    "rclone-gdrive-token"
   ];
   defaultPermissions = secret: {
     ${secret} = {

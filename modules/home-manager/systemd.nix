@@ -6,8 +6,11 @@ let
       "rclone-${name}-mount" = {
         Unit = {
           Description = description;
-          After = [ "network-online.target" ];
-          Wants = [ "network-online.target" ];
+          # rclone-config.service (programs.rclone, modules/rclone.nix)
+          # renders ~/.config/rclone/rclone.conf; the mount can't start
+          # until the remote it names exists in that file.
+          After = [ "network-online.target" "rclone-config.service" ];
+          Wants = [ "network-online.target" "rclone-config.service" ];
         };
 
         Install = { WantedBy = [ "default.target" ]; };
