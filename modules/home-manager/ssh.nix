@@ -1,4 +1,4 @@
-{ ... }: {
+{ lib, ... }: {
   programs.ssh = {
     enable = true;
     # The legacy implicit defaults (ForwardAgent no, Compression no, …) all
@@ -38,4 +38,21 @@
   # ssh does not create the ControlPath directory itself; materialize it
   # declaratively so multiplexing works on a fresh $HOME.
   home.file.".ssh/sockets/.keep".text = "";
+
+  # vscode-fhs runs in a bubblewrap user namespace where /nix/store files
+  # (root-owned) appear as nobody:nogroup, so openssh's "owned by you or
+  # root" check rejects the store-symlinked ~/.ssh/config ("Bad owner or
+  # permissions"). Verified: a user-owned real file passes, and Include of
+  # a store path fails the same check — so the file itself must be a copy.
+  # force lets HM re-link over the materialized copy on the next
+  # activation, which the hook below then re-materializes.
+  home.file.".ssh/config".force = true;
+  home.activation.materializeSshConfig =
+    lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      sshConfig="$HOME/.ssh/config"
+      if [ -L "$sshConfig" ]; then
+        run cp --remove-destination "$(readlink -f "$sshConfig")" "$sshConfig"
+        run chmod 600 "$sshConfig"
+      fi
+    '';
 }
