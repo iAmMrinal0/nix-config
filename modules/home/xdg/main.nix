@@ -14,6 +14,11 @@
       userDirs = {
         enable = true;
         createDirectories = true;
+        # Adopt the 26.05 default (stateVersion 24.05 would otherwise warn
+        # and keep the legacy `true`): don't export XDG_DOWNLOAD_DIR & co.
+        # as session variables — nothing in this config reads them (verified
+        # by grep), apps get the dirs from user-dirs.dirs directly.
+        setSessionVariables = false;
         desktop = "${config.home.homeDirectory}/Desktop";
         documents = "${config.home.homeDirectory}/Documents";
         download = "${config.home.homeDirectory}/Downloads";

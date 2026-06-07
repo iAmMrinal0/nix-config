@@ -24,6 +24,13 @@ in {
     (mkIf cfg.enable {
       virtualisation.docker.enable = true;
 
+      # Keep containers running across daemon restarts (containerd shims
+      # hold them; the new daemon re-attaches). Was the implicit default
+      # via the stateVersion < 24.11 legacy gate; pinned explicitly when
+      # stateVersion moved to 26.05 so rebuilds that bump docker don't
+      # kill running work containers. Incompatible with swarm (unused).
+      virtualisation.docker.daemon.settings.live-restore = true;
+
       environment.systemPackages =
         mkIf cfg.installCompose [ pkgs.docker-compose ];
     })

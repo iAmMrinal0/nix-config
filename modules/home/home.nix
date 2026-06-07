@@ -7,7 +7,7 @@ in {
   config = {
     home = {
       packages = userPackages;
-      stateVersion = "24.05";
+      stateVersion = "26.05";
       sessionPath = [
         "$HOME/.local/bin"
         "$HOME/.npm_global/bin"
