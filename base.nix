@@ -24,6 +24,12 @@ in {
 
   sops = {
     defaultSopsFile = ./sops/secrets.yaml;
+    # The root of trust: each host's age key is derived from its SSH host
+    # key. This is the sops-nix default, made explicit so the dependency is
+    # visible — no secrets decrypt without this key, and a new host must be
+    # bootstrapped into sops/.sops.yaml first (see README "New host
+    # bootstrap"). Under impermanence this becomes /persist/etc/ssh/....
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets =
       lib.foldl' lib.mergeAttrs { } (builtins.map defaultPermissions secrets)
       // {
