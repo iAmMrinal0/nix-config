@@ -11,6 +11,9 @@ let
     "cachix-auth-token"
     "atuin-key"
     "wifi-env"
+    # Private ssh host blocks (homelab/cloud IPs + usernames), Include'd
+    # from the HM-managed ~/.ssh/config (modules/home-manager/ssh.nix)
+    "ssh-config-private"
   ];
   defaultPermissions = secret: {
     ${secret} = {
@@ -137,6 +140,10 @@ in {
   };
 
   security.pam.services.lightdm.enableGnomeKeyring = true;
+  # Same unlock for TTY logins (the `login` PAM service), so the keyring —
+  # and with it the gcr ssh-agent's stored passphrases — is available
+  # without a GUI session.
+  security.pam.services.login.enableGnomeKeyring = true;
   security.rtkit.enable = true;
   # fwupd-refresh.service (timer-driven LVFS metadata refresh) runs as a
   # sessionless DynamicUser; the refresh-remote polkit action defaults to
@@ -182,11 +189,19 @@ in {
     libinput = { enable = true; };
     gvfs = { enable = true; };
     gnome.gnome-keyring.enable = true;
-    gnome.gcr-ssh-agent.enable = false;
+    # The ssh-agent: auto-discovers keys in ~/.ssh, stores their
+    # passphrases in the keyring on first use, and serves them in every
+    # later session once PAM unlocks the keyring at login (GUI or TTY).
+    # Replaces Bitwarden as the default agent (manual GUI unlock, no TTY);
+    # Bitwarden's own agent socket stays available via
+    # BITWARDEN_SSH_AUTH_SOCK (modules/home/home.nix) for vault-held keys.
+    gnome.gcr-ssh-agent.enable = true;
   };
 
   programs = {
-    ssh.startAgent = true;
+    # gcr-ssh-agent is the agent now; its module asserts this is off
+    # (only one agent can own the socket).
+    ssh.startAgent = false;
     zsh = { enable = true; };
     seahorse = { enable = true; };
   };

@@ -17,6 +17,7 @@
     ./picom.nix
     ./qt.nix
     ./rofi.nix
+    ./ssh.nix
     ./systemd.nix
     ./tmux.nix
     ./xsession.nix
