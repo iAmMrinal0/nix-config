@@ -1,12 +1,12 @@
 { pkgs, lib, inputs, osConfig }:
 
-let
-  # On Wayland hosts (betazed) transmission_4-qt is the GUI of choice (it
-  # publishes a proper SNI tray item; the GTK build's StatusIcon API is
-  # X11-only). On X11 hosts (mordor → i3) transmission_4-gtk stays in for
-  # parity with the i3 setup.
-  isWayland = osConfig.modules.wayland.registerSession or false;
-in with pkgs; [
+# Both transmission GUIs are installed (see the transmission_4-* entries at
+# the end): transmission_4-qt is the sway choice — it publishes a proper SNI
+# tray item; the GTK build's StatusIcon API is X11-only — and transmission_4-gtk
+# is the i3 choice. The session picker means one generation can boot either WM,
+# so the GUI can't be chosen at build time; each WM's startup launches the right
+# one (modules/home-manager/i3/config.nix → gtk, .../sway/config.nix → qt).
+with pkgs; [
   # Development Tools
   eza
   cachix
@@ -153,4 +153,17 @@ in with pkgs; [
   inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.rtk
   python3
   python3Packages.pip
-] ++ lib.optional (!isWayland) pkgs.transmission_4-gtk
+
+  # Transmission GUI for both stacks (see header) — gtk for i3, qt for sway.
+  # Installed unconditionally so PATH carries the right binary whichever WM
+  # the picker boots; each WM's startup execs its variant by full store path.
+  #
+  # Both variants are built from the same transmission core, so they ship
+  # identical shared files (lib/systemd/system/transmission-daemon.service,
+  # the transmission-daemon/transmission-remote/transmission-cli binaries,
+  # man pages). In home.packages' buildEnv that's a path collision. lowPrio
+  # on the gtk variant lets the qt variant win those shared files while both
+  # unique GUI binaries (transmission-gtk, transmission-qt) stay in PATH.
+  (lib.lowPrio transmission_4-gtk)
+  transmission_4-qt
+]

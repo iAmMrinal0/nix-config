@@ -1,12 +1,12 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, osConfig, ... }:
 
 let
   theme = config.personal.theming.colors;
-  lock = "${pkgs.scripts.swaylock-custom}/bin/swaylock-custom";
+  lock = "${pkgs.my.scripts.swaylock-custom}/bin/swaylock-custom";
   shutdownMenu = ''${pkgs.rofi}/bin/rofi -show power-menu -modi "power-menu:${pkgs.rofi-power-menu}/bin/rofi-power-menu"'';
-  rofiTailscaleAccount = "${pkgs.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
-  rofiTailscaleExitNode = "${pkgs.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
-  rofiKanshi = "${pkgs.scripts.rofi-kanshi}/bin/rofi-kanshi";
+  rofiTailscaleAccount = "${pkgs.my.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
+  rofiTailscaleExitNode = "${pkgs.my.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
+  rofiKanshi = "${pkgs.my.scripts.rofi-kanshi}/bin/rofi-kanshi";
   wallpaper = ../common/wallpapers/nix-glow-black.png;
 
   swaymsg = "${pkgs.sway}/bin/swaymsg";
@@ -54,9 +54,39 @@ let
     lib.mapAttrs' (k: v: lib.nameValuePair (mod + "+" + k) v);
   appendExecToCommand = lib.mapAttrs' (k: v: lib.nameValuePair k ("exec " + v));
 in {
+  # Bind all Wayland systemd --user services (waybar, kanshi) to
+  # sway-session.target instead of the HM default graphical-session.target.
+  # WHY: with the login picker, one boot can run i3 then sway (or vice-versa)
+  # and the systemd --user manager PERSISTS across the switch (tmux/rclone keep
+  # it alive). graphical-session.target is shared by both stacks and goes
+  # sticky — whichever WM starts first latches it active, so sway's later
+  # `systemctl --user start sway-session.target` finds graphical-session.target
+  # already up and never (re)starts waybar/kanshi → no bar after an i3→sway
+  # switch. sway-session.target, by contrast, is started AND stopped per sway
+  # session (see the generated `exec ... start sway-session.target && swaymsg
+  # subscribe ... && stop sway-session.target`), so binding here makes the bar
+  # cycle correctly every switch. Matches what the waybar.nix/kanshi.nix
+  # comments already assume (the HM default flipped to graphical-session.target
+  # upstream). i3 is X11 and ignores this; mordor (i3-only) is unaffected.
+  wayland.systemd.target = "sway-session.target";
+
   wayland.windowManager.sway = {
     enable = true;
-    package = pkgs.swayfx;
+    # On the picker host (registerSession), DON'T let home-manager install its
+    # own sway: the NixOS `programs.sway` module (modules/nixos/wayland-session.nix)
+    # installs a swayfx wrapped with extraSessionCommands (the Wayland env vars —
+    # QT_QPA_PLATFORM=wayland etc.). HM's wayland.windowManager.sway has no
+    # extraSessionCommands, so the package it would install is UNwrapped, and it
+    # lands in /etc/profiles/per-user/<user>/bin which precedes
+    # /run/current-system/sw/bin in the session PATH — so greetd would launch the
+    # vars-less HM sway and the env vars would silently never apply (exactly the
+    # bug we hit: bar fine but QT_QPA_PLATFORM empty under sway). `package = null`
+    # makes HM generate only the config and defer the binary to the NixOS module.
+    # (Only trade-off: no auto sway-reload on rebuild — irrelevant, we relog.)
+    # mordor (registerSession = false, i3-only, no NixOS programs.sway) keeps the
+    # HM-installed swayfx so it isn't left with no sway at all.
+    package =
+      if osConfig.modules.wayland.registerSession then null else pkgs.swayfx;
     wrapperFeatures.gtk = true;
     # SwayFX's GLES2/DRM-backed renderer can't initialize inside the Nix build
     # sandbox, so `sway --validate` (run by the home-manager check) fails with
@@ -210,6 +240,18 @@ in {
         smartBorders = "on";
       };
       startup = [
+        # The systemd --user manager persists across an i3→sway switch
+        # (tmux/rclone units keep it alive), and units started by i3's
+        # startup are NOT tied to any session — they linger into the sway
+        # session, lose their X display, and crash-loop (redshift threw
+        # "initialization of randr failed" error boxes on every i3→sway
+        # switch). Stop the i3-only units explicitly; no-op when they
+        # aren't running (e.g. sway-first boot). i3 does the symmetric
+        # cleanup for stale Wayland env (see i3/config.nix startup).
+        {
+          command =
+            "${pkgs.systemd}/bin/systemctl --user stop redshift.service xss-lock.service picom.service";
+        }
         {
           command = "${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill";
           always = true;

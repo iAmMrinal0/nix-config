@@ -73,4 +73,14 @@
       "file:///home/${username}/work"
     ];
   };
+
+  # GTK file pickers / Thunar REWRITE ~/.config/gtk-3.0/bookmarks at runtime
+  # (any "add to bookmarks" click), turning it back into a regular file. On
+  # the next activation HM tries to back it up, finds the .hm-backup from
+  # last time already there, and ABORTS THE WHOLE ACTIVATION — every unit
+  # file and .wants link in $HOME then silently stays at the previous
+  # generation (this masked the waybar sway-session.target fix entirely).
+  # Bookmarks are declarative here by choice, so force-overwrite instead of
+  # backing up; runtime bookmark edits are discarded at activation.
+  xdg.configFile."gtk-3.0/bookmarks".force = true;
 }
