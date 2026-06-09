@@ -10,9 +10,9 @@
     theme.package = pkgs.gruvbox-gtk-theme;
     theme.name = "Gruvbox-Dark";
     # 26.05 changed the default of gtk4.theme from config.gtk.theme to
-    # null. We're still on stateVersion < 26.05 (legacy default), so pin
-    # it explicitly to the gtk3 theme to keep GTK4 apps on Gruvbox-Dark
-    # and silence the migration warning.
+    # null. Now that we're on stateVersion 26.05, pin it explicitly to the
+    # gtk3 theme so GTK4 apps stay on Gruvbox-Dark (the new default would
+    # otherwise leave them unthemed).
     gtk4.theme = config.gtk.theme;
     gtk2.extraConfig = ''
       gtk-cursor-theme-size=0

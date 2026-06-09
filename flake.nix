@@ -77,8 +77,9 @@
       url = "github:numtide/llm-agents.nix";
       # Intentionally not following our nixpkgs — numtide pre-builds against
       # its own pinned nixpkgs and pushes those exact paths to cache.numtide.com.
-      # Following our nixpkgs would (a) miss the cache and (b) break packages
-      # like `apm` that use newer-than-25.11 nixpkgs APIs.
+      # Following our nixpkgs would change the drv hashes and miss that cache,
+      # native-compiling everything locally; the pin also keeps packages like
+      # `apm` on the nixpkgs revision they're actually built and tested against.
     };
     # nixos-06cb-009a-fingerprint-sensor = {
     #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor?ref=25.05";
