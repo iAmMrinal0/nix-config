@@ -113,6 +113,19 @@ in {
         smartBorders = "on";
       };
       startup = [
+        # Scrub the dead sway session's Wayland vars from the persistent
+        # systemd --user env. sway imports WAYLAND_DISPLAY/SWAYSOCK via
+        # dbus-update-activation-environment at its startup but nothing
+        # removes them on exit, so after a sway→i3 switch the env still
+        # advertises a dead wayland-1 socket — waybar/kanshi's
+        # ConditionEnvironment=WAYLAND_DISPLAY then PASSES under i3, they
+        # launch, die with "Bar need to run under Wayland", and burn their
+        # restart budget (start-limit-hit) which can poison the NEXT sway
+        # login. Unsetting here makes the condition fail cleanly under i3.
+        {
+          command =
+            "${pkgs.systemd}/bin/systemctl --user unset-environment WAYLAND_DISPLAY SWAYSOCK";
+        }
         { command = "${pkgs.xset}/bin/xset -b"; }
         {
           command = "${pkgs.cryptomator}/bin/cryptomator &";
@@ -127,6 +140,17 @@ in {
           # inhibits, so videos (mpv/Firefox/Chromium) won't trigger a lock.
           command = "${pkgs.xset}/bin/xset s 300 300";
         }
+        # Per-WM units launched HERE (not via systemd autostart) so they run
+        # only under i3, never sway — their WantedBy is forced empty in
+        # modules/home/services.nix because graphical-session.target is shared
+        # by both stacks. xss-lock catches the xset screensaver event above and
+        # locks via i3lock-custom; redshift is the X11 color-temp daemon (sway
+        # uses gammastep instead). Both need an X server, so they're i3-only.
+        { command = "${pkgs.systemd}/bin/systemctl --user start xss-lock.service"; }
+        { command = "${pkgs.systemd}/bin/systemctl --user start redshift.service"; }
+        # picom: X11 compositor, i3-only (WantedBy forced empty in
+        # modules/home/services.nix so it doesn't leak into sway).
+        { command = "${pkgs.systemd}/bin/systemctl --user start picom.service"; }
         { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
         {
           command =

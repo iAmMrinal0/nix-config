@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  home.packages = (with pkgs.scripts; [
+  home.packages = (with pkgs.my.scripts; [
     current-track
     i3dunst-toggle
     bluetooth-battery

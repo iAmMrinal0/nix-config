@@ -45,12 +45,22 @@ in {
           "${pkgs.libnotify}/bin/notify-send 'Battery critically low!'";
         lowLevelPercent = 20;
       };
-      # Sway-exec'd via sway/config.nix startup, NOT auto-started by
-      # systemd — same reasoning as blueman/udiskie (Requires=tray.target
-      # and the WAYLAND_DISPLAY race at session start). (No-op when
-      # batteryDevice is null since the unit isn't generated.)
+      # Autostart disabled on BOTH stacks (WantedBy empty); each WM launches
+      # cbatticon from its own startup. Sway-exec'd via sway/config.nix startup
+      # — same reasoning as blueman/udiskie (Requires=tray.target and the
+      # WAYLAND_DISPLAY race at session start). (No-op when batteryDevice is
+      # null since the unit isn't generated.)
       systemd.user.services.cbatticon.Install.WantedBy =
         mkIf (cfg.batteryDevice != null) (mkForce [ ]);
+
+      # i3 counterpart: with autostart off, the battery tray icon would be
+      # missing under the i3 pick. There's no WAYLAND_DISPLAY race on X11, so
+      # i3 just starts the unit from its startup list. Merges with the startup
+      # entries in modules/home-manager/i3/config.nix.
+      xsession.windowManager.i3.config.startup =
+        mkIf (cfg.batteryDevice != null) [
+          { command = "${pkgs.systemd}/bin/systemctl --user start cbatticon.service"; }
+        ];
 
       # `light` was removed in 26.05 (unmaintained); brightnessctl is the
       # replacement and matches the i3 brightness keybinds + the udev

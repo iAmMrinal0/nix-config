@@ -103,7 +103,7 @@ in {
       in mkIf cfg.swayIntegration {
         keybindings = {
           "${modifier}+Control+e" =
-            "exec ${emacsWithPackagesFromUsePackage}/bin/emacsclient -a '' -c";
+            "exec ${emacsEnv}/bin/emacsclient -a '' -c";
         };
 
         assigns."\"${codeWorkspace}\"" = [{ class = "Emacs"; }];

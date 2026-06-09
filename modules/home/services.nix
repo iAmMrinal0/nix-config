@@ -1,11 +1,6 @@
 { config, pkgs, lib, osConfig, ... }:
 
-let
-  # Wayland session hosts use gammastep (Wayland-native); X11 hosts keep
-  # redshift. Read straight from NixOS config so the choice is gated on
-  # the same flag that flips the display manager.
-  isWayland = osConfig.modules.wayland.registerSession or false;
-in {
+{
   imports = [
     # Security-related services
     ./services/gpg-agent.nix
@@ -25,15 +20,18 @@ in {
     };
   };
 
-  # X11 screen-locker stack (xss-lock + i3lock-custom). Only enabled
-  # on X11 hosts — under sway, swayidle handles idle timeouts,
-  # before-sleep, and `loginctl lock-session` events directly via
-  # swaylock (see modules/home-manager/sway/config.nix swayidleCmd).
-  # Running both concurrently caused a re-lock cascade: every logind
-  # lock event fired both swayidle's swaylock AND xss-lock's
-  # i3lock-custom, layering them on top of each other so each unlock
-  # only peeled back one layer.
-  services.screen-locker = lib.mkIf (!isWayland) {
+  # X11 screen-locker stack (xss-lock + i3lock-custom). Installed
+  # unconditionally now that one generation serves both i3 and sway, but
+  # its systemd unit is launched ONLY under i3 (see the WantedBy override
+  # below + the i3 startup entry in modules/home-manager/i3/config.nix).
+  # Under sway, swayidle handles idle timeouts, before-sleep, and
+  # `loginctl lock-session` events directly via swaylock (see
+  # modules/home-manager/sway/config.nix swayidleCmd). The two are
+  # mutually exclusive per boot (you pick one WM), so the old re-lock
+  # cascade — every logind lock event firing both swayidle's swaylock AND
+  # xss-lock's i3lock-custom — can't recur. We still gate xss-lock to i3
+  # because it needs an X server (it would just fail to start under sway).
+  services.screen-locker = {
     enable = true;
     inactiveInterval = 5;
     lockCmd = "${pkgs.my.scripts.i3lock-custom}/bin/i3lock-custom";
@@ -66,7 +64,13 @@ in {
 
   services.mpris-proxy.enable = true;
 
-  services.redshift = lib.mkIf (!isWayland) {
+  # X11 color-temperature daemon. Installed unconditionally; launched only
+  # under i3 (gammastep covers sway). Autostart disabled below because its
+  # unit is WantedBy graphical-session.target, which sway ALSO activates
+  # (sway-session.target bindsTo it) — leaving autostart on would start
+  # redshift under sway too, where it fails (no X) and would double up with
+  # gammastep. i3 starts it explicitly from its startup list.
+  services.redshift = {
     enable = true;
     tray = true;
     provider = "geoclue2";
@@ -77,9 +81,10 @@ in {
   };
 
   # Wayland equivalent of redshift. Same temperatures + geoclue2 provider so
-  # behaviour matches across hosts. Tray indicator is published as an SNI
-  # item picked up by waybar's tray module.
-  services.gammastep = lib.mkIf isWayland {
+  # behaviour matches across stacks. Tray indicator is published as an SNI
+  # item picked up by waybar's tray module. Installed unconditionally;
+  # launched only under sway (see WantedBy override + sway/config.nix exec).
+  services.gammastep = {
     enable = true;
     tray = true;
     provider = "geoclue2";
@@ -89,9 +94,19 @@ in {
     };
   };
 
-  # Anti-race override: gammastep's systemd user unit binds to the graphical
-  # session target and races sway's WAYLAND_DISPLAY env import the same way
-  # waybar/kanshi/blueman/kdeconnect did. Disable the auto-start; sway exec
-  # launches gammastep-indicator in sway's process env (see sway/config.nix).
-  systemd.user.services.gammastep.Install.WantedBy = lib.mkIf isWayland (lib.mkForce [ ]);
+  # Disable systemd autostart for the per-WM color daemons and the X11
+  # locker; each is launched by its own WM's startup instead. This is the
+  # same anti-race pattern used for waybar/kanshi/blueman/kdeconnect:
+  #   - gammastep: races sway's WAYLAND_DISPLAY import at session start, so
+  #     sway exec's gammastep-indicator in sway's process env.
+  #   - redshift + xss-lock: X11-only; i3 starts them from its startup list
+  #     (modules/home-manager/i3/config.nix) so they never fire under sway,
+  #     where graphical-session.target is active but no X server exists.
+  #   - picom: X11 compositor; same story — it was WantedBy
+  #     graphical-session.target, so it leaked into sway (a useless X
+  #     compositor under wlroots). i3 starts it from its startup list instead.
+  systemd.user.services.gammastep.Install.WantedBy = lib.mkForce [ ];
+  systemd.user.services.redshift.Install.WantedBy = lib.mkForce [ ];
+  systemd.user.services.xss-lock.Install.WantedBy = lib.mkForce [ ];
+  systemd.user.services.picom.Install.WantedBy = lib.mkForce [ ];
 }

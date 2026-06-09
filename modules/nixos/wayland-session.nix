@@ -2,7 +2,25 @@
 
 with lib;
 
-let cfg = config.modules.wayland;
+let
+  cfg = config.modules.wayland;
+  # NixOS aggregates every WM/DM .desktop file (sway.desktop from
+  # programs.sway, none+i3.desktop from services.xserver.windowManager.i3)
+  # into this derivation under share/{wayland-sessions,xsessions}. This is
+  # where session files actually live — NOT /run/current-system/sw/share,
+  # which only carries .desktop files shipped inside packages (so sway's
+  # would appear there but the generated none+i3.desktop would not).
+  sessionData = config.services.displayManager.sessionData;
+  # Shared X11 session wrapper, the same one lightdm runs: it sources
+  # /etc/profile + ~/.xprofile, runs services.xserver.displayManager
+  # .sessionCommands (our dbus-update-activation-environment DISPLAY) and
+  # merges xrdb before exec'ing the session. The generated none+i3.desktop
+  # Exec is a bare `exec i3` that assumes X is already up and does NOT go
+  # through this wrapper on its own, so we prepend `startx` (brings up an X
+  # server via /etc/X11/xinit/xserverrc) and hand the wrapper to it. Result
+  # for an X11 pick: startx → X server → xsession-wrapper → i3, matching the
+  # old lightdm path. Wayland sessions (sway) ignore this wrapper entirely.
+  xsessionWrapper = "startx ${sessionData.wrapper}";
 in {
   options.modules.wayland = {
     enable = mkEnableOption "Install Wayland userspace tools (swayfx, kanshi, grim, etc.)";
@@ -11,13 +29,17 @@ in {
       type = types.bool;
       default = false;
       description = ''
-        Register sway as a login session by switching the display manager from
-        lightdm to greetd+tuigreet, and enable the supporting infrastructure
-        (PAM service for swaylock, xdg-desktop-portal-wlr).
+        `true`  → greetd + tuigreet session PICKER: the login screen lists
+                  both i3 (X11) and sway (Wayland) and you choose per login,
+                  no rebuild to switch. Also enables the supporting
+                  infrastructure (startx for the X11 pick, PAM service for
+                  swaylock, xdg-desktop-portal-wlr).
+        `false` → known-good lightdm + i3 only (no greetd in the path). This
+                  is the recovery/escape-hatch generation.
 
         Recovery: keep `modules.boot.labelSuffix = "stable-i3"` on a generation
-        with this set to `false`; if greetd misbehaves, pick that generation
-        from the systemd-boot menu to return to lightdm + i3.
+        with this set to `false`; if greetd or the picker misbehaves, pick that
+        generation from the systemd-boot menu to return to lightdm + i3.
 
         Operational note: switch the display manager via `nixos-rebuild boot`
         and reboot, not `switch`. Switching live would tear down lightdm and
@@ -48,7 +70,12 @@ in {
     # tray entries that publish only an icon name (no embedded pixmap)
     # render as the "icon not found" red sad face.
     environment.systemPackages = mkIf cfg.windowManager.sway.enable (with pkgs; [
-      swayfx
+      # NB: do NOT list swayfx here. `programs.sway` (below) already installs
+      # the wrapped swayfx into PATH, and that wrapper is the one carrying
+      # extraSessionCommands (the Wayland env vars). Listing plain `swayfx`
+      # here too put a SECOND, unwrapped `bin/sway` in the buildEnv that won
+      # the collision — so the session ran with an empty session-command
+      # wrapper and none of the QT_QPA_PLATFORM/NIXOS_OZONE_WL/etc. vars set.
       swaybg
       swaylock
       swayidle
@@ -79,62 +106,82 @@ in {
       enable = true;
       package = pkgs.swayfx;
       wrapperFeatures.gtk = true;
+      # Wayland-only env vars, scoped to the SWAY session (not system-wide).
+      # The base wrapper (wrapperFeatures.base, default true) runs these just
+      # before exec'ing sway, so they land in sway's process env and are
+      # inherited by everything sway exec's — rofi, kitty, and the GUI apps
+      # launched from them. They are deliberately kept OUT of
+      # environment.sessionVariables: that path is system-wide
+      # (/etc/pam/environment + /etc/set-environment) and would also apply
+      # under the i3 (X11) session picked from the SAME generation, where
+      # QT_QPA_PLATFORM=wayland makes Qt apps abort (no compositor to talk
+      # to). Splitting them here is what lets one generation serve both
+      # stacks. (waybar/kanshi run as systemd --user units and don't need
+      # these; the tray apps override QT_QPA_PLATFORM=xcb at their own exec.)
+      extraSessionCommands = ''
+        export NIXOS_OZONE_WL=1
+        export MOZ_ENABLE_WAYLAND=1
+        export QT_QPA_PLATFORM=wayland
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+        export SDL_VIDEODRIVER=wayland
+        export _JAVA_AWT_WM_NONREPARENTING=1
+        # GDK_BACKEND moved here too (was system-wide): "wayland,x11" under i3
+        # would just probe a non-existent Wayland display before falling back
+        # to X11 — harmless but pointless off-Wayland, so scope it to sway.
+        export GDK_BACKEND=wayland,x11
+        # Kirigami / KF6 apps (kdeconnect-app etc.) need QtQuick Controls
+        # pointed at the desktop style — without it they fall back to
+        # default Fusion light (white bg, grey buttons, black text).
+        # Pairs with kdePackages.qqc2-desktop-style in home/packages.nix
+        # (the QML plugin that provides this style) and the BreezeDark
+        # kdeglobals in modules/home-manager/qt.nix (the color scheme it
+        # reads colors from).
+        export QT_QUICK_CONTROLS_STYLE=org.kde.desktop
+      '';
     };
 
-    # Push env vars into /etc/set-environment via environment.sessionVariables.
-    # This is sourced by /etc/profile, which greetd's source_profile shell
-    # invokes before exec'ing the session command — so every login session
-    # picks them up. We tried programs.sway.extraSessionCommands and a
-    # launcher script first; both had subtle propagation issues in this
-    # config (the wrapped binary's extraSessionCommands kept evaluating to
-    # empty, and the launcher's exports didn't survive greetd's chain).
-    # environment.sessionVariables is the canonical NixOS path and works
-    # reliably because it's set BEFORE the session command runs.
+    # System-wide session vars that are safe (or needed) on BOTH stacks, so
+    # they stay in environment.sessionVariables → /etc/set-environment (sourced
+    # by /etc/profile, which greetd's source_profile shell runs before exec'ing
+    # the chosen session) and /etc/pam/environment (loaded by PAM at session
+    # open). The Wayland-only vars that used to live here moved to
+    # programs.sway.extraSessionCommands above — keeping QT_QPA_PLATFORM=wayland
+    # etc. system-wide would break Qt/Electron under the i3 (X11) pick.
     environment.sessionVariables = mkIf cfg.registerSession {
-      NIXOS_OZONE_WL = "1";
-      MOZ_ENABLE_WAYLAND = "1";
-      QT_QPA_PLATFORM = "wayland";
-      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-      SDL_VIDEODRIVER = "wayland";
-      _JAVA_AWT_WM_NONREPARENTING = "1";
-      GDK_BACKEND = "wayland,x11";
+      # Cursor theme: harmless on X11, so it stays system-wide (and the
+      # sway compositor also resolves it via XCURSOR_PATH — see the
+      # bibata-cursors note in systemPackages above).
       XCURSOR_THEME = "Bibata-Modern-Classic";
       XCURSOR_SIZE = "24";
-      # Kirigami / KF6 apps (kdeconnect-app etc.) need QtQuick Controls
-      # pointed at the desktop style — without it they fall back to
-      # default Fusion light (white bg, grey buttons, black text).
-      # Pairs with kdePackages.qqc2-desktop-style in home/packages.nix
-      # (the QML plugin that provides this style) and the BreezeDark
-      # kdeglobals in modules/home-manager/qt.nix (the color scheme it
-      # reads colors from).
-      QT_QUICK_CONTROLS_STYLE = "org.kde.desktop";
-      # QT_QPA_PLATFORMTHEME and QT_STYLE_OVERRIDE moved to the NixOS
-      # `qt` module below — that module owns the env vars, installs
-      # qt5ct/qt6ct + Adwaita style plugins, and writes the values to
-      # /etc/pam/environment the same way explicit sessionVariables
-      # do. The previous setup (QT_QPA_PLATFORMTHEME=adwaita) was a
-      # silent no-op: adwaita-qt only ships plugins/styles/adwaita.so,
-      # not plugins/platformthemes/adwaita.so, so Qt couldn't load
-      # the platform theme and never read gtk-icon-theme-name from
-      # gtk.nix — leaving transmission's torrent-row mime icons stuck
-      # on the hicolor "generic file" fallback. qtct is a real
-      # platform-theme plugin and reads its own config from
-      # ~/.config/qt5ct/qt5ct.conf (deployed by HM qt.nix).
       # Bitwarden's SSH agent socket. Duplicates home.sessionVariables
       # (which still apply for mordor's lightdm + login-shell session)
-      # because greetd → tuigreet → sway exec's sway directly without a
-      # login shell, so home-manager session vars don't reach sway-launched
+      # because greetd → tuigreet → session exec's the WM directly without a
+      # login shell, so home-manager session vars don't reach WM-launched
       # GUI apps. Bitwarden therefore starts without BITWARDEN_SSH_AUTH_SOCK
       # and its SSH agent never binds the configured socket — keys never
       # get added on unlock. Routing these through PAM via
       # environment.sessionVariables (→ /etc/pam/environment, which PAM
-      # loads before greetd execs the session) gets them into sway's env
-      # the same way NIXOS_OZONE_WL etc. arrive. PAM translates $HOME to
-      # @{HOME} for per-session expansion.
+      # loads before greetd execs the session) gets them into the session
+      # env on both stacks. PAM translates $HOME to @{HOME} for per-session
+      # expansion. These must stay system-wide (not in the sway wrapper)
+      # because they're needed under i3 too.
       SSH_AUTH_SOCK = "$HOME/.local/share/ssh-agent";
       BITWARDEN_SSH_AUTH_SOCK = "$HOME/.local/share/ssh-agent";
     };
 
+    # QT_QPA_PLATFORMTHEME and QT_STYLE_OVERRIDE are owned by the NixOS `qt`
+    # module below (not environment.sessionVariables) — that module installs
+    # qt5ct/qt6ct + Adwaita style plugins and writes the values to
+    # /etc/pam/environment itself. They stay system-wide on purpose: qt5ct
+    # works on X11 too, so they're correct under both i3 and sway. The
+    # previous setup (QT_QPA_PLATFORMTHEME=adwaita) was a silent no-op:
+    # adwaita-qt only ships plugins/styles/adwaita.so, not
+    # plugins/platformthemes/adwaita.so, so Qt couldn't load the platform
+    # theme and never read gtk-icon-theme-name from gtk.nix — leaving
+    # transmission's torrent-row mime icons stuck on the hicolor "generic
+    # file" fallback. qtct is a real platform-theme plugin and reads its own
+    # config from ~/.config/qt5ct/qt5ct.conf (deployed by HM qt.nix).
+    #
     # NixOS qt module: installs qt5ct + qt6ct (the qtct platform theme
     # plugin) and the Adwaita style plugins for Qt5 + Qt6, and exports
     # QT_QPA_PLATFORMTHEME=qt5ct + QT_STYLE_OVERRIDE=Adwaita-Dark via
@@ -176,21 +223,40 @@ in {
     services.xserver.displayManager.lightdm.enable =
       mkIf cfg.registerSession (mkForce false);
 
+    # Enable the "startx" pseudo-display-manager. It registers NO
+    # display-manager.service (greetd owns that), so it coexists with greetd;
+    # all it contributes is the `startx`/`xinit` binary in PATH and a correct
+    # /etc/X11/xinit/xserverrc that launches NixOS's X with the configured
+    # xserverArgs. tuigreet's --xsession-wrapper relies on this `startx` to
+    # bring up an X server when the i3 (X11) session is picked.
+    services.xserver.displayManager.startx.enable = mkIf cfg.registerSession true;
+
     services.greetd = mkIf cfg.registerSession {
       enable = true;
       useTextGreeter = true;
       settings = {
         default_session = {
-          # `--cmd sway` resolves via PATH after greetd's source_profile
-          # shell sources /etc/profile, which sources /etc/set-environment
-          # (populated by environment.sessionVariables above). By the time
-          # sway exec's, all our env vars are present.
+          # Session-menu mode (replaces the old `--cmd sway`): tuigreet reads
+          # the session .desktop files and lets you pick i3 (X11) or sway
+          # (Wayland) per login, no rebuild to switch. greetd's source_profile
+          # shell sources /etc/profile (→ /etc/set-environment from
+          # environment.sessionVariables) before running the chosen session,
+          # so env vars are present at exec time for both stacks.
+          #
+          # tuigreet 0.9.1 flag forms (verified against the pinned source):
+          #   --sessions DIRS   colon-separated Wayland session dirs
+          #   --xsessions DIRS  colon-separated X11 session dirs
+          #   --xsession-wrapper 'CMD'  command X11 sessions are wrapped with
+          #     (default is `startx /usr/bin/env`, which would skip our X
+          #     session setup — we override it, see xsessionWrapper above).
           command = ''
             ${pkgs.tuigreet}/bin/tuigreet \
               --time \
               --remember \
               --asterisks \
-              --cmd sway
+              --sessions ${sessionData.desktops}/share/wayland-sessions \
+              --xsessions ${sessionData.desktops}/share/xsessions \
+              --xsession-wrapper "${xsessionWrapper}"
           '';
           # `--remember-user-session` removed deliberately. It causes
           # tuigreet to cache the resolved store-path of the launched
@@ -200,9 +266,9 @@ in {
           # is dead, PAM's session shell errors with
           #   sh: <nix-store-path>: No such file or directory
           # and the login screen loops endlessly with no actionable
-          # message. `--cmd sway` alone resolves through PATH at every
-          # exec, so it always picks up the current generation's sway.
-          # `--remember` (username only) is fine to keep.
+          # message. Session-menu mode resolves the chosen .desktop fresh
+          # from sessionData on every login, so it always points at the
+          # current generation. `--remember` (username only) is fine to keep.
           user = "greeter";
         };
       };
