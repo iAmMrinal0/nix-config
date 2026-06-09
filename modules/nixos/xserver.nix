@@ -28,6 +28,18 @@ in {
     services.xserver = {
       enable = true;
       exportConfiguration = true;
+      # DisplayLink's official workaround for X segfaults when evdi outputs
+      # are (re)configured (modesetting RRCrtcSet crash on first profile
+      # apply after boot, GLX-init crash on session restart with the dock
+      # attached). Merges with the AccelMethod=none OutputClass that the
+      # displaylink driver already ships. See DisplayLink/evdi#175,#295.
+      extraConfig = ''
+        Section "OutputClass"
+          Identifier  "DisplayLink no pageflip"
+          MatchDriver "evdi"
+          Option      "PageFlip" "false"
+        EndSection
+      '';
       # dpi = 160;
       xkb = {
         layout = "us,se";
