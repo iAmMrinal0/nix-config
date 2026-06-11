@@ -8,15 +8,35 @@ let
   # Copy fills PRIMARY as well as CLIPBOARD, and paste reads PRIMARY — that
   # mirrors the pre-wrapper xclip bindings, where copy-mode selections were
   # middle-click pasteable and C-y inserted the current mouse selection.
+  # WAYLAND_DISPLAY discovery: tmux pipes run with the SERVER's environment,
+  # and the server is born from tmux-server.service (systemd.nix pre-warm)
+  # before sway has imported WAYLAND_DISPLAY into the user manager — so the
+  # env check alone always fell through to xclip under sway. If the var is
+  # unset, look for a live wayland socket in XDG_RUNTIME_DIR instead of
+  # trusting the inherited env (the socket name varies, so no hardcoding).
+  findWayland = ''
+    if [ -z "$WAYLAND_DISPLAY" ]; then
+      for s in "''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}"/wayland-*; do
+        case "$s" in *.lock) continue ;; esac
+        [ -S "$s" ] && export WAYLAND_DISPLAY="''${s##*/}" && break
+      done
+    fi
+  '';
   clipCopy = pkgs.writeShellScript "tmux-clip-copy" ''
+    ${findWayland}
     if [ -n "$WAYLAND_DISPLAY" ]; then
       ${pkgs.coreutils}/bin/tee >(${pkgs.wl-clipboard}/bin/wl-copy --primary) \
         | ${pkgs.wl-clipboard}/bin/wl-copy
     else
-      ${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c
+      # No -f on the primary xclip: -f keeps it in the foreground serving
+      # the selection, so the pipeline never sees EOF and both ends hang
+      # (observed live 2026-06-11). Without -f xclip forks and returns.
+      ${pkgs.coreutils}/bin/tee >(${pkgs.xclip}/bin/xclip -i -sel p) \
+        | ${pkgs.xclip}/bin/xclip -i -sel c
     fi
   '';
   clipPaste = pkgs.writeShellScript "tmux-clip-paste" ''
+    ${findWayland}
     if [ -n "$WAYLAND_DISPLAY" ]; then
       exec ${pkgs.wl-clipboard}/bin/wl-paste --primary
     else
@@ -174,12 +194,23 @@ in
       bind-key -n -T copy-mode 'C-w' send -X copy-pipe-and-cancel "${clipCopy}"
       bind-key -n -T copy-mode 'M-w' send -X copy-pipe-and-cancel "${clipCopy}"
       bind-key -n -T copy-mode Enter send -X copy-pipe-and-cancel "${clipCopy}"
+      # Mouse-release copy must be bound explicitly: copycat installs its own
+      # MouseDragEnd1Pane binding (copy-pipe-and-cancel with NO command, i.e.
+      # tmux buffer only), and plugins load before extraConfig, so this
+      # rebind wins. Bound in both key tables so it survives mode-keys
+      # flipping to vi (tmux auto-selects vi when EDITOR contains "vi").
+      bind-key -n -T copy-mode MouseDragEnd1Pane send -X copy-pipe-and-cancel "${clipCopy}"
+      bind-key -n -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel "${clipCopy}"
       bind-key -n C-y run "${clipPaste} | ${pkgs.tmux}/bin/tmux load-buffer - ; ${pkgs.tmux}/bin/tmux paste-buffer"
       #
       #
       ##########
 
-      set -g update-environment "DISPLAY SHELL SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY SSH_AUTH_SOCK"
+      # WAYLAND_DISPLAY/SWAYSOCK: attaching from a sway terminal refreshes
+      # the session env so new panes (and anything resolving env per-pane)
+      # see the live compositor — the pre-warm server is born without them
+      # (see the findWayland comment above and systemd.nix).
+      set -g update-environment "DISPLAY SHELL SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY SSH_AUTH_SOCK WAYLAND_DISPLAY SWAYSOCK"
       # Pin a stable local agent socket so panes keep a working agent across
       # reattaches (belt-and-suspenders to update-environment above, which
       # already pulls the live value on attach). Sourced from home.nix's
