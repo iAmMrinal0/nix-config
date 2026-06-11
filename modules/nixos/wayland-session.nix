@@ -21,6 +21,21 @@ let
   # for an X11 pick: startx → X server → xsession-wrapper → i3, matching the
   # old lightdm path. Wayland sessions (sway) ignore this wrapper entirely.
   xsessionWrapper = "startx ${sessionData.wrapper}";
+  # Filtered copy of sessionData.desktops for the tuigreet menu. The
+  # displayManager module lndirs the ENTIRE share/wayland-sessions dir of
+  # every session package (passthru.providedSessions only feeds
+  # sessionNames, it does not filter the files), and pkgs.hyprland ships
+  # hyprland-uwsm.desktop alongside hyprland.desktop. With
+  # programs.hyprland.withUWSM off, uwsm isn't installed, so that entry
+  # would be a landmine in the menu: picking it fails at exec and dumps
+  # you back at the greeter. Drop it here — this derivation is only ever
+  # referenced by the tuigreet flags below, everything else keeps reading
+  # sessionData.desktops.
+  menuSessions = pkgs.runCommand "tuigreet-menu-sessions" { } ''
+    mkdir -p $out/share
+    ${pkgs.buildPackages.lndir}/bin/lndir -silent ${sessionData.desktops}/share $out/share
+    rm -f $out/share/wayland-sessions/hyprland-uwsm.desktop
+  '';
 in {
   options.modules.wayland = {
     enable = mkEnableOption "Install Wayland userspace tools (swayfx, kanshi, grim, etc.)";
@@ -53,6 +68,18 @@ in {
           type = types.bool;
           default = true;
           description = "Enable Sway (SwayFX) window manager support";
+        };
+      };
+      hyprland = {
+        enable = mkOption {
+          type = types.bool;
+          default = true;
+          description = ''
+            Enable Hyprland as an additional session-picker entry (third
+            alongside i3 and sway). Only takes effect together with
+            registerSession — without the picker there is no way to launch
+            it, so nothing is installed.
+          '';
         };
       };
     };
@@ -139,6 +166,36 @@ in {
         export QT_QUICK_CONTROLS_STYLE=org.kde.desktop
       '';
     };
+
+    # Hyprland as the third picker entry. The NixOS module does everything
+    # the picker needs in one shot: installs the package system-wide (plus a
+    # cap_sys_nice security wrapper in /run/wrappers/bin that the session
+    # Exec resolves first in PATH), registers hyprland.desktop via
+    # services.displayManager.sessionPackages (→ sessionData → tuigreet's
+    # --sessions menu, same path sway.desktop takes), and wires
+    # xdg-desktop-portal-hyprland with the package's own portals.conf
+    # (routed per XDG_CURRENT_DESKTOP=Hyprland, so it coexists with the
+    # sway/wlr portal block below).
+    #
+    # One-binary rule (the swayfx shadowing bug, see systemPackages note
+    # above): this module is the ONLY place that installs hyprland — do not
+    # list it in environment.systemPackages, and the home-manager side sets
+    # wayland.windowManager.hyprland.package = null (config generation only).
+    #
+    # Env vars: programs.hyprland has NO extraSessionCommands equivalent —
+    # the Wayland-only var set lives as `env =` lines in the HM config
+    # (modules/home-manager/hyprland/config.nix), which load before
+    # exec-once / any client and are inherited by everything Hyprland
+    # execs. Keep that list in sync with programs.sway.extraSessionCommands
+    # above.
+    programs.hyprland =
+      mkIf (cfg.windowManager.hyprland.enable && cfg.registerSession) {
+        enable = true;
+        # withUWSM deliberately off: UWSM would own graphical-session.target
+        # wiring; our per-WM-target scheme (hyprland-session.target via the
+        # HM module) is what keeps waybar/kanshi cycling correctly across
+        # WM switches — see gotcha #2 in MULTI_SESSION_HANDOFF.md.
+      };
 
     # System-wide session vars that are safe (or needed) on BOTH stacks, so
     # they stay in environment.sessionVariables → /etc/set-environment (sourced
@@ -254,8 +311,8 @@ in {
               --time \
               --remember \
               --asterisks \
-              --sessions ${sessionData.desktops}/share/wayland-sessions \
-              --xsessions ${sessionData.desktops}/share/xsessions \
+              --sessions ${menuSessions}/share/wayland-sessions \
+              --xsessions ${menuSessions}/share/xsessions \
               --xsession-wrapper "${xsessionWrapper}"
           '';
           # `--remember-user-session` removed deliberately. It causes

@@ -252,6 +252,21 @@ in {
           command =
             "${pkgs.systemd}/bin/systemctl --user stop redshift.service xss-lock.service picom.service";
         }
+        # Scrub a dead Hyprland session's instance var (imported by HM's
+        # hyprland systemd integration, never removed on exit) so waybar's
+        # hyprland/* modules don't chase a stale socket under sway. The
+        # symmetric SWAYSOCK scrub lives in hyprland/config.nix exec-once;
+        # i3 scrubs all three vars (i3/config.nix). NOTE: deliberately no
+        # `systemctl --user stop hyprland-session.target` here — sway exec
+        # is fire-and-forget, so that stop could race the sway-session
+        # target start that follows these entries and kill the fresh
+        # waybar/kanshi via their PartOf= binding. Stopping the Hyprland
+        # target on Hyprland exit is the socket-watcher's job
+        # (hyprland/config.nix).
+        {
+          command =
+            "${pkgs.systemd}/bin/systemctl --user unset-environment HYPRLAND_INSTANCE_SIGNATURE";
+        }
         {
           command = "${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill";
           always = true;
