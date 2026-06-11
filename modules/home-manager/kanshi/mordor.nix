@@ -17,9 +17,17 @@
 # Wayland has no "primary output" concept — the autorandr `primary` flags
 # have no kanshi equivalent and are dropped.
 let
+  # eDP-1 is a 4K (3840x2160) panel; the autorandr profiles drove it at
+  # 2560x1440 via an X-side scaler mode that wlroots does NOT expose
+  # (kanshi error on first office boot: "output 'eDP-1' doesn't support
+  # mode '2560x1440@59.959999Hz'"). The Wayland-native equivalent is the
+  # real mode + scale 1.5 — identical 2560x1440 LOGICAL size, so the
+  # profile positions below keep working unchanged. Refresh rate omitted
+  # so kanshi takes the panel's rate for that mode.
   t14s = {
     status = "enable";
-    mode = "2560x1440@59.96Hz";
+    mode = "3840x2160";
+    scale = 1.5;
     position = "0,0";
   };
   # Office dock (bzt-alt): two Samsungs over DisplayLink/evdi.

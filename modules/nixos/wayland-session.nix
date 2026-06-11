@@ -133,6 +133,17 @@ in {
       enable = true;
       package = pkgs.swayfx;
       wrapperFeatures.gtk = true;
+      # sway hard-exits at startup when the proprietary DisplayLink stack is
+      # in use (sway/server.c check; hit on mordor's first office TTY test).
+      # --unsupported-gpu is the documented escape hatch. Conditioned on the
+      # displaylink video driver (currently the xserver.nix default on BOTH
+      # hosts, so in practice this lands everywhere; betazed's guard never
+      # fired since no DisplayLink hardware ever appears there — the flag is
+      # inert without it). The module plumbs this into the wrapped package
+      # via package.override.
+      extraOptions =
+        lib.optional (lib.elem "displaylink" config.services.xserver.videoDrivers)
+        "--unsupported-gpu";
       # Wayland-only env vars, scoped to the SWAY session (not system-wide).
       # The base wrapper (wrapperFeatures.base, default true) runs these just
       # before exec'ing sway, so they land in sway's process env and are
