@@ -15,6 +15,9 @@ in {
         pkgs.source-code-pro
         pkgs.iosevka
         pkgs.nerd-fonts.symbols-only
+        # Provides "Font Awesome 7 Free" — supplies glyphs Symbols Nerd Font
+        # lacks (e.g. volume-xmark at U+F6A9, used by i3status-rust awesome6).
+        pkgs.font-awesome
       ];
       description = "List of font packages to install";
     };
