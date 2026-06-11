@@ -283,9 +283,11 @@ in {
       };
       firewall = { enable = true; };
       extraHosts = ''
+        127.0.0.1 avarda.local
         127.0.0.1 bankid.local
         127.0.0.1 swish.local
         127.0.0.1 mss.swish.local
+        127.0.0.1 status.swish.local
         127.0.0.1 mobilepay.local
         127.0.0.1 uc.local
         127.0.0.1 mock.local
