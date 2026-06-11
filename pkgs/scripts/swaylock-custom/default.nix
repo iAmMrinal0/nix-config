@@ -75,13 +75,29 @@ in pkgs.writeShellScriptBin "swaylock-custom" ''
     OS_VERSION=""
   fi
 
-  # Get the first focused output's geometry from sway, fall back to the
-  # bounding box of all outputs if we can't find a focused one.
-  read -r SCREEN_W SCREEN_H OUT_X OUT_Y < <(${pkgs.sway}/bin/swaymsg -t get_outputs 2>/dev/null \
-    | ${pkgs.jq}/bin/jq -r '
-        ([.[] | select(.active and .focused)] | first) // ([.[] | select(.active)] | first)
-        | "\(.rect.width) \(.rect.height) \(.rect.x) \(.rect.y)"
-      ' 2>/dev/null)
+  # Get the first focused output's geometry from the running compositor —
+  # hyprctl under Hyprland (no sway IPC there; SWAYSOCK is scrubbed at
+  # login), swaymsg under sway; fall back to the first active output if we
+  # can't find a focused one. If neither IPC answers, the 1920x1080
+  # default below kicks in and swaylock UPSCALES the canvas on bigger
+  # outputs (huge text/QR) — it's a last resort, not a sane default.
+  # hyprctl reports physical pixels + scale + transform, while sway's
+  # rect is already logical, so the jq converts: swap w/h on 90°/270°
+  # transforms (odd values), then divide by scale.
+  if [[ -n "''${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+    read -r SCREEN_W SCREEN_H OUT_X OUT_Y < <(${pkgs.hyprland}/bin/hyprctl -j monitors 2>/dev/null \
+      | ${pkgs.jq}/bin/jq -r '
+          ([.[] | select(.focused)] | first) // first
+          | (if (.transform % 2) == 1 then {w: .height, h: .width} else {w: .width, h: .height} end) as $d
+          | "\(($d.w / .scale) | round) \(($d.h / .scale) | round) \(.x) \(.y)"
+        ' 2>/dev/null)
+  else
+    read -r SCREEN_W SCREEN_H OUT_X OUT_Y < <(${pkgs.sway}/bin/swaymsg -t get_outputs 2>/dev/null \
+      | ${pkgs.jq}/bin/jq -r '
+          ([.[] | select(.active and .focused)] | first) // ([.[] | select(.active)] | first)
+          | "\(.rect.width) \(.rect.height) \(.rect.x) \(.rect.y)"
+        ' 2>/dev/null)
+  fi
   SCREEN_W=''${SCREEN_W:-1920}
   SCREEN_H=''${SCREEN_H:-1080}
   OUT_X=''${OUT_X:-0}

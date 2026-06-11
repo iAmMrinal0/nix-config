@@ -47,4 +47,32 @@ in {
   systemd.user.services.kanshi.Service.RestartSec = lib.mkForce 2;
   systemd.user.services.kanshi.Unit.StartLimitBurst = lib.mkForce 10;
   systemd.user.services.kanshi.Unit.StartLimitIntervalSec = lib.mkForce 30;
+
+  # Kanshi must serve BOTH Wayland sessions (sway + Hyprland picker
+  # entries), but services.kanshi.systemdTarget is a SINGLE string (it
+  # defaults to wayland.systemd.target = sway-session.target), so the unit
+  # wiring is overridden wholesale here:
+  #   - WantedBy both per-WM targets → starts under either compositor.
+  #   - PartOf both → stops when either target stops (sway stops its
+  #     target on exit via the generated `swaymsg subscribe shutdown`
+  #     exec; Hyprland's is stopped by the socket-watcher exec-once in
+  #     modules/home-manager/hyprland/config.nix). Without the stop
+  #     propagation, kanshi would outlive the compositor, crash on the
+  #     dead socket, and Restart=always would burn it into
+  #     start-limit-hit against the stale WAYLAND_DISPLAY.
+  #   - Requires CLEARED: the stock unit Requires= its one target, which
+  #     under the dual-target setup would drag sway-session.target active
+  #     when kanshi starts under Hyprland (and vice versa) — exactly the
+  #     sticky-target class of bug the per-WM targets exist to prevent.
+  #     WantedBy+PartOf cover start and stop; Requires adds nothing here.
+  # On hosts without the picker (mordor today) hyprland-session.target
+  # doesn't exist; a .wants/.partof reference to a nonexistent target is
+  # inert, so this is safe everywhere.
+  systemd.user.services.kanshi.Unit.PartOf =
+    lib.mkForce [ "sway-session.target" "hyprland-session.target" ];
+  systemd.user.services.kanshi.Unit.Requires = lib.mkForce [ ];
+  systemd.user.services.kanshi.Unit.After =
+    lib.mkForce [ "sway-session.target" "hyprland-session.target" ];
+  systemd.user.services.kanshi.Install.WantedBy =
+    lib.mkForce [ "sway-session.target" "hyprland-session.target" ];
 }

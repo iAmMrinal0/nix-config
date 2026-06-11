@@ -113,8 +113,9 @@ in {
         smartBorders = "on";
       };
       startup = [
-        # Scrub the dead sway session's Wayland vars from the persistent
-        # systemd --user env. sway imports WAYLAND_DISPLAY/SWAYSOCK via
+        # Scrub the dead Wayland session's vars from the persistent
+        # systemd --user env. sway imports WAYLAND_DISPLAY/SWAYSOCK (and
+        # Hyprland its HYPRLAND_INSTANCE_SIGNATURE) via
         # dbus-update-activation-environment at its startup but nothing
         # removes them on exit, so after a sway→i3 switch the env still
         # advertises a dead wayland-1 socket — waybar/kanshi's
@@ -124,7 +125,7 @@ in {
         # login. Unsetting here makes the condition fail cleanly under i3.
         {
           command =
-            "${pkgs.systemd}/bin/systemctl --user unset-environment WAYLAND_DISPLAY SWAYSOCK";
+            "${pkgs.systemd}/bin/systemctl --user unset-environment WAYLAND_DISPLAY SWAYSOCK HYPRLAND_INSTANCE_SIGNATURE";
         }
         { command = "${pkgs.xset}/bin/xset -b"; }
         {
