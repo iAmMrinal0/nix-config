@@ -4,18 +4,23 @@ let
   # Runtime-dispatching clipboard wrappers: pick wl-clipboard under Wayland,
   # xclip under X11. Lets the same tmux config work on betazed (sway) and
   # mordor (i3) without conditional nix.
+  #
+  # Copy fills PRIMARY as well as CLIPBOARD, and paste reads PRIMARY — that
+  # mirrors the pre-wrapper xclip bindings, where copy-mode selections were
+  # middle-click pasteable and C-y inserted the current mouse selection.
   clipCopy = pkgs.writeShellScript "tmux-clip-copy" ''
     if [ -n "$WAYLAND_DISPLAY" ]; then
-      exec ${pkgs.wl-clipboard}/bin/wl-copy
+      ${pkgs.coreutils}/bin/tee >(${pkgs.wl-clipboard}/bin/wl-copy --primary) \
+        | ${pkgs.wl-clipboard}/bin/wl-copy
     else
-      exec ${pkgs.xclip}/bin/xclip -i -sel c
+      ${pkgs.xclip}/bin/xclip -i -sel p -f | ${pkgs.xclip}/bin/xclip -i -sel c
     fi
   '';
   clipPaste = pkgs.writeShellScript "tmux-clip-paste" ''
     if [ -n "$WAYLAND_DISPLAY" ]; then
-      exec ${pkgs.wl-clipboard}/bin/wl-paste
+      exec ${pkgs.wl-clipboard}/bin/wl-paste --primary
     else
-      exec ${pkgs.xclip}/bin/xclip -o -sel c
+      exec ${pkgs.xclip}/bin/xclip -o -sel p
     fi
   '';
 in
