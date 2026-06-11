@@ -360,6 +360,13 @@ in {
           xkb_options = "grp:switch";
           xkb_numlock = "enabled";
         };
+        # Raw libinput defaults tap to off; X11 sessions got tap-to-click
+        # from the NixOS services.libinput default (tapping = true), so
+        # mirror that here for parity with i3.
+        "type:touchpad" = {
+          tap = "enabled";
+          middle_emulation = "enabled";
+        };
       };
       modes = {
         resize = {
