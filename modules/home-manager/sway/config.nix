@@ -84,9 +84,21 @@ in {
     # makes HM generate only the config and defer the binary to the NixOS module.
     # (Only trade-off: no auto sway-reload on rebuild — irrelevant, we relog.)
     # mordor (registerSession = false, i3-only, no NixOS programs.sway) keeps the
-    # HM-installed swayfx so it isn't left with no sway at all.
+    # HM-installed swayfx so it isn't left with no sway at all. That binary needs
+    # --unsupported-gpu baked in on DisplayLink hosts: sway hard-exits at startup
+    # when the proprietary DisplayLink stack is present ("displaylink" in
+    # videoDrivers loads evdi even undocked), which is exactly the pre-cutover
+    # mordor TTY-test case. Mirrors programs.sway.extraOptions in
+    # modules/nixos/wayland-session.nix (the post-cutover path).
     package =
-      if osConfig.modules.wayland.registerSession then null else pkgs.swayfx;
+      if osConfig.modules.wayland.registerSession then
+        null
+      else
+        pkgs.swayfx.override {
+          extraOptions =
+            lib.optional (lib.elem "displaylink" osConfig.services.xserver.videoDrivers)
+            "--unsupported-gpu";
+        };
     wrapperFeatures.gtk = true;
     # SwayFX's GLES2/DRM-backed renderer can't initialize inside the Nix build
     # sandbox, so `sway --validate` (run by the home-manager check) fails with
