@@ -111,9 +111,14 @@ in {
     # system-wide plus the cap_sys_nice security wrapper that the session
     # .desktop resolves via /run/wrappers/bin. Letting HM install a second
     # hyprland into the per-user profile would shadow that wrapper in PATH.
-    # Unlike sway there is no mordor carve-out: no host needs an HM-owned
-    # Hyprland, so this is unconditionally null (HM generates config only).
-    package = null;
+    # Same mordor carve-out as sway's package: with registerSession=false
+    # there is no NixOS programs.hyprland, so HM installs the binary —
+    # that's what makes the pre-cutover TTY dock test possible at all.
+    # Unlike sway's vars-less HM binary, this one is NOT degraded: the
+    # session env lives in the env= lines of this very config. Flipping
+    # registerSession nulls it again and the NixOS wrapper takes over.
+    package =
+      if osConfig.modules.wayland.registerSession then null else pkgs.hyprland;
     # Portals are owned by the NixOS module too (programs.hyprland wires
     # xdg-desktop-portal-hyprland + the package's portals.conf routing).
     portalPackage = null;
