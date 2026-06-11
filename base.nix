@@ -169,6 +169,32 @@ in {
         return polkit.Result.YES;
       }
     });
+
+    /* logind power actions default to allow_inactive=auth_admin_keep, and
+       with two seat sessions alive (i3 on lightdm + a TTY compositor —
+       routine during the sway migration) the caller's session can be
+       flagged inactive: systemctl reboot then blocks forever on a polkit
+       auth dialog that never reaches the user (rofi-power-menu swallows
+       stderr), the user logs out thinking it's broken, and the lingering
+       session makes the lightdm greeter grey out its power buttons
+       (CanReboot=challenge). Allow wheel to manage power unconditionally —
+       no auth, nothing to hang on, regardless of session active-state. */
+    polkit.addRule(function(action, subject) {
+      var powerActions = [
+        "org.freedesktop.login1.reboot",
+        "org.freedesktop.login1.reboot-multiple-sessions",
+        "org.freedesktop.login1.power-off",
+        "org.freedesktop.login1.power-off-multiple-sessions",
+        "org.freedesktop.login1.suspend",
+        "org.freedesktop.login1.suspend-multiple-sessions",
+        "org.freedesktop.login1.hibernate",
+        "org.freedesktop.login1.hibernate-multiple-sessions"
+      ];
+      if (powerActions.indexOf(action.id) !== -1 &&
+          subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+      }
+    });
   '';
 
   services = {
