@@ -202,6 +202,17 @@ in
       bind-key -n -T copy-mode MouseDragEnd1Pane send -X copy-pipe-and-cancel "${clipCopy}"
       bind-key -n -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel "${clipCopy}"
       bind-key -n C-y run "${clipPaste} | ${pkgs.tmux}/bin/tmux load-buffer - ; ${pkgs.tmux}/bin/tmux paste-buffer"
+
+      # Mouse-capturing TUIs (Claude Code etc.) bypass tmux's drag-copy and
+      # set the clipboard themselves via OSC52. The default set-clipboard
+      # "external" relies on tmux forwarding the escape to the outer
+      # terminal — flaky here (pane-visibility gates, races). "on" makes
+      # tmux ACCEPT the OSC52 into a paste buffer and fire the
+      # pane-set-clipboard hook, which pipes it through the same wrapper as
+      # every other copy. Deterministic, works from any pane in any
+      # session, attached or not (verified live 2026-06-11).
+      set -g set-clipboard on
+      set-hook -g pane-set-clipboard 'run-shell "${pkgs.tmux}/bin/tmux show-buffer | ${clipCopy}"'
       #
       #
       ##########
