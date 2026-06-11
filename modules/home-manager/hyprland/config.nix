@@ -88,6 +88,28 @@ let
     exec ${hyprctl} dispatch movewindoworgroup "$dir"
   '';
 
+  # i3 parity for moving a grouped window to another workspace: Hyprland's
+  # movetoworkspace[silent] moves the ENTIRE group when the active window
+  # is grouped (Compositor.cpp moveWindowToWorkspaceSafe ends with
+  # group->updateWorkspace; no option disables it). i3 moves only the
+  # focused tab and leaves the rest of the container behind, so pop the
+  # window out of its group first, then move it. Both dispatchers are
+  # pinned to the window's address so a focus change between the two
+  # dispatches can't redirect the move. Ungrouped (or lone-group) windows
+  # fall straight through to a plain move.
+  groupAwareMoveToWorkspace = pkgs.writeShellScript "hypr-group-aware-move-to-ws" ''
+    disp="$1"
+    ws="$2"
+    aw=$(${hyprctl} -j activewindow)
+    addr=$(${pkgs.jq}/bin/jq -r '.address' <<< "$aw")
+    [[ -z "$addr" || "$addr" == "null" ]] && exit 0
+    n=$(${pkgs.jq}/bin/jq -r '.grouped | length' <<< "$aw")
+    if [[ "''${n:-0}" -gt 1 ]]; then
+      ${hyprctl} dispatch moveoutofgroup "address:$addr"
+    fi
+    exec ${hyprctl} dispatch "$disp" "$ws,address:$addr"
+  '';
+
   fonts = {
     names = [ "Source Code Pro" "Symbols Nerd Font Mono" ];
     size = 10.8;
@@ -415,7 +437,7 @@ in {
         # Difference from i3/sway: the special workspace shows ALL stashed
         # windows at once instead of cycling them one `scratchpad show` at
         # a time.
-        "$mod, q, movetoworkspacesilent, special:scratch"
+        "$mod, q, exec, ${groupAwareMoveToWorkspace} movetoworkspacesilent special:scratch"
         "$mod, x, togglespecialworkspace, scratch"
         # sway `[urgent=latest] focus`
         "$mod SHIFT, x, focusurgentorlast"
@@ -452,9 +474,11 @@ in {
       ]
       # workspace switching / moving; movetoworkspace follows the window,
       # matching sway's "move container to workspace N; workspace N".
+      # Routed through groupAwareMoveToWorkspace so a grouped (tabbed)
+      # window moves alone instead of dragging the whole group along.
       ++ lib.concatMap (n: [
         "$mod, ${n}, workspace, ${n}"
-        "$mod SHIFT, ${n}, movetoworkspace, ${n}"
+        "$mod SHIFT, ${n}, exec, ${groupAwareMoveToWorkspace} movetoworkspace ${n}"
       ]) numbers;
 
       # Mod+drag to move/resize floating windows (sway floating_modifier).
