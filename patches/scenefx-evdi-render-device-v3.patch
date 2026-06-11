@@ -1,0 +1,51 @@
+scenefx: render evdi outputs on the device named by WLR_EVDI_RENDER_DEVICE
+
+scenefx vendors a copy of wlroots' render/egl.c, so the wlroots-side
+DisplayLink/evdi patch never reaches SwayFX's renderer: scenefx's own
+open_render_node falls back to the evdi primary node (evdi has no render
+node and cannot render), landing DisplayLink outputs on a corrupt
+software path — flicker-to-wallpaper, cursor trails, scroll corruption.
+This is the scenefx twin of patches/wlroots-evdi-render-device-v3.patch:
+accept any absolute path in WLR_EVDI_RENDER_DEVICE (open() resolves
+symlinks, so a stable /dev/dri/by-path/... link survives cardN
+renumbering across boots and dock hotplugs).
+
+--- a/render/egl.c
++++ b/render/egl.c
+@@ -3,6 +3,7 @@
+ #include <fcntl.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <unistd.h>
+ #include <gbm.h>
+ #include <wlr/render/egl.h>
+@@ -561,6 +562,28 @@
+ 		}
+ 		wlr_log(WLR_DEBUG, "DRM device '%s' has no render node, "
+ 			"falling back to primary node", render_name);
++
++		// evdi devices cannot render; honor WLR_EVDI_RENDER_DEVICE as the
++		// node to render on instead. Any absolute path is accepted --
++		// open() resolves symlinks, so a stable /dev/dri/by-path/... link
++		// survives cardN renumbering across boots and dock hotplugs.
++		drmVersion *render_version = drmGetVersion(drm_fd);
++		if (render_version != NULL && render_version->name != NULL &&
++				strcmp(render_version->name, "evdi") == 0) {
++			const char *evdi_render_dev = getenv("WLR_EVDI_RENDER_DEVICE");
++			if (evdi_render_dev != NULL && evdi_render_dev[0] == '/') {
++				free(render_name);
++				render_name = strdup(evdi_render_dev);
++				wlr_log(WLR_INFO, "evdi: rendering on WLR_EVDI_RENDER_DEVICE '%s'",
++					render_name);
++			} else {
++				wlr_log(WLR_ERROR, "evdi: WLR_EVDI_RENDER_DEVICE %s; "
++					"falling back to '%s' (evdi cannot render, expect failure)",
++					evdi_render_dev == NULL ? "is unset" : "is not an absolute path",
++					render_name);
++			}
++		}
++		drmFreeVersion(render_version);
+ 	}
+ 
+ 	int render_fd = open(render_name, O_RDWR | O_CLOEXEC);

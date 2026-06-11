@@ -138,17 +138,29 @@
   # (which would otherwise rebuild sway for hardware it doesn't have).
   # --unsupported-gpu is already baked into the sway wrappers
   # (modules/nixos/wayland-session.nix + the HM carve-out).
+  #
+  # v3 (2026-06-11): the wiki's DisplayLink_v2 patch only accepted literal
+  # /dev/dri/card0..card9 values for WLR_EVDI_RENDER_DEVICE and silently
+  # fell back to card0 on anything else — including the by-path symlink
+  # below. card numbering is dynamic (evdi grabbed card0 this boot, i915
+  # was card1), so "card0" meant evdi rendering on itself: EGL device
+  # matching failed and the outputs landed on a corrupt software path
+  # (flicker-to-wallpaper, cursor trails). The local v3 patch accepts any
+  # absolute path; open() resolves symlinks, so by-path works.
+  #
+  # scenefx must carry the same patch: it vendors a copy of wlroots'
+  # render/egl.c, and SwayFX's renderer is created through scenefx, so a
+  # wlroots-only patch never reaches it (confirmed by the egl.c:506 error
+  # in the sway log — that line number exists only in scenefx's copy).
   nixpkgs.overlays = [
     (final: prev: {
       wlroots_0_19 = prev.wlroots_0_19.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (prev.fetchpatch {
-            name = "wlroots-displaylink-v2.patch";
-            url =
-              "https://gitlab.freedesktop.org/wlroots/wlroots/uploads/bd115aa120d20f2c99084951589abf9c/DisplayLink_v2.patch";
-            hash = "sha256-vWQc2e8a5/YZaaHe+BxfAR/Ni8HOs2sPJ8Nt9pfxqiE=";
-          })
-        ];
+        patches = (old.patches or [ ])
+          ++ [ ../patches/wlroots-evdi-render-device-v3.patch ];
+      });
+      scenefx = prev.scenefx.overrideAttrs (old: {
+        patches = (old.patches or [ ])
+          ++ [ ../patches/scenefx-evdi-render-device-v3.patch ];
       });
     })
   ];
