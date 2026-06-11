@@ -123,4 +123,40 @@
   environment.systemPackages = [ pkgs.android-studio pkgs.polkit_gnome ];
 
   programs.nix-ld.enable = true;
+
+  # DisplayLink/evdi under wlroots, second round (2026-06-11 office TTY
+  # test): UNPATCHED sway 1.11/wlroots 0.19.3 detects and lights up both
+  # dock Samsungs, but every damage-heavy update (scrolling, typing)
+  # flickers windows out to the wallpaper — silent frame corruption, no
+  # wlroots errors logged. This is the failure mode the prepared fallback
+  # in MULTI_SESSION_HANDOFF.md Phase 4b covers: patch wlroots' DRM
+  # backend with proper evdi support (NixOS wiki "Displaylink" page;
+  # written against 0.17, wiki claims it applies through 0.19 — a build
+  # failure here means the patch finally bit-rotted, see the handoff for
+  # alternatives). swayfx-unwrapped takes wlroots_0_19 from the package
+  # set, so this host-scoped overlay reaches it without touching betazed
+  # (which would otherwise rebuild sway for hardware it doesn't have).
+  # --unsupported-gpu is already baked into the sway wrappers
+  # (modules/nixos/wayland-session.nix + the HM carve-out).
+  nixpkgs.overlays = [
+    (final: prev: {
+      wlroots_0_19 = prev.wlroots_0_19.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch {
+            name = "wlroots-displaylink-v2.patch";
+            url =
+              "https://gitlab.freedesktop.org/wlroots/wlroots/uploads/bd115aa120d20f2c99084951589abf9c/DisplayLink_v2.patch";
+            hash = "sha256-vWQc2e8a5/YZaaHe+BxfAR/Ni8HOs2sPJ8Nt9pfxqiE=";
+          })
+        ];
+      });
+    })
+  ];
+  # The patched backend renders evdi outputs on the GPU named here (the
+  # iGPU). by-path is used instead of cardN because evdi cards are created
+  # dynamically at dock-time and can shuffle numbering; 0000:00:02.0 is
+  # the Intel iGPU's fixed PCI address. Verify once with
+  # `ls -l /dev/dri/by-path/` if rendering ends up on the wrong device.
+  environment.variables.WLR_EVDI_RENDER_DEVICE =
+    "/dev/dri/by-path/pci-0000:00:02.0-card";
 }
