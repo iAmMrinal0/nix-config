@@ -10,15 +10,34 @@ let
   wallpaper = ../common/wallpapers/nix-glow-black.png;
 
   swaymsg = "${pkgs.sway}/bin/swaymsg";
+  # DPMS wake helper for the resume hook. A wildcard `output * power on`
+  # silently fails for evdi outputs: the all-outputs atomic commit gets
+  # rejected (cf. "Atomic commit failed" for DVI connectors in the logs)
+  # and the dock monitors stay power=false until a modeset — which is why
+  # restarting kanshi "fixed" it. Per-output commands work, but two evdi
+  # outputs kicked back-to-back can still race each other's modeset, so
+  # retry whatever is still off until everything reports power=true
+  # (verified live 2026-06-12: converges after at most one retry).
+  wakeOutputs = pkgs.writeShellScript "sway-wake-outputs" ''
+    for i in 1 2 3 4 5; do
+      off=$(${swaymsg} -t get_outputs --raw \
+        | ${pkgs.jq}/bin/jq -r '.[] | select(.power == false) | .name')
+      [ -z "$off" ] && exit 0
+      for o in $off; do
+        ${swaymsg} "output $o power on"
+      done
+      sleep 1
+    done
+  '';
   # Full swayidle command line. Inlined here (rather than going through
   # services.swayidle) so the launch happens via sway exec in sway's
   # process env — see swayidle.nix for why the systemd-unit path raced.
   # Behaviour:
   #   timeout 300  → lock screen
-  #   timeout 600  → power outputs off; on resume, power back on
+  #   timeout 600  → power outputs off; on resume, wake outputs (evdi-safe)
   #   before-sleep → lock before the system suspends
   #   lock         → lock when `loginctl lock-session` fires
-  swayidleCmd = ''${pkgs.swayidle}/bin/swayidle -w timeout 300 ${lock} timeout 600 "${swaymsg} 'output * power off'" resume "${swaymsg} 'output * power on'" before-sleep ${lock} lock ${lock}'';
+  swayidleCmd = ''${pkgs.swayidle}/bin/swayidle -w timeout 300 ${lock} timeout 600 "${swaymsg} 'output * power off'" resume ${wakeOutputs} before-sleep ${lock} lock ${lock}'';
 
   # Tray apps that don't retry SNI registration if the watcher/host isn't
   # ready at startup. Sway exec'ing all tray apps in parallel races
