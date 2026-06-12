@@ -1,5 +1,5 @@
 { ... }:
 
 {
-  imports = [ ./sway ./hyprland ];
+  imports = [ ./sway ];
 }

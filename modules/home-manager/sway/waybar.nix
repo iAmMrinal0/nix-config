@@ -41,13 +41,6 @@ in {
     # original env race resolve without permanently failing the unit;
     # same approach as kanshi.nix.
     systemd.enable = true;
-    # One bar serves both Wayland sessions: targets is a LIST (unlike
-    # kanshi's single-string systemdTarget), so the dual binding needs no
-    # raw unit override — the HM module sets Install.WantedBy AND
-    # Unit.PartOf to these, giving start+stop under whichever compositor
-    # is running. Default would be [ wayland.systemd.target ] =
-    # sway-session.target only.
-    systemd.targets = [ "sway-session.target" "hyprland-session.target" ];
 
     settings = {
       mainBar = {
@@ -56,15 +49,7 @@ in {
         height = 28;
         spacing = 4;
 
-        # Both compositors' modules are listed; waybar disables (with a log
-        # line, no crash) any module whose IPC it can't reach, so under sway
-        # the hyprland/* pair is inert and vice versa. The per-WM env scrubs
-        # (SWAYSOCK unset in hyprland's exec-once, HYPRLAND_INSTANCE_SIGNATURE
-        # unset in sway's startup) keep the inactive pair from chasing a
-        # stale socket. hyprland/workspaces renders the same labels as
-        # sway/workspaces because the workspace defaultName rules carry the
-        # i3/sway names (see modules/home-manager/hyprland/config.nix).
-        modules-left = [ "sway/workspaces" "sway/mode" "hyprland/workspaces" "hyprland/submap" ];
+        modules-left = [ "sway/workspaces" "sway/mode" ];
         modules-center = [ ];
         modules-right = [
           "custom/current-track" "custom/sep1"
@@ -89,15 +74,6 @@ in {
 
         "sway/workspaces" = {
           disable-scroll = true;
-          all-outputs = false;
-        };
-
-        # Active only under Hyprland (see modules-left note above). format
-        # pinned to {name} so the defaultName workspace labels render, and
-        # scroll-cycling left unbound for parity with disable-scroll on the
-        # sway module.
-        "hyprland/workspaces" = {
-          format = "{name}";
           all-outputs = false;
         };
 
