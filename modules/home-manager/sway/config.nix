@@ -488,7 +488,7 @@ in {
         "Shift+Right" = "move right";
         "Shift+space" = "floating toggle";
         "Shift+m" =
-          "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute 1 toggle";
+          "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
         "s" = "layout stacking";
         "space" = "focus mode_toggle";
         "w" = "layout tabbed";
@@ -512,7 +512,7 @@ in {
         "XF86MonBrightnessDown" = "${pkgs.brightnessctl}/bin/brightnessctl set 10%-";
 
         "XF86AudioMicMute" =
-          "${pkgs.pulseaudio}/bin/pactl set-source-mute 0 toggle";
+          "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
 
         # Wayland Print: flameshot opens an interactive picker / annotator,
         # uses xdg-desktop-portal-wlr (see modules/nixos/wayland-session.nix)

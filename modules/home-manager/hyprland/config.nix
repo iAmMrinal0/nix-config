@@ -441,7 +441,7 @@ in {
         "$mod, x, togglespecialworkspace, scratch"
         # sway `[urgent=latest] focus`
         "$mod SHIFT, x, focusurgentorlast"
-        "$mod SHIFT, m, exec, ${pkgs.pulseaudio}/bin/pactl set-source-mute 1 toggle"
+        "$mod SHIFT, m, exec, ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle"
 
         # move current workspace between outputs
         "$mod CTRL, Down, movecurrentworkspacetomonitor, d"
@@ -460,7 +460,7 @@ in {
         ", XF86AudioPrev, exec, ${pkgs.playerctl}/bin/playerctl previous"
         ", XF86MonBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl set +10%"
         ", XF86MonBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl set 10%-"
-        ", XF86AudioMicMute, exec, ${pkgs.pulseaudio}/bin/pactl set-source-mute 0 toggle"
+        ", XF86AudioMicMute, exec, ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle"
         # flameshot grabs frames via xdg-desktop-portal-hyprland here (the
         # wlr portal serves sway; routing is per-XDG_CURRENT_DESKTOP).
         # NOTE: this block mirrors sway's appendExecToCommand set, which is
