@@ -18,16 +18,23 @@ let
   # outputs kicked back-to-back can still race each other's modeset, so
   # retry whatever is still off until everything reports power=true
   # (verified live 2026-06-12: converges after at most one retry).
+  #
+  # The power cycle can also scramble output positions (the evdi
+  # re-enable comes back with default placement, not the profile's), and
+  # kanshi only re-applies profiles on connect/disconnect events — so
+  # after everything is powered on, kanshictl reload re-applies the
+  # matched profile. `|| true`: don't fail the hook if kanshi is down.
   wakeOutputs = pkgs.writeShellScript "sway-wake-outputs" ''
     for i in 1 2 3 4 5; do
       off=$(${swaymsg} -t get_outputs --raw \
         | ${pkgs.jq}/bin/jq -r '.[] | select(.power == false) | .name')
-      [ -z "$off" ] && exit 0
+      [ -z "$off" ] && break
       for o in $off; do
         ${swaymsg} "output $o power on"
       done
       sleep 1
     done
+    ${pkgs.kanshi}/bin/kanshictl reload || true
   '';
   # Full swayidle command line. Inlined here (rather than going through
   # services.swayidle) so the launch happens via sway exec in sway's
