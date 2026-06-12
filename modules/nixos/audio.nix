@@ -67,6 +67,40 @@ in {
               };
             };
           }
+          # Demote S/PDIF (IEC958) capture inputs so they never auto-become
+          # the default *source*. The Targus dock exposes its digital
+          # passthrough as `alsa_input...iec958-stereo`, and WirePlumber was
+          # scoring it above the real mics and picking it as the default
+          # input — but it's a digital passthrough, not a microphone, so it
+          # captures silence. That broke every "default mic" consumer
+          # (Discord, the Mod+Shift+m mute keybind, etc.). Match the IEC958
+          # input generically (regex, not the dock's serial) so any dock with
+          # an S/PDIF input is covered.
+          {
+            matches = [{ "node.name" = "~alsa_input\\..*iec958.*"; }];
+            actions = {
+              update-props = {
+                "priority.session" = -100;
+                "priority.driver" = -100;
+              };
+            };
+          }
+          # Prefer the laptop's built-in digital array mic (Mic1) as the
+          # default source. Boosting it above the bluetooth-headset source
+          # priority means connecting the WH-1000XM3 does NOT pull voice
+          # capture onto the headset — which would force the bluetooth link
+          # into mono HFP and wreck A2DP music quality. Voice stays on the
+          # laptop mic; the headset stays in high-quality A2DP. An explicit
+          # `wpctl set-default` still overrides this (WirePlumber persists the
+          # manual choice); the priority only governs the automatic fallback.
+          {
+            matches = [{ "node.name" = "~alsa_input\\..*Mic1__source"; }];
+            actions = {
+              update-props = {
+                "priority.session" = 3000;
+              };
+            };
+          }
         ];
       };
     };
