@@ -49,7 +49,7 @@ in {
       workspaceLayout = "tabbed";
       assigns = {
         "\"${workspacesByKey.code}\"" = [{ class = "^Code$"; }];
-        "\"${workspacesByKey.music}\"" = [{ class = "Vlc"; }];
+        "\"${workspacesByKey.music}\"" = [{ class = "^[Vv]lc$"; }];
         "\"${workspacesByKey.avoid}\"" = [
           { class = "Slack"; }
           { class = "discord"; }
