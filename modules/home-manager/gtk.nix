@@ -50,18 +50,6 @@
       .thunar {
         -gtk-icon-style: regular;
       }
-      /* Spacious popup menus — nm-applet's right-click checkbox menu
-         (Enable Wi-Fi / Enable Networking) and other GTK tray/context
-         menus default to compact rows under Gruvbox-Dark, which makes
-         the toggles fiddly to click. The theme uses `menu menuitem`
-         (specificity 2) which beats a bare `menuitem` rule from user
-         CSS, so we match that selector and add !important as belt-and-
-         suspenders. min-height intentionally generous (28px) — easy to
-         dial back to 22 once we've confirmed the rule actually binds. */
-      /* Diagnostic: make every label text red. window-background was a
-         bad test because child widgets cover the window's pixels. */
-      * { color: red !important; }
-      label { color: red !important; }
     '';
     gtk3.bookmarks = [
       "file:///home/${username}/Documents"
