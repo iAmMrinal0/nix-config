@@ -34,8 +34,7 @@
     # manager modules in modules/home-manager/sway/ and the i3 modules in
     # modules/home-manager/i3/ are imported unconditionally; they generate
     # config files but only one is actually used per session). Flip this
-    # one flag and rebuild to switch. See HANDOFF.md for the history,
-    # the SNI/tray quirks, and what's tested vs. untested.
+    # one flag and rebuild to switch.
     wayland.registerSession = true;
   };
 

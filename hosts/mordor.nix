@@ -136,12 +136,10 @@
   # test): UNPATCHED sway 1.11/wlroots 0.19.3 detects and lights up both
   # dock Samsungs, but every damage-heavy update (scrolling, typing)
   # flickers windows out to the wallpaper — silent frame corruption, no
-  # wlroots errors logged. This is the failure mode the prepared fallback
-  # in MULTI_SESSION_HANDOFF.md Phase 4b covers: patch wlroots' DRM
-  # backend with proper evdi support (NixOS wiki "Displaylink" page;
-  # written against 0.17, wiki claims it applies through 0.19 — a build
-  # failure here means the patch finally bit-rotted, see the handoff for
-  # alternatives). swayfx-unwrapped takes wlroots_0_19 from the package
+  # wlroots errors logged. The fix is to patch wlroots' DRM backend with
+  # proper evdi support (NixOS wiki "Displaylink" page; written against
+  # 0.17, wiki claims it applies through 0.19 — a build failure here means
+  # the patch finally bit-rotted). swayfx-unwrapped takes wlroots_0_19 from the package
   # set, so this host-scoped overlay reaches it without touching betazed
   # (which would otherwise rebuild sway for hardware it doesn't have).
   # --unsupported-gpu is already baked into the sway wrappers
