@@ -1,16 +1,10 @@
-{ lib, pkgs, config, hostname ? "", ... }:
+{ lib, pkgs, hostname, ... }:
 
 let
-  systemHostName = if hostname != "" then
-    hostname
-  else if config ? networking.hostName then
-    config.networking.hostName
-  else
-    builtins.getEnv "HOSTNAME";
-
-  hostConfig = if systemHostName != ""
-  && builtins.pathExists ./kanshi/${systemHostName}.nix then
-    import ./kanshi/${systemHostName}.nix { inherit lib pkgs; }
+  # `hostname` is always supplied via home-manager.extraSpecialArgs
+  # (see home.nix), so we can key the per-host profiles off it directly.
+  hostConfig = if builtins.pathExists ./kanshi/${hostname}.nix then
+    import ./kanshi/${hostname}.nix { inherit lib pkgs; }
   else {
     profiles = { };
   };
