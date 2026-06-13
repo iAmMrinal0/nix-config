@@ -18,46 +18,41 @@ let
 in pkgs.writeShellScriptBin "swaylock-custom" ''
   set -u
 
-  # Diagnostic log to investigate "had to unlock N times" cascades.
-  # Records every invocation with timestamp, our PID, parent PID, parent
-  # command, and whether another swaylock is already running. Tail
-  # /tmp/swaylock-custom.log after a cascade to see how many invocations
-  # fired in what order and from which parents (swayidle / loginctl /
-  # something else). Remove this block once the cascade source is
-  # identified.
-  LOG=/tmp/swaylock-custom.log
-  PARENT_CMD=$(${pkgs.coreutils}/bin/cat /proc/$PPID/comm 2>/dev/null || echo unknown)
-  SWAYLOCK_RUNNING=$(${pkgs.procps}/bin/pgrep -x swaylock >/dev/null && echo yes || echo no)
-  ${pkgs.coreutils}/bin/printf '%s pid=%d ppid=%d parent=%s swaylock_running=%s\n' \
-    "$(${pkgs.coreutils}/bin/date +%Y-%m-%dT%H:%M:%S.%N)" "$$" "$PPID" "$PARENT_CMD" "$SWAYLOCK_RUNNING" \
-    >> "$LOG"
+  RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}"
 
-  # Exit if swaylock is already running
-  if ${pkgs.procps}/bin/pgrep -x swaylock >/dev/null; then
+  # Single-instance guard via flock. This atomically replaces the old
+  # `pgrep -x swaylock` check AND the 10-second cooldown that sat on top of
+  # it. We grab a non-blocking lock on fd 9 and hold it for the entire
+  # lifetime of swaylock; the kernel drops it when this process exits (even
+  # on SIGKILL), so there's no stale state and no time window to reason
+  # about. A lock trigger that arrives while the screen is already locked
+  # fails flock -n and exits cleanly — safe, the screen is locked. Crucially
+  # this NEVER silently drops a *wanted* lock the way the cooldown did: if no
+  # swaylock is running (manual Mod+Ctrl+l, before-sleep on lid close, idle
+  # timeout) flock succeeds and we lock. It only ever errs toward "locked".
+  #
+  # Why this kills the "unlock N times" cascade: the bulk of a burst's
+  # triggers arrive while the screen sits locked waiting for the user, and
+  # the held lock absorbs all of them. Only a straggler in the brief window
+  # right after unlock could re-lock — and that re-locks (safe), it doesn't
+  # leave the session exposed.
+  exec 9>"$RUNTIME_DIR/swaylock-custom.lock"
+  if ! ${pkgs.util-linux}/bin/flock -n 9; then
     exit 0
   fi
 
-  # Cooldown: ignore lock requests within 10 seconds of the previous
-  # one finishing. Symptom that prompted this: 10+ unlocks needed in
-  # one cascade (rapid back-to-back lock events from swayidle's queue
-  # under -w, or some external loop emitting Lock signals). The
-  # `pgrep -x swaylock` check above only guards CONCURRENT cascades —
-  # sequential ones (swaylock exits → next event fires → swaylock
-  # starts again) still stack up. Stamp file timestamp is updated at
-  # the END of the script (after swaylock exits), so the window is
-  # "10s after unlock". Remove this block once the actual cascade
-  # source is identified and fixed.
-  STAMP=/tmp/swaylock-custom.last
-  if [[ -f "$STAMP" ]]; then
-    NOW=$(${pkgs.coreutils}/bin/date +%s)
-    LAST=$(${pkgs.coreutils}/bin/cat "$STAMP" 2>/dev/null || echo 0)
-    if (( NOW - LAST < 10 )); then
-      ${pkgs.coreutils}/bin/printf '%s cooldown_skip (last=%d now=%d)\n' \
-        "$(${pkgs.coreutils}/bin/date +%Y-%m-%dT%H:%M:%S.%N)" "$LAST" "$NOW" \
-        >> "$LOG"
-      exit 0
-    fi
-  fi
+  # Slim diagnostic log, kept while we confirm flock ends the cascades.
+  # If a cascade ever recurs WITH this guard in place it can't be stacking
+  # (flock prevents that) — it means swaylock is exiting and being respawned
+  # sequentially (e.g. dying on an evdi output modeset during the idle
+  # power-off/resume cycle), and parent= names whoever relaunched it. Lives
+  # in XDG_RUNTIME_DIR (per-user tmpfs, 0700) rather than a world-readable
+  # /tmp path. Safe to delete this block after a few weeks cascade-free.
+  LOG="$RUNTIME_DIR/swaylock-custom.log"
+  PARENT_CMD=$(${pkgs.coreutils}/bin/cat /proc/$PPID/comm 2>/dev/null || echo unknown)
+  ${pkgs.coreutils}/bin/printf '%s pid=%d ppid=%d parent=%s\n' \
+    "$(${pkgs.coreutils}/bin/date +%Y-%m-%dT%H:%M:%S.%N)" "$$" "$PPID" "$PARENT_CMD" \
+    >> "$LOG"
 
   ${pkgs.playerctl}/bin/playerctl pause 2>/dev/null || true
 
@@ -141,7 +136,4 @@ in pkgs.writeShellScriptBin "swaylock-custom" ''
     --separator-color 00000000     --key-hl-color 00000000 \
     --bs-hl-color 00000000
   ${pkgs.dunst}/bin/dunstctl set-paused false
-
-  # Record unlock time for the cooldown guard above.
-  ${pkgs.coreutils}/bin/date +%s > "$STAMP"
 ''
