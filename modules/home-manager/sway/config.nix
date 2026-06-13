@@ -23,7 +23,11 @@ let
   # re-enable comes back with default placement, not the profile's), and
   # kanshi only re-applies profiles on connect/disconnect events — so
   # after everything is powered on, kanshictl reload re-applies the
-  # matched profile. `|| true`: don't fail the hook if kanshi is down.
+  # matched profile. That re-apply is a SECOND modeset (a visible blink on
+  # wake, unlike X11's DPMS which just re-signals a fixed layout), and the
+  # position-scramble it fixes can only matter with more than one output —
+  # so we gate the reload on >1 active output. A single display skips it and
+  # wakes clean. `|| true`: don't fail the hook if kanshi is down.
   wakeOutputs = pkgs.writeShellScript "sway-wake-outputs" ''
     for i in 1 2 3 4 5; do
       off=$(${swaymsg} -t get_outputs --raw \
@@ -34,7 +38,15 @@ let
       done
       sleep 1
     done
-    ${pkgs.kanshi}/bin/kanshictl reload || true
+    # Only re-apply the kanshi profile when more than one output is active
+    # (the sole case evdi position-scramble can affect). On a single display
+    # the reload is a gratuitous extra modeset — skipping it removes the
+    # wake/unlock blink. See the comment above.
+    active=$(${swaymsg} -t get_outputs --raw \
+      | ${pkgs.jq}/bin/jq -r '[.[] | select(.active)] | length')
+    if [ "''${active:-0}" -gt 1 ]; then
+      ${pkgs.kanshi}/bin/kanshictl reload || true
+    fi
   '';
   # Full swayidle command line. Inlined here (rather than going through
   # services.swayidle) so the launch happens via sway exec in sway's
