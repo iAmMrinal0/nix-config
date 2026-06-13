@@ -1,11 +1,13 @@
 { writeShellScriptBin, kanshi, rofi, gnugrep, libnotify }:
 
 # Sway equivalent of rofi-autorandr: lists kanshi profiles defined in
-# ~/.config/kanshi/config.kdl and switches via `kanshictl switch`. Profile
+# ~/.config/kanshi/config and switches via `kanshictl switch`. Profile
 # names are parsed from `profile <name> {` lines so the script auto-picks up
-# any profiles the host's kanshi config defines.
+# any profiles the host's kanshi config defines. (home-manager's
+# services.kanshi writes the generated config to ~/.config/kanshi/config —
+# no .kdl extension — so that's the path we read.)
 writeShellScriptBin "rofi-kanshi" ''
-  config="''${XDG_CONFIG_HOME:-$HOME/.config}/kanshi/config.kdl"
+  config="''${XDG_CONFIG_HOME:-$HOME/.config}/kanshi/config"
   if [ ! -r "$config" ]; then
     ${libnotify}/bin/notify-send -u critical "Kanshi" "No config at $config"
     exit 1
