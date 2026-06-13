@@ -180,11 +180,12 @@ in {
       # firing. Both keys are listed so each app gets caught regardless
       # of which backend it ends up on after a packaging or env change.
       # Each `{}` is OR'd in sway criteria, so duplicates don't conflict.
+      # VS Code is NOT assigned here — see the for_window rule in
+      # window.commands below. It's Electron/native-Wayland and sets its
+      # app_id only AFTER the window first maps, so `assign` (matched at map
+      # time) misses it and it lands on the current workspace. A for_window
+      # `move` rule re-fires once the app_id is known, so it lands reliably.
       assigns = {
-        "\"${workspacesByKey.code}\"" = [
-          { app_id = "^[Cc]ode$"; }
-          { class = "^Code$"; }
-        ];
         "\"${workspacesByKey.music}\"" = [
           { app_id = "vlc"; }
           { class = "^[Vv]lc$"; }
@@ -217,6 +218,19 @@ in {
           {
             command = ''move to workspace "${workspacesByKey.music}"'';
             criteria = { app_id = "^[Ss]potify$"; };
+          }
+          # VS Code → code workspace. Handled here (for_window) rather than via
+          # `assigns` because VS Code is Electron and sets app_id after map, so
+          # assign races and misses (window lands on the current workspace).
+          # for_window re-evaluates when app_id is set. app_id covers native
+          # Wayland; class covers the XWayland fallback.
+          {
+            command = ''move to workspace "${workspacesByKey.code}"'';
+            criteria = { app_id = "^[Cc]ode$"; };
+          }
+          {
+            command = ''move to workspace "${workspacesByKey.code}"'';
+            criteria = { class = "^Code$"; };
           }
           {
             # Picture-in-Picture from Firefox/Chrome doesn't set the
