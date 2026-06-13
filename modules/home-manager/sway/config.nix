@@ -93,7 +93,8 @@ in {
   # subscribe ... && stop sway-session.target`), so binding here makes the bar
   # cycle correctly every switch. Matches what the waybar.nix/kanshi.nix
   # comments already assume (the HM default flipped to graphical-session.target
-  # upstream). i3 is X11 and ignores this; mordor (i3-only) is unaffected.
+  # upstream). The i3 (X11) pick is unaffected — it never binds anything to
+  # sway-session.target.
   wayland.systemd.target = "sway-session.target";
 
   wayland.windowManager.sway = {
@@ -109,13 +110,14 @@ in {
     # bug we hit: bar fine but QT_QPA_PLATFORM empty under sway). `package = null`
     # makes HM generate only the config and defer the binary to the NixOS module.
     # (Only trade-off: no auto sway-reload on rebuild — irrelevant, we relog.)
-    # mordor (registerSession = false, i3-only, no NixOS programs.sway) keeps the
-    # HM-installed swayfx so it isn't left with no sway at all. That binary needs
-    # --unsupported-gpu baked in on DisplayLink hosts: sway hard-exits at startup
-    # when the proprietary DisplayLink stack is present ("displaylink" in
-    # videoDrivers loads evdi even undocked), which is exactly the pre-cutover
-    # mordor TTY-test case. Mirrors programs.sway.extraOptions in
-    # modules/nixos/wayland-session.nix (the post-cutover path).
+    # When registerSession = false (the lightdm + i3 recovery generation, with
+    # no NixOS programs.sway), HM keeps installing swayfx so the host isn't left
+    # with no sway at all — useful for a TTY test from that generation. That
+    # binary needs --unsupported-gpu baked in on DisplayLink hosts: sway
+    # hard-exits at startup when the proprietary DisplayLink stack is present
+    # ("displaylink" in videoDrivers loads evdi even undocked). Mirrors
+    # programs.sway.extraOptions in modules/nixos/wayland-session.nix (the
+    # registered-session path).
     package =
       if osConfig.modules.wayland.registerSession then
         null

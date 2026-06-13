@@ -2,8 +2,8 @@
 
 let
   # Runtime-dispatching clipboard wrappers: pick wl-clipboard under Wayland,
-  # xclip under X11. Lets the same tmux config work on betazed (sway) and
-  # mordor (i3) without conditional nix.
+  # xclip under X11. Lets the same tmux config work under both the sway
+  # (Wayland) and i3 (X11) session picks without conditional nix.
   #
   # Copy fills PRIMARY as well as CLIPBOARD, and paste reads PRIMARY — that
   # mirrors the pre-wrapper xclip bindings, where copy-mode selections were

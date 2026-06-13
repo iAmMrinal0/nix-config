@@ -144,8 +144,9 @@ in {
     ];
     # Qt style is now configured per-session via the home-manager qt module
     # (modules/home-manager/qt.nix → Adwaita-Dark) and re-asserted at the
-    # system level for sway-exec'd apps (modules/nixos/wayland-session.nix
-    # → environment.sessionVariables.QT_STYLE_OVERRIDE). The previous
+    # system level for sway-exec'd apps via the NixOS qt module
+    # (modules/nixos/wayland-session.nix → qt.style = "adwaita-dark", which
+    # writes QT_STYLE_OVERRIDE into /etc/pam/environment). The previous
     # `QT_STYLE_OVERRIDE = "gtk2"` here loaded qtstyleplugins-style-gtk2 for
     # Qt5 apps, but that plugin doesn't exist for Qt6 — KF6 apps saw it,
     # rejected it as "invalid style override", and fell back to Fusion.
@@ -355,9 +356,10 @@ in {
     # modules/nixos/wayland-session.nix for why).
     wayland = {
       enable = true;
-      # registerSession is per-host: betazed flips it on (Phase 2), mordor
-      # stays on lightdm + i3 until Phase 3. mkDefault lets the host file
-      # override without needing mkForce there.
+      # registerSession defaults to false here — that's the lightdm + i3
+      # recovery generation. Each host opts into the greetd picker in its
+      # own file (both betazed and mordor now set it true). mkDefault lets
+      # the host file override without needing mkForce there.
       registerSession = lib.mkDefault false;
     };
     editors.vscode.enable = true;

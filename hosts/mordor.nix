@@ -28,10 +28,10 @@
     touchegg.enable = true;
 
     # Phase 3 cutover (2026-06-11): greetd + tuigreet session picker with
-    # both i3 and sway. Flipped after both dock gates passed — sway docked
-    # + hotplug flicker-free (evdi v3 patches below), Hyprland docked clean
-    # at 75Hz with no env override needed. Deploy with `nh os boot` +
-    # reboot, NOT a live switch (see modules/nixos/wayland-session.nix).
+    # both i3 and sway. Flipped after the dock gates passed — sway docked
+    # + hotplug flicker-free at 75Hz (evdi v3 patches below). Deploy with
+    # `nh os boot` + reboot, NOT a live switch (see
+    # modules/nixos/wayland-session.nix).
     # Recovery: pick the previous lightdm+i3 generation from systemd-boot.
     wayland.registerSession = true;
   };

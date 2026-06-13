@@ -1,8 +1,9 @@
 { ... }:
 
-# i3status-rust is configured in modules/home-manager/i3/status.nix and shared
-# between i3 (X11) and sway (Wayland). Sway's bar in ./config.nix runs the same
-# i3status-rs binary against the same generated config file. This file is a
-# placeholder so the directory layout mirrors the i3 module; once i3 is retired
-# (Phase 4) this is where the i3status-rust definition will move to.
+# Placeholder so the sway module's directory layout mirrors the i3 module.
+# Sway does NOT use i3status-rust: ./config.nix disables the built-in swaybar
+# (`bars = []`) and ./waybar.nix provides the bar instead (waybar handles the
+# SNI tray properly, which swaybar+i3status-rust did not). If i3 is ever
+# retired and the i3status-rust definition needs a new home, it would land
+# here.
 { }
