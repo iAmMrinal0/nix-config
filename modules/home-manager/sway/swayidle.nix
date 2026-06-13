@@ -15,7 +15,8 @@
 # from sway exec via `systemctl --user start` was also unreliable.
 # Direct exec puts swayidle in sway's process env from the start, no race.
 #
-# Mordor (i3) doesn't import this — it uses xss-lock + xautolock instead.
+# Under the i3 (X11) pick this idle path is unused — xss-lock + xautolock
+# handle locking/DPMS there instead (see modules/home/services.nix).
 {
   home.packages = [ pkgs.swayidle ];
 }

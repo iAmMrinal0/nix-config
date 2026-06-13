@@ -7,7 +7,8 @@
 # placeholder. Waybar handles SNI properly.
 #
 # Installed unconditionally — the systemd user service is tied to
-# sway-session.target, so on mordor (i3 + lightdm) it stays inert.
+# sway-session.target, so under the i3 (X11) pick it stays inert
+# (sway-session.target never starts).
 let
   colors = config.personal.theming.colors;
   currentTrack = "${pkgs.my.scripts.current-track}/bin/current-track";
