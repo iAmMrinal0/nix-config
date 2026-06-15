@@ -32,6 +32,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -87,10 +91,10 @@
     # };
   };
 
-  outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, emacs-overlay
-    , nixos-hardware, emacsConfiguration, zsh-autosuggestions, zsh-nix-shell
-    , haskell-yesod-quasiquotes, nixpkgs-unstable, nix4vscode, llm-agents
-    , nix-index-database, nix-flatpak }:
+  outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, disko
+    , emacs-overlay, nixos-hardware, emacsConfiguration, zsh-autosuggestions
+    , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable, nix4vscode
+    , llm-agents, nix-index-database, nix-flatpak }:
     let username = "iammrinal0";
     in {
       nixosConfigurations = {
@@ -147,6 +151,33 @@
                     # "lib.systems.elaborate: linux-kernel has been removed".
                     # The bare string lets unstable elaborate under its own schema.
                     localSystem = { inherit (pkgs.stdenv.hostPlatform) system; };
+                    config = final.config;
+                  };
+                })
+              ];
+            })
+          ];
+        };
+        cardassia = let hostname = "cardassia";
+        in nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs hostname username; };
+          modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
+            ./hosts/${hostname}.nix
+            ./cache.nix
+            sops-nix.nixosModules.sops
+            # disko owns cardassia's partitioning (modules/nixos/disk-layout.nix).
+            # Only this host enables it, so betazed/mordor evaluate unchanged.
+            disko.nixosModules.disko
+            ({ pkgs, inputs, ... }: {
+              nixpkgs.overlays = [
+                nur.overlays.default
+                emacs-overlay.overlay
+                nix4vscode.overlays.forVscode
+                (import ./overlays)
+                (final: prev: {
+                  unstable = import nixpkgs-unstable {
+                    localSystem = pkgs.stdenv.hostPlatform;
                     config = final.config;
                   };
                 })

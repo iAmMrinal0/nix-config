@@ -18,6 +18,16 @@ in {
       default = "both";
       description = "Enable Tailscale subnet routing and exit node features";
     };
+
+    authKeyFile = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        File containing a pre-authorized tailnet auth key (e.g. a sops
+        secret path). When set, the machine joins the tailnet on first
+        boot without interactive `tailscale up`.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -27,6 +37,7 @@ in {
       package = pkgs.unstable.tailscale;
       openFirewall = cfg.openFirewall;
       useRoutingFeatures = cfg.useRoutingFeatures;
+      authKeyFile = cfg.authKeyFile;
     };
 
     networking.firewall.trustedInterfaces = [ "tailscale0" ];
