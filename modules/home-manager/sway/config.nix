@@ -191,12 +191,17 @@ in {
           { class = "^[Vv]lc$"; }
         ];
         "\"${workspacesByKey.avoid}\"" = [
-          { app_id = "Slack"; }
-          { class = "Slack"; }
+          # Criteria are case-sensitive PCRE. sway reports these Electron
+          # apps' identifiers lowercase (native Wayland app_id `slack`,
+          # XWayland WM_CLASS `code`), unlike i3/X11 which capitalises the
+          # WM_CLASS — so match case-insensitively. discord already happened
+          # to be lowercase, which is why it alone worked before this fix.
+          { app_id = "^[Ss]lack$"; }
+          { class = "^[Ss]lack$"; }
           { app_id = "discord"; }
           { class = "discord"; }
-          { app_id = "Element"; }
-          { class = "Element"; }
+          { app_id = "^[Ee]lement$"; }
+          { class = "^[Ee]lement$"; }
         ];
       };
       # Disable the built-in swaybar entirely. Waybar replaces it (see
@@ -220,17 +225,20 @@ in {
             criteria = { app_id = "^[Ss]potify$"; };
           }
           # VS Code → code workspace. Handled here (for_window) rather than via
-          # `assigns` because VS Code is Electron and sets app_id after map, so
-          # assign races and misses (window lands on the current workspace).
-          # for_window re-evaluates when app_id is set. app_id covers native
-          # Wayland; class covers the XWayland fallback.
+          # `assigns` because Electron sets its identifier only after the
+          # window first maps, so `assign` (matched at map time) races and
+          # misses; for_window re-evaluates once it's known. In practice VS
+          # Code runs under XWayland here and exposes WM_CLASS `code`
+          # (lowercase — sway does not capitalise it the way i3/X11 does), so
+          # the `class` rule is what actually fires. The `app_id` rule is kept
+          # for a native-Wayland build. Both match case-insensitively.
           {
             command = ''move to workspace "${workspacesByKey.code}"'';
             criteria = { app_id = "^[Cc]ode$"; };
           }
           {
             command = ''move to workspace "${workspacesByKey.code}"'';
-            criteria = { class = "^Code$"; };
+            criteria = { class = "^[Cc]ode$"; };
           }
           {
             # Picture-in-Picture from Firefox/Chrome doesn't set the
@@ -283,16 +291,16 @@ in {
         ++ map
           (c: { command = "urgent enable"; criteria = c; })
           [
-            { app_id = "Slack"; }
-            { class = "Slack"; }
+            { app_id = "^[Ss]lack$"; }
+            { class = "^[Ss]lack$"; }
             { app_id = "discord"; }
             { class = "discord"; }
-            { app_id = "Element"; }
-            { class = "Element"; }
+            { app_id = "^[Ee]lement$"; }
+            { class = "^[Ee]lement$"; }
             { app_id = "vlc"; }
             { class = "^[Vv]lc$"; }
             { app_id = "^[Cc]ode$"; }
-            { class = "^Code$"; }
+            { class = "^[Cc]ode$"; }
             { app_id = "^[Ss]potify$"; }
             { class = "^[Ss]potify$"; }
             { app_id = "emacs"; }
