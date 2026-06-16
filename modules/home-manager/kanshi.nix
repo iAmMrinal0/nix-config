@@ -13,7 +13,23 @@ in {
   services.kanshi = {
     enable = true;
     settings =
-      lib.mapAttrsToList (name: profile: { profile = profile // { inherit name; }; })
+      lib.mapAttrsToList (name: profile: {
+        profile = profile // {
+          inherit name;
+          # kanshi applies the profile, then runs exec. Re-power every output
+          # so a head that came up DPMS/power-off (hotplugged while the session
+          # was idle/locked) actually lights up: kanshi's modeset reports
+          # success but never commits a mode to a powered-off CRTC, leaving the
+          # panel dark at current_mode 0x0. Idempotent for already-on heads (no
+          # modeset, no flicker) and orthogonal to enable/disable, so it won't
+          # re-enable an output a profile set to `status disable`. This is the
+          # automatic-path counterpart to the same `output * power on` in the
+          # rofi-kanshi manual switcher (pkgs/scripts/rofi-kanshi).
+          exec = (profile.exec or [ ]) ++ [
+            "${pkgs.sway}/bin/swaymsg 'output * power on'"
+          ];
+        };
+      })
         hostConfig.profiles;
   };
 
