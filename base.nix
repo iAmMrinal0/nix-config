@@ -401,4 +401,9 @@ in {
 
   # for mounting NFS shares
   boot.supportedFilesystems = [ "nfs" ];
+
+  # Cap the systemd journal. Default is min(10% of disk, 4G) = 4G here,
+  # which held ~41 days. After de-noising waybar + Docker logs the rate
+  # is ~12-15 MB/day, so 1G keeps ~2 months of useful history.
+  services.journald.extraConfig = "SystemMaxUse=1G";
 }
