@@ -19,6 +19,17 @@ let
   pavucontrol = "${pkgs.pavucontrol}/bin/pavucontrol";
   pactl = "${pkgs.pulseaudio}/bin/pactl";
 
+  # df-based root-fs usage so the bar matches `df` exactly: used / usable
+  # (excludes the ext4 root-reserved blocks). Waybar's built-in disk
+  # module reports used/total instead, which reads ~5% lower. Custom
+  # modules don't apply `states` from `percentage`, so the script emits
+  # the warning/critical class itself.
+  diskUsage = pkgs.writeShellScript "waybar-disk-usage" ''
+    pct=$(${pkgs.coreutils}/bin/df --output=pcent / | ${pkgs.coreutils}/bin/tail --lines=1 | ${pkgs.coreutils}/bin/tr --delete --complement '0-9')
+    if [ "$pct" -ge 90 ]; then class=critical; elif [ "$pct" -ge 80 ]; then class=warning; else class=normal; fi
+    printf '{"text":"%s%%","percentage":%s,"class":"%s","tooltip":"Root filesystem: %s%% used (df)"}\n' "$pct" "$pct" "$class" "$pct"
+  '';
+
   # Shared config for all separators — waybar does NOT auto-strip the
   # `#N` instance suffix when looking up module config, so each separator
   # in `modules-right` needs a distinct key. Keys are reused via this
@@ -55,12 +66,13 @@ in {
         modules-right = [
           "custom/current-track" "custom/sep1"
           "pulseaudio" "custom/sep2"
-          "network" "custom/sep3"
+          "network#ethernet" "network#wifi" "custom/sep3"
           "cpu" "custom/sep4"
-          "battery" "custom/sep5"
-          "custom/bluetooth-battery" "custom/sep6"
-          "custom/dunst" "custom/sep7"
+          "custom/disk" "custom/sep5"
+          "battery" "custom/sep6"
+          "custom/bluetooth-battery" "custom/sep7"
           "clock" "custom/sep8"
+          "custom/dunst" "custom/sep9"
           "tray"
         ];
 
@@ -72,6 +84,7 @@ in {
         "custom/sep6" = separator;
         "custom/sep7" = separator;
         "custom/sep8" = separator;
+        "custom/sep9" = separator;
 
         "sway/workspaces" = {
           disable-scroll = true;
@@ -118,32 +131,45 @@ in {
           on-click-right = "${pactl} set-sink-mute @DEFAULT_SINK@ toggle";
         };
 
-        network = {
-          # Default format: just the icon + ssid/ifname.
-          format-wifi = "󰖩 {essid}";
+        # Two interface-pinned network modules. With no `interface`,
+        # waybar auto-selects and can latch onto the VPN tunnel (tun0 /
+        # tailscale0) — that was making the bar read "tun0" instead of the
+        # SSID. Pinning each module to a NIC glob excludes the tunnels.
+        # `format-disconnected = ""` yields empty output, which waybar
+        # hides entirely (event_box hide), so the inactive link disappears
+        # and only the connected one shows. Both share the `#network` CSS.
+        "network#ethernet" = {
+          interface = "e*";
           format-ethernet = "󰈀 {ifname}";
-          format-disconnected = "󰖪";
-          # Click → NetworkManager connection editor (full GUI for
-          # picking/saving wifi networks, manages active-vs-available
-          # state with familiar checkboxes/radio UI). Ships with the
-          # networkmanager package by default.
+          format-disconnected = "";
           on-click = "${pkgs.networkmanagerapplet}/bin/nm-connection-editor";
-          # Click cycles to the alt format which shows signal strength and
-          # live bandwidth — equivalent to i3status-rust's `format_alt`.
-          # Click again to cycle back.
-          format-wifi-alt = "󰖩 {signalStrength}% {essid} ↓{bandwidthDownBits} ↑{bandwidthUpBits}";
           format-ethernet-alt = "󰈀 {ifname} ↓{bandwidthDownBits} ↑{bandwidthUpBits}";
-          # Hover-tooltip — same info as alt format, available without
-          # clicking.
-          tooltip-format-wifi = "{essid} ({signalStrength}%)\nIP: {ipaddr}/{cidr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}";
           tooltip-format-ethernet = "{ifname}\nIP: {ipaddr}/{cidr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}";
-          tooltip-format-disconnected = "Disconnected";
+          interval = 5;
+        };
+        "network#wifi" = {
+          interface = "wl*";
+          format-wifi = "󰖩 {essid}";
+          format-disconnected = "";
+          on-click = "${pkgs.networkmanagerapplet}/bin/nm-connection-editor";
+          format-wifi-alt = "󰖩 {signalStrength}% {essid} ↓{bandwidthDownBits} ↑{bandwidthUpBits}";
+          tooltip-format-wifi = "{essid} ({signalStrength}%)\nIP: {ipaddr}/{cidr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}";
           interval = 5;
         };
 
         cpu = {
           interval = 5;
           format = "󰍛 {load}";
+        };
+
+        "custom/disk" = {
+          # Root-filesystem usage, driven by df (see diskUsage) so the
+          # percentage matches `df` rather than waybar's used/total. The
+          # script emits the warning/critical class for the CSS below.
+          exec = "${diskUsage}";
+          return-type = "json";
+          interval = 30;
+          format = "󰋊 {}";
         };
 
         battery = {
@@ -291,6 +317,7 @@ in {
       #pulseaudio,
       #network,
       #cpu,
+      #custom-disk,
       #battery,
       #custom-bluetooth-battery,
       #custom-dunst,
@@ -304,7 +331,8 @@ in {
          i3status-rust `separator = " · "` style. Each `custom/sepN` gets
          the same visual; the CSS selector list covers all of them. */
       #custom-sep1, #custom-sep2, #custom-sep3, #custom-sep4,
-      #custom-sep5, #custom-sep6, #custom-sep7, #custom-sep8 {
+      #custom-sep5, #custom-sep6, #custom-sep7, #custom-sep8,
+      #custom-sep9 {
         color: ${colors.comment};
         padding: 0 2px;
       }
@@ -313,6 +341,9 @@ in {
       #pulseaudio { color: ${colors.aqua}; }
       #network { color: ${colors.aqua}; }
       #cpu { color: ${colors.aqua}; }
+      #custom-disk { color: ${colors.aqua}; }
+      #custom-disk.warning { color: ${colors.yellow}; }
+      #custom-disk.critical { color: ${colors.red}; }
       #battery { color: ${colors.green}; }
       #battery.warning { color: ${colors.yellow}; }
       #battery.critical { color: ${colors.red}; }
@@ -334,6 +365,12 @@ in {
   # env-propagation race fires at session start. Spreading retries
   # over a 30-second window with a 2-second gap lets the unit ride out
   # 5–10s of env-import lag before systemd marks it permanently failed.
+  # Silence the battery module's log spam: waybar 0.15.0 ships a stray
+  # `puts(status)` debug line (battery.cpp:689) that writes the battery
+  # status ("Plugged"/"Charging") to stdout on every poll — ~30k journal
+  # lines/day. Real logs go to stderr via spdlog, so dropping stdout
+  # removes the noise without losing anything.
+  systemd.user.services.waybar.Service.StandardOutput = lib.mkForce "null";
   systemd.user.services.waybar.Service.RestartSec = lib.mkForce 2;
   systemd.user.services.waybar.Unit.StartLimitBurst = lib.mkForce 10;
   systemd.user.services.waybar.Unit.StartLimitIntervalSec = lib.mkForce 30;
