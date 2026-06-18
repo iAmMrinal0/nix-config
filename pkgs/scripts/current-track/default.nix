@@ -5,13 +5,13 @@ writeShellScriptBin "current-track" ''
   ARGS="--player=$PLAYER"
 
   getTrack() {
-      format=$(${playerctl}/bin/playerctl $ARGS metadata --format='{{status}}')
+      format=$(${playerctl}/bin/playerctl $ARGS metadata --format='{{status}}' 2>/dev/null)
       if [ "$format" = "Playing" ]
       then
-         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}')
+         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}' 2>/dev/null)
       elif [ "$format" = "Paused" ]
       then
-         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}')
+         echo "" $(${playerctl}/bin/playerctl $ARGS  metadata --format='{{title}} - {{artist}}' 2>/dev/null)
       elif [ "$format" = "No players found" ]
       then
          echo ""
