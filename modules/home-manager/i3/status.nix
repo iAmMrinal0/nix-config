@@ -8,6 +8,14 @@ let
   playerctl = "${pkgs.playerctl}/bin/playerctl --player=spotify";
   dunstctl = "${pkgs.dunst}/bin/dunstctl";
   gsimplecal = "${pkgs.gsimplecal}/bin/gsimplecal";
+  # df-based root-fs usage so the bar matches `df` exactly: used / usable
+  # (excludes the ext4 root-reserved blocks). i3status-rust's disk_space
+  # block reports used/total instead, which reads ~5% lower.
+  diskUsage = pkgs.writeShellScript "i3status-disk-usage" ''
+    pct=$(${pkgs.coreutils}/bin/df --output=pcent / | ${pkgs.coreutils}/bin/tail --lines=1 | ${pkgs.coreutils}/bin/tr --delete --complement '0-9')
+    if [ "$pct" -ge 90 ]; then state=Critical; elif [ "$pct" -ge 80 ]; then state=Warning; else state=Idle; fi
+    printf '{"icon":"disk_drive","state":"%s","text":"%s%%"}\n' "$state" "$pct"
+  '';
 in {
   # Popup calendar for the time block; scroll on the block or popup to switch months
   xdg.configFile."gsimplecal/config".text = ''
@@ -76,16 +84,41 @@ in {
           ];
         }
         {
+          # Two interface-pinned net blocks. A regex `device` keeps the VPN
+          # tunnel (tun0 / tailscale0) from being selected. Each hides when
+          # its interface is down/missing (inactive_format + missing_format
+          # empty), so only the connected link shows. NOTE: the previous
+          # `device = "auto"` was a bug — it matched an interface literally
+          # named "auto", so this block rendered nothing.
           block = "net";
-          device = "auto";
+          device = "^wl";
           format = " $icon $ssid ";
           format_alt = " $icon $signal_strength $ssid {$speed_down.eng(prefix:K) / $speed_up.eng(prefix:K) |}";
+          inactive_format = "";
+          missing_format = "";
+        }
+        {
+          block = "net";
+          device = "^(en|eth)";
+          format = " $icon $device ";
+          format_alt = " $icon $device {$speed_down.eng(prefix:K) / $speed_up.eng(prefix:K) |}";
+          inactive_format = "";
           missing_format = "";
         }
         {
           block = "load";
           interval = 5;
           format = " $icon $1m.eng(w:4) ";
+        }
+        {
+          # Root-filesystem usage. Surfaced so a Nix store / worktree
+          # blowup is visible before it runs the disk dry. Driven by df
+          # (see diskUsage) so the percentage matches `df`; state colours
+          # the block yellow at >=80% and red at >=90%.
+          block = "custom";
+          command = "${diskUsage}";
+          json = true;
+          interval = 60;
         }
         {
           block = "battery";
@@ -102,14 +135,6 @@ in {
           interval = 30;
         }
         {
-          block = "custom";
-          command = dunstToggle;
-          interval = 2;
-          click = [
-            { button = "right"; cmd = "${dunstctl} set-paused toggle"; }
-          ];
-        }
-        {
           block = "time";
           interval = 60;
           format = " $icon $timestamp.datetime(f:'W%V · %a %d %b · %H:%M') ";
@@ -117,6 +142,14 @@ in {
             { button = "left"; cmd = gsimplecal; } # toggle calendar popup
             { button = "up"; cmd = "${gsimplecal} prev_month"; }
             { button = "down"; cmd = "${gsimplecal} next_month"; }
+          ];
+        }
+        {
+          block = "custom";
+          command = dunstToggle;
+          interval = 2;
+          click = [
+            { button = "right"; cmd = "${dunstctl} set-paused toggle"; }
           ];
         }
       ];
