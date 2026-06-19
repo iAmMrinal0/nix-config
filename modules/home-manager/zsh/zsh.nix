@@ -107,6 +107,26 @@ in {
         ${pkgs.tmux}/bin/tmux new-session -As $dir_name
       }
 
+      # Remote hosts lack the xterm-kitty terminfo entry, so ncurses apps
+      # error out over ssh. `kitten ssh` installs it into the remote login
+      # user's ~/.terminfo on connect (keeps TERM honest, unlike faking it).
+      # Interactive-only, so git/rsync and scripts still use the real binary.
+      if [[ "$TERM" == xterm-kitty ]]; then
+        function ssh {
+          ${config.programs.kitty.package}/bin/kitten ssh "$@"
+        }
+      fi
+
+      # ~/.terminfo doesn't survive sudo (it resets $HOME to /root), so run
+      # this once per host to install xterm-kitty system-wide for sudo'd TUIs.
+      function ssh-setup-terminfo {
+        local host="''${1:?usage: ssh-setup-terminfo <host>}"
+        infocmp -x xterm-kitty | command ssh "$host" 'cat > /tmp/.xterm-kitty.ti' \
+          && command ssh -t "$host" \
+            'sudo tic -x -o /usr/share/terminfo /tmp/.xterm-kitty.ti && rm -f /tmp/.xterm-kitty.ti' \
+          && echo "xterm-kitty installed system-wide on $host"
+      }
+
       # Defer heavy plugins until after the first prompt renders. They
       # initialize a few ms later via a precmd hook — invisible unless you
       # type the instant the prompt appears (autosuggestions/syntax colors
