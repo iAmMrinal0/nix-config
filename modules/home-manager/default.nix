@@ -21,6 +21,7 @@
     ./rofi.nix
     ./ssh.nix
     ./systemd.nix
+    ./terminator.nix
     ./tmux.nix
     ./xsession.nix
     ./wayland-session.nix
