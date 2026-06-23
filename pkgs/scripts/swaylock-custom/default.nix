@@ -118,8 +118,17 @@ in pkgs.writeShellScriptBin "swaylock-custom" ''
   # entire UI; we don't want a circle hovering over it. Setting all
   # indicator colors to fully transparent (RRGGBB"00") makes every state
   # invisible.
+  # --scaling=fit (not swaylock's default of fill): the canvas is built to the
+  # focused output's geometry with all text/QR anchored at the left edge (X=60).
+  # fill scales-to-cover and crops the overflow centered, so any time the canvas
+  # aspect ratio doesn't match the output's — most notably when the IPC query
+  # above fails and SCREEN_W/H fall back to 1920x1080 on the 2560x1600 panel —
+  # it shaves the sides and the left-anchored content disappears off-screen.
+  # fit letterboxes instead of cropping; the bars are invisible on a pure-black
+  # background, and the left edge is always preserved.
   ${pkgs.swaylock}/bin/swaylock \
     --image "$TMPDIR/lock.png" \
+    --scaling fit \
     --color 000000 \
     --hide-keyboard-layout \
     --inside-color 00000000        --ring-color 00000000 \
