@@ -22,6 +22,7 @@
     ./ssh.nix
     ./systemd.nix
     ./terminator.nix
+    ./thunar.nix
     ./tmux.nix
     ./xsession.nix
     ./wayland-session.nix

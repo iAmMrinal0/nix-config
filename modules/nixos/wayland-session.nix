@@ -59,6 +59,12 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # Thunar stores its prefs in xfconf. This installs xfconf + registers its
+    # D-Bus service so xfconfd is activatable on the session bus — required for
+    # the home-manager xfconf.settings in modules/home-manager/thunar.nix to
+    # apply at activation (we run no XFCE desktop that would pull it in).
+    programs.xfconf.enable = true;
+
     # Always install the Wayland tools so the home-manager sway config can
     # reference them and so the user can `swaymsg`, `grim`, etc. from a TTY
     # or X11 session for testing. Installing the binaries does not touch
