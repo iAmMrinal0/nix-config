@@ -130,14 +130,22 @@ in {
         name = "connect-kronor-vpn";
         runtimeInputs = [ pkgs.openvpn pkgs.bitwarden-cli ];
         text = ''
-          echo "mrinal@kronor.io" > /tmp/kronor_vpn.pass
+          # The auth file holds the VPN username + a live TOTP. Write it to
+          # a private temp file (mktemp creates 0600) with a cleanup trap so
+          # the secret never sits at a predictable, world-readable path and
+          # never lingers after the session — also correct under ephemeral /tmp.
+          pass="$(mktemp)"
+          trap 'rm -f "$pass"' EXIT
+          chmod 600 "$pass"
+
+          echo "mrinal@kronor.io" > "$pass"
 
           if [[ "''${1:-staging}" == "staging" ]]; then
-              bw get totp "pritunl staging" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> /tmp/kronor_vpn.pass
-              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-staging.path} --auth-user-pass /tmp/kronor_vpn.pass --auth-nocache
+              bw get totp "pritunl staging" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> "$pass"
+              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-staging.path} --auth-user-pass "$pass" --auth-nocache
           elif [[ "$1" == "production" ]]; then
-              bw get totp "pritunl prod" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> /tmp/kronor_vpn.pass
-              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-production.path} --auth-user-pass /tmp/kronor_vpn.pass --auth-nocache
+              bw get totp "pritunl prod" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> "$pass"
+              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-production.path} --auth-user-pass "$pass" --auth-nocache
           fi
         '';
       })
