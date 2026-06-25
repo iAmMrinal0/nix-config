@@ -1,4 +1,4 @@
-{ lib, pkgs, hostname, ... }:
+{ config, lib, pkgs, hostname, ... }:
 
 let
   # `hostname` is always supplied via home-manager.extraSpecialArgs
@@ -57,4 +57,11 @@ in {
   systemd.user.services.kanshi.Service.RestartSec = lib.mkForce 2;
   systemd.user.services.kanshi.Unit.StartLimitBurst = lib.mkForce 10;
   systemd.user.services.kanshi.Unit.StartLimitIntervalSec = lib.mkForce 30;
+
+  # Restart kanshi when its config changes. The HM module only sets
+  # Restart=always (crash respawn), so without this a `nh os switch` that edits
+  # a profile wouldn't apply until logout or a manual `systemctl --user restart
+  # kanshi`. sd-switch restarts the unit when this trigger's store path changes.
+  systemd.user.services.kanshi.Unit.X-Restart-Triggers =
+    [ config.xdg.configFile."kanshi/config".source ];
 }
