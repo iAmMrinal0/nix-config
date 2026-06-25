@@ -30,6 +30,17 @@ in {
 
       "org/gnome/desktop/interface" =
         mkIf cfg.appearance.preferDarkTheme { color-scheme = "prefer-dark"; };
+
+      # Nautilus (GNOME Files) preferences. click-policy = "single" is the
+      # Nautilus equivalent of Thunar's misc-single-click; the rest mirror the
+      # tweaks set on betazed (offer "Create Link" / "Delete Permanently" in
+      # the context menu, default to icon view).
+      "org/gnome/nautilus/preferences" = {
+        click-policy = "single";
+        show-create-link = true;
+        show-delete-permanently = true;
+        default-folder-viewer = "icon-view";
+      };
     };
   };
 }

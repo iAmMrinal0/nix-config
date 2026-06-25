@@ -39,6 +39,37 @@
       configFile."pgcli/pgcli-staging".source =
         config.lib.file.mkOutOfStoreSymlink
         osConfig.sops.templates."pgcli-staging".path;
+
+      # Default application associations (mimeapps.list). Apps occasionally
+      # rewrite this file at runtime ("Set as default" / xdg-mime), which
+      # would turn the HM symlink back into a regular file and abort the next
+      # activation on the backup conflict — so force-overwrite, same as
+      # gtk-3.0/bookmarks. The magnet handler points at the canonical
+      # transmission-gtk.desktop rather than the runtime-generated
+      # userapp-transmission-gtk-*.desktop alias that was in the mutable file.
+      configFile."mimeapps.list".force = true;
+      mimeApps = {
+        enable = true;
+        defaultApplications = {
+          "x-scheme-handler/http" = "firefox.desktop";
+          "x-scheme-handler/https" = "firefox.desktop";
+          "x-scheme-handler/chrome" = "firefox.desktop";
+          "text/html" = "firefox.desktop";
+          "application/xhtml+xml" = "firefox.desktop";
+          "application/x-extension-htm" = "firefox.desktop";
+          "application/x-extension-html" = "firefox.desktop";
+          "application/x-extension-shtml" = "firefox.desktop";
+          "application/x-extension-xhtml" = "firefox.desktop";
+          "application/x-extension-xht" = "firefox.desktop";
+          "x-scheme-handler/magnet" = "transmission-gtk.desktop";
+          "image/png" = "feh.desktop";
+          "image/jpeg" = "feh.desktop";
+          "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop";
+          "application/zip" = "xarchiver.desktop";
+          "text/plain" = "code.desktop";
+          "application/x-zerosize" = "code.desktop";
+        };
+      };
     };
   };
 }
