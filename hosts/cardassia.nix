@@ -1,29 +1,23 @@
-# NixOS config for work laptop (mordor's successor — ThinkPad P14s)
+# NixOS config for work laptop (mordor's successor — ThinkPad P14s Gen 6,
+# Intel Core Ultra 9 285H, 16 cores / 64 GB).
 #
 # Derived from hosts/mordor.nix. Differences from mordor:
 #   - disko owns the disk (LUKS + btrfs + /persist + dormant @root-blank
 #     snapshot for staged impermanence) → modules.disk-layout.enable, and
 #     NO swapDevices here (the @swap subvolume provides it; zram backs up).
-#   - tailscale joins the tailnet on first boot via a sops auth key.
-#
-# ⚠ CONFIRM ON ARRIVAL — items to revisit once the actual P14s is in hand
-#   (search this file for "CONFIRM ON ARRIVAL"):
-#     1. nixos-hardware module  (P14s, not T14s — variant Intel/AMD TBD)
-#     2. kvm-intel vs kvm-amd + microcode  (in hardware/cardassia.nix)
-#     3. evdi/DisplayLink dock overlay + WLR_EVDI_RENDER_DEVICE PCI path
-#     4. TLP battery/CPU thresholds
-#     5. nix.settings max-jobs/cores  (depends on the P14s core count)
 { config, lib, pkgs, inputs, hostname, username, ... }:
 
 {
   networking.hostName = hostname;
   imports = [
-    # ⚠ CONFIRM ON ARRIVAL (1): T14s carried over from mordor as the closest
-    # stand-in so the flake evaluates today. Swap for the matching
-    # lenovo-thinkpad-p14s-* module once the laptop arrives (check
-    # https://github.com/NixOS/nixos-hardware for the exact gen/variant attr;
-    # AMD and Intel have different ones).
-    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14s
+    # nixos-hardware has no lenovo-thinkpad-p14s-intel-gen6 module (Intel
+    # stops at gen5; only AMD has gen6), and the gen5 module adds nothing
+    # beyond these generic profiles on a modern kernel — so use the common-*
+    # set directly.
+    inputs.nixos-hardware.nixosModules.common-cpu-intel
+    inputs.nixos-hardware.nixosModules.common-gpu-intel
+    inputs.nixos-hardware.nixosModules.common-pc-laptop
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
     ../base.nix
     ../home.nix
     ../modules/nixos
@@ -42,7 +36,7 @@
     # @root-blank snapshot (modules/nixos/disk-layout.nix). Also provides
     # the swapfile, so no swapDevices block here (zram from base.nix backs
     # it up). The boot-time root wipe is NOT armed — impermanence is
-    # adopted in stages (see cardassia-setup.md Phase F).
+    # adopted in stages.
     disk-layout.enable = true;
     gc = {
       enable = true;
@@ -50,10 +44,7 @@
     };
     nfs.enable = true;
     openrazer.enable = true;
-    tailscale = {
-      enable = true;
-      authKeyFile = config.sops.secrets.tailscale-auth-key.path;
-    };
+    tailscale.enable = true;
     touchegg.enable = true;
 
     # Greetd + tuigreet session picker (i3 + sway), same as mordor.
@@ -63,11 +54,14 @@
     wayland.registerSession = true;
   };
 
-  # tailscale auth key: host-scoped (NOT in base.nix's shared secrets list)
-  # so betazed/mordor are unaffected. The secret must exist in
-  # sops/secrets.yaml before cardassia activates (cardassia-setup.md
-  # Phase B); tailscaled runs as root, so default root-owned 0400 is fine.
-  sops.secrets.tailscale-auth-key = { };
+  # Boot-speed trims (see `systemd-analyze`):
+  #   - systemd-boot timeout 1s (was 5s); hold Space at boot to reach the menu.
+  #   - Skip the network-online wait (~7s): nothing here needs it — the only NFS
+  #     mount is automount (noauto + x-systemd.automount). NM still connects in
+  #     the background.
+  # Bigger remaining costs (firmware POST, LUKS unlock) are BIOS/disk, not here.
+  boot.loader.timeout = 1;
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   # This value determines the NixOS release with which your system is to be
   # compatible. Fresh install on 26.05 — never copy an older host's value.
@@ -98,18 +92,41 @@
     ];
   };
 
-  # ⚠ CONFIRM ON ARRIVAL (5): copied from mordor (4 cores / 8 threads). The
-  # P14s may have a different core count — revisit so nix doesn't run more
-  # parallel derivations than the machine can feed without OOMing.
-  nix.settings = {
-    max-jobs = 2;
-    cores = 4;
+  # Internal speaker fix (P14s Gen 6 / sof-hda-dsp). The card has two mutually
+  # exclusive UCM HiFi profiles sharing one analog PCM — one with Headphones
+  # (priority 10300), one with Speaker (10200). With HDMI present WirePlumber
+  # always picks the higher-priority Headphones profile, so the Speaker sink
+  # never appears. Pin the Speaker profile; it also has Mic1+Mic2 so the digital
+  # mic still works. Upstream bug: alsa-ucm-conf#720, pipewire#4976.
+  # Trade-off: no automatic wired-headphone-jack switching (switch the profile
+  # by hand; Bluetooth is a separate card, unaffected).
+  services.pipewire.wireplumber.extraConfig."52-cardassia-speaker-profile" = {
+    "monitor.alsa.rules" = [
+      {
+        matches = [{ "device.name" = "~alsa_card.*skl_hda_dsp_generic"; }];
+        actions.update-props = {
+          "device.profile" = "HiFi (HDMI1, HDMI2, HDMI3, Mic1, Mic2, Speaker)";
+        };
+      }
+    ];
   };
+
+  # Keep Bluetooth headsets (e.g. WH-1000XM3) in A2DP/LDAC: don't auto-switch to
+  # the HSP/HFP headset profile when an app opens a mic — voice capture falls
+  # back to the laptop mic instead.
+  services.pipewire.wireplumber.extraConfig."53-cardassia-bluetooth" = {
+    "wireplumber.settings" = {
+      "bluetooth.autoswitch-to-headset-profile" = false;
+    };
+  };
+
+  # No nix.settings override: on 16 cores / 64 GB the defaults (max-jobs =
+  # "auto", cores = 0) already use everything. mordor caps these to avoid OOM
+  # on its 4 cores; cardassia doesn't need to.
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
-  # ⚠ CONFIRM ON ARRIVAL (4): thresholds copied from mordor; review against
-  # the P14s battery/silicon.
+  # Battery charge thresholds + CPU perf policy (BAT0).
   services.tlp = {
     enable = true;
     settings = {
@@ -149,21 +166,26 @@
   # Ensure users in these groups can access the fingerprint reader
   users.groups.plugdev.members = [ config.users.users.${username}.name ];
 
+  # Mic-mute LED (P14s `platform::micmute`). Detach the kernel `audio-micmute`
+  # trigger — it binds the LED to a hardware capture-switch mute, but PipeWire
+  # mutes in software and never flips that, so the trigger held the LED dark and
+  # overrode manual writes. trigger=none + group-write on `brightness` let the
+  # shared mic-mute-toggle keybind drive it. Host-local because this is the only
+  # host with this LED node; the script no-ops the LED where it's absent.
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="leds", KERNEL=="platform::micmute", ATTR{trigger}="none", RUN+="${pkgs.coreutils}/bin/chgrp audio /sys/class/leds/platform::micmute/brightness", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/leds/platform::micmute/brightness"
+  '';
+
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   environment.systemPackages = [ pkgs.android-studio pkgs.polkit_gnome ];
 
   programs.nix-ld.enable = true;
 
-  # ⚠ CONFIRM ON ARRIVAL (3): DisplayLink/evdi dock support, carried over
-  # from mordor verbatim. Keep this block ONLY if cardassia uses the same
-  # DisplayLink dock. Two caveats:
-  #   - The patches pin wlroots_0_19 + scenefx (26.05, same as mordor) so
-  #     they apply identically and the closure pre-builds fine.
-  #   - WLR_EVDI_RENDER_DEVICE below points at the INTEL iGPU's fixed PCI
-  #     address (0000:00:02.0). On an AMD P14s the iGPU PCI address differs
-  #     — re-derive with `ls -l /dev/dri/by-path/`. If the dock is native
-  #     DP-alt-mode/USB-C (not DisplayLink), drop this overlay entirely.
+  # DisplayLink/evdi dock support, carried over from mordor (cardassia uses a
+  # DisplayLink dock at the office). WLR_EVDI_RENDER_DEVICE below points at the
+  # Intel Arc iGPU at PCI 0000:00:02.0. The patches pin wlroots_0_19 + scenefx
+  # to 26.05 so they apply cleanly.
   # See hosts/mordor.nix for the full history of why these patches exist.
   nixpkgs.overlays = [
     (final: prev: {
