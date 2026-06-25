@@ -7,6 +7,7 @@ let
   rofiAutorandr = "${pkgs.my.scripts.rofi-autorandr}/bin/rofi-autorandr";
   rofiTailscaleAccount = "${pkgs.my.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.my.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
+  micMuteToggle = "${pkgs.my.scripts.mic-mute-toggle}/bin/mic-mute-toggle";
 
   # i3's `move workspace to output <dir>` doesn't trigger mouse_warping, so
   # the cursor stays put. Warp it onto the focused workspace's rect after
@@ -281,8 +282,7 @@ in {
         "Shift+Up" = "move up";
         "Shift+Right" = "move right";
         "Shift+space" = "floating toggle";
-        "Shift+m" =
-          "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+        "Shift+m" = "exec ${micMuteToggle}";
         "s" = "layout stacking";
         "space" = "focus mode_toggle";
         "w" = "layout tabbed";
@@ -307,8 +307,7 @@ in {
         "XF86MonBrightnessUp" = "${pkgs.brightnessctl}/bin/brightnessctl set +10%";
         "XF86MonBrightnessDown" = "${pkgs.brightnessctl}/bin/brightnessctl set 10%-";
 
-        "XF86AudioMicMute" =
-          "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+        "XF86AudioMicMute" = micMuteToggle;
 
         "Print" = "${pkgs.gnome-screenshot}/bin/gnome-screenshot -i";
 

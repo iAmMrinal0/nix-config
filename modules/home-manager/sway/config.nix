@@ -7,6 +7,7 @@ let
   rofiTailscaleAccount = "${pkgs.my.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.my.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
   rofiKanshi = "${pkgs.my.scripts.rofi-kanshi}/bin/rofi-kanshi";
+  micMuteToggle = "${pkgs.my.scripts.mic-mute-toggle}/bin/mic-mute-toggle";
   wallpaper = ../common/wallpapers/nix-glow-black.png;
 
   swaymsg = "${pkgs.sway}/bin/swaymsg";
@@ -534,8 +535,7 @@ in {
         "Shift+Up" = "move up";
         "Shift+Right" = "move right";
         "Shift+space" = "floating toggle";
-        "Shift+m" =
-          "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+        "Shift+m" = "exec ${micMuteToggle}";
         "s" = "layout stacking";
         "space" = "focus mode_toggle";
         "w" = "layout tabbed";
@@ -558,8 +558,7 @@ in {
         "XF86MonBrightnessUp" = "${pkgs.brightnessctl}/bin/brightnessctl set +10%";
         "XF86MonBrightnessDown" = "${pkgs.brightnessctl}/bin/brightnessctl set 10%-";
 
-        "XF86AudioMicMute" =
-          "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+        "XF86AudioMicMute" = micMuteToggle;
 
         # Wayland Print: flameshot opens an interactive picker / annotator,
         # uses xdg-desktop-portal-wlr (see modules/nixos/wayland-session.nix)
