@@ -59,6 +59,7 @@
       "file:///home/${username}/oss"
       "file:///home/${username}/play"
       "file:///home/${username}/work"
+      "file:///home/${username}/tnas"
     ];
   };
 
