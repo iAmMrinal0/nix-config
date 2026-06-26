@@ -6,8 +6,9 @@
 #   - 10 min idle   → outputs powered off (DPMS)
 #   - on suspend    → lock first so the lid is locked on resume
 #
-# We install the binary here and let sway/config.nix exec it directly with
-# its full argument list. Earlier attempts to use HM's `services.swayidle`
+# We install the binary here and let sway/config.nix exec it directly (via a
+# supervised wrapper that adds a respawn loop + `-d` debug log — see the
+# swayidleCmd comment there). Earlier attempts to use HM's `services.swayidle`
 # (systemd user unit bound to sway-session.target) failed with the same
 # WAYLAND_DISPLAY env-import race that bit kanshi/blueman/kdeconnect:
 # the unit fired before sway propagated env, swayidle couldn't reach the

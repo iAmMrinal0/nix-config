@@ -49,15 +49,46 @@ let
       ${pkgs.kanshi}/bin/kanshictl reload || true
     fi
   '';
-  # Full swayidle command line. Inlined here (rather than going through
-  # services.swayidle) so the launch happens via sway exec in sway's
-  # process env — see swayidle.nix for why the systemd-unit path raced.
-  # Behaviour:
+  # Supervised swayidle launcher. The swayidle invocation is inlined here
+  # (rather than going through services.swayidle) so the launch happens via
+  # sway exec in sway's process env — see swayidle.nix for why the
+  # systemd-unit path raced. Behaviour of the swayidle args:
   #   timeout 300  → lock screen
   #   timeout 600  → power outputs off; on resume, wake outputs (evdi-safe)
   #   before-sleep → lock before the system suspends
   #   lock         → lock when `loginctl lock-session` fires
-  swayidleCmd = ''${pkgs.swayidle}/bin/swayidle -w timeout 300 ${lock} timeout 600 "${swaymsg} 'output * power off'" resume ${wakeOutputs} before-sleep ${lock} lock ${lock}'';
+  #
+  # The wrapper around it fixes two consequences of the direct-exec launch
+  # that bit us in the "unlock N times" cascade (see swaylock-custom):
+  #   1. Captured debug log. swayidle's stdout/stderr otherwise go nowhere,
+  #      so when it re-fires lock seconds after an unlock there's no record
+  #      of *which* event triggered it. `-d` + redirect to
+  #      $XDG_RUNTIME_DIR/swayidle.log (per-user tmpfs, 0700) records every
+  #      event swayidle handles and any output-modeset errors from the
+  #      power-off/resume cycle. Pairs with swaylock-custom.log to pinpoint
+  #      the relock trigger. Truncated once per session at launch.
+  #   2. Respawn loop. A direct sway `exec` is one-shot — if swayidle crashes
+  #      (suspected: evdi output modeset during the idle power-off/resume
+  #      cycle) it is never restarted and the session silently loses
+  #      auto-lock. The loop restarts it; the 2s backoff stops a
+  #      hard-failing swayidle from hot-looping.
+  swayidleCmd = pkgs.writeShellScript "swayidle-supervised" ''
+    LOG="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}/swayidle.log"
+    : > "$LOG"
+    while true; do
+      ${pkgs.coreutils}/bin/printf '%s swayidle starting\n' \
+        "$(${pkgs.coreutils}/bin/date +%Y-%m-%dT%H:%M:%S.%N)" >> "$LOG"
+      ${pkgs.swayidle}/bin/swayidle -d -w \
+        timeout 300 ${lock} \
+        timeout 600 "${swaymsg} 'output * power off'" resume ${wakeOutputs} \
+        before-sleep ${lock} \
+        lock ${lock} >> "$LOG" 2>&1
+      rc=$?
+      ${pkgs.coreutils}/bin/printf '%s swayidle exited (rc=%d), respawning in 2s\n' \
+        "$(${pkgs.coreutils}/bin/date +%Y-%m-%dT%H:%M:%S.%N)" "$rc" >> "$LOG"
+      ${pkgs.coreutils}/bin/sleep 2
+    done
+  '';
 
   # Tray apps that don't retry SNI registration if the watcher/host isn't
   # ready at startup. Sway exec'ing all tray apps in parallel races
@@ -351,8 +382,10 @@ in {
         # or `kanshictl reload` — sway reload doesn't pick it up.
         {
           # Idle daemon — see swayidle.nix for context, swayidleCmd in the
-          # let block above for the full argument list.
-          command = swayidleCmd;
+          # let block above for the full argument list. swayidleCmd is a
+          # supervised wrapper script (respawn + debug log); reference it by
+          # store path.
+          command = "${swayidleCmd}";
         }
         # Tray-publishing apps started via sway exec (NOT systemd
         # auto-start). Three reasons it stays this way:
