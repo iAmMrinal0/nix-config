@@ -23,7 +23,6 @@ with pkgs; [
   nixfmt
   gh
   nil
-  btop
   unzip
 
   # Text Processing & Search

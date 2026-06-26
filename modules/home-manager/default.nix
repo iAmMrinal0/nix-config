@@ -5,6 +5,7 @@
     ./autorandr.nix
     ./blueman-applet.nix
     ./chromium.nix
+    ./devtools.nix
     ./dunstrc.nix
     ./emacs.nix
     ./feh.nix
