@@ -19,6 +19,7 @@
     ./openrazer.nix
     ./pgcli.nix
     ./printing.nix
+    ./secret-dotfiles.nix
     ./tailscale.nix
     ./touchegg.nix
     ./vscode.nix
