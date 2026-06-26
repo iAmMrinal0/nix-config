@@ -21,6 +21,21 @@ in {
   options.modules.gfn = {
     enable = mkEnableOption
       "Enable NVIDIA GeForce NOW (Flatpak + gamescope launcher)";
+
+    # gamescope render size for the launcher. Defaults to 1080p60 (safe for
+    # weak iGPUs); set to the native panel res on capable hosts.
+    width = mkOption {
+      type = types.int;
+      default = 1920;
+    };
+    height = mkOption {
+      type = types.int;
+      default = 1080;
+    };
+    refresh = mkOption {
+      type = types.int;
+      default = 60;
+    };
   };
 
   config = mkIf cfg.enable {
@@ -72,7 +87,8 @@ in {
     };
 
     home-manager.users.${username} = {
-      home.packages = [ pkgs.my.scripts.gfn ];
+      home.packages =
+        [ (pkgs.my.scripts.gfn.override { inherit (cfg) width height refresh; }) ];
     };
   };
 }

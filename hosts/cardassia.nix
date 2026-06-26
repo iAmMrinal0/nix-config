@@ -42,6 +42,13 @@
       enable = true;
       method = "nh";
     };
+    # GeForce NOW at the native panel res — the Arc iGPU handles it (unlike
+    # mordor's UHD 620, which is why the launcher defaults to 1080p).
+    gfn = {
+      enable = true;
+      width = 2560;
+      height = 1600;
+    };
     nfs.enable = true;
     openrazer.enable = true;
     tailscale.enable = true;
