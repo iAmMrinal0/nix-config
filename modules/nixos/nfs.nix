@@ -16,7 +16,18 @@ in {
     boot.supportedFilesystems = [ "nfs" ];
     services.rpcbind.enable = true;
 
-    fileSystems."${userHome}/tnas" = {
+    # Mount OUTSIDE $HOME, then symlink ~/tnas -> /mnt/tnas below.
+    #
+    # Why not mount directly at ~/tnas: sandboxed apps that bind the whole
+    # home read-write (notably the GeForce NOW Flatpak, --filesystem=home)
+    # recursively bind $HOME. A live nfs4 submount nested in $HOME makes
+    # bubblewrap fail to re-apply mount flags onto it and the sandbox dies:
+    #   bwrap: Can't bind mount …/home/<user>: Unable to apply mount flags:
+    #          remount "…/tnas": No such device
+    # A symlink isn't a mountpoint, so the home bind just copies the link
+    # and there's no submount under $HOME to choke on — GFN keeps full home
+    # access. See modules/nixos/gfn.nix.
+    fileSystems."/mnt/tnas" = {
       device = "atlas:/mnt/data/media";
       fsType = "nfs";
       options = [
@@ -36,5 +47,10 @@ in {
         "x-gvfs-hide"
       ];
     };
+
+    # ~/tnas stays as the user-facing path (GTK bookmark in gtk.nix points
+    # here). `L+` replaces any existing dir/link, so a stale automount dir
+    # left over from the old in-home mount is cleaned up on switch.
+    systemd.tmpfiles.rules = [ "L+ ${userHome}/tnas - - - - /mnt/tnas" ];
   };
 }
