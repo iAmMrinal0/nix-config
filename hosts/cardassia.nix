@@ -181,6 +181,8 @@
 
   programs.nix-ld.enable = true;
 
+  programs.steam.enable = true;
+
   # DisplayLink/evdi dock support, carried over from mordor (cardassia uses a
   # DisplayLink dock at the office). WLR_EVDI_RENDER_DEVICE below points at the
   # Intel Arc iGPU at PCI 0000:00:02.0. The patches pin wlroots_0_19 + scenefx
