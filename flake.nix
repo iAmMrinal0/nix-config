@@ -85,10 +85,6 @@
       # native-compiling everything locally; the pin also keeps packages like
       # `apm` on the nixpkgs revision they're actually built and tested against.
     };
-    # nixos-06cb-009a-fingerprint-sensor = {
-    #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor?ref=25.05";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
   };
 
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, disko

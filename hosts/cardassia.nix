@@ -154,23 +154,15 @@
     };
   };
 
-  # services.fprintd.enable = true;
-  # security.pam.services.login.fprintAuth = true;
-  # security.pam.services.sudo.fprintAuth = true;
-  # security.pam.services.i3lock.fprintAuth = true;
-  # security.pam.services.polkit-1.fprintAuth = true;
+  services.fprintd.enable = true;
+  security.pam.services = {
+    sudo.fprintAuth = true;
+    swaylock.fprintAuth = true;
+    i3lock.fprintAuth = true;
+    polkit-1.fprintAuth = true;
+  };
 
-  # security.polkit.extraConfig = ''
-  #   polkit.addRule(function(action, subject) {
-  #     if ((action.id == "net.reactivated.fprint.device.enroll") ||
-  #         (action.id == "net.reactivated.fprint.device.verify") ||
-  #         (action.id == "net.reactivated.fprint.device.delete")) {
-  #       return polkit.Result.YES;
-  #     }
-  #   });
-  # '';
-
-  # Ensure users in these groups can access the fingerprint reader
+  # plugdev: fingerprint reader access (also used by openrazer).
   users.groups.plugdev.members = [ config.users.users.${username}.name ];
 
   # Mic-mute LED (P14s `platform::micmute`). Detach the kernel `audio-micmute`
