@@ -33,7 +33,26 @@ let
               ${remote}: ${mountPath}
           '';
 
-          ExecStop = "/run/current-system/sw/bin/fusermount -u ${mountPath}";
+          # Bounded, non-blocking unmount on stop/shutdown. A plain
+          # `fusermount -u` blocks if rclone is wedged on a dead backend
+          # (laptop off-network, tailnet down, expired OAuth) — and then the
+          # 90s default stop timeout fires. That D-state stall on an in-$HOME
+          # mount is exactly what made a recent reboot take ~4.5 min on the
+          # old tnas NFS mount. Try a clean unmount first (lets the vfs cache
+          # flush), then fall back to a lazy detach so the mountpoint leaves
+          # the tree immediately and nothing else blocks on it. Cap the whole
+          # stop at 15s so shutdown can never stall here — pending uploads
+          # survive in the on-disk vfs cache and resume on next start.
+          # fusermount3 (not fusermount): the mount is fuse.rclone built
+          # against libfuse3, and we want the matching fuse3 helper. Must be
+          # the /run/wrappers setuid copy — the nixpkgs store binary isn't
+          # setuid and can't unmount from an unprivileged --user service.
+          ExecStop = pkgs.writeShellScript "rclone-${name}-umount" ''
+            /run/wrappers/bin/fusermount3 -u ${mountPath} \
+              || /run/wrappers/bin/fusermount3 -uz ${mountPath} \
+              || true
+          '';
+          TimeoutStopSec = 15;
           Restart = "on-failure";
           RestartSec = "10s";
           Environment = [ "PATH=/run/wrappers/bin/:$PATH" ];
