@@ -248,6 +248,32 @@ in {
         titlebar = false;
         hideEdgeBorders = "both";
         commands = [
+          # GeForce NOW runs as a nested gamescope window (see pkgs/scripts/
+          # gfn). Two things need handling, both keyed on the same window:
+          #   - fullscreen enable: gamescope is launched with `-f`, but sway
+          #     doesn't always honour a nested client's own fullscreen
+          #     request, so the window can map as a tiled/bordered box
+          #     instead of filling the output. Force it fullscreen on map.
+          #   - inhibit_idle focus: input is captured by the nested
+          #     compositor, so the parent sway sees no activity and swayidle
+          #     locks/blanks mid-game (5 min lock, 10 min DPMS — see
+          #     sway/swayidle.nix). Inhibit idle while GFN is focused; normal
+          #     locking resumes the instant you tab away or quit.
+          # Matched on app_id (stable across a session) with a title
+          # fallback, both case-insensitive since the exact casing varies by
+          # gamescope/wlroots version. Verify the live identity + state with
+          #   swaymsg -t get_tree | jq '.. | objects
+          #     | select((.app_id // .name // "") | test("(?i)gamescope"))
+          #     | {app_id, name, fullscreen_mode, rect}'
+          # while GFN is open if this ever stops working after an upgrade.
+          {
+            command = "fullscreen enable, inhibit_idle focus";
+            criteria = { app_id = "(?i)gamescope"; };
+          }
+          {
+            command = "fullscreen enable, inhibit_idle focus";
+            criteria = { title = "(?i)gamescope"; };
+          }
           {
             command = ''move to workspace "${workspacesByKey.music}"'';
             criteria = { class = "Spotify"; };

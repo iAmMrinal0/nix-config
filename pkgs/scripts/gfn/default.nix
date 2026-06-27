@@ -1,4 +1,4 @@
-{ writeShellScriptBin, gamescope, flatpak, jq, gawk, sway, i3, xrandr
+{ writeShellScriptBin, gamescope, flatpak, jq, gawk, sway, i3, xrandr, xset
 , width ? 1920, height ? 1080, refresh ? 60 }:
 
 # Launcher for NVIDIA GeForce NOW (Flatpak). The SteamDeck build of the
@@ -42,14 +42,30 @@ writeShellScriptBin "gfn" ''
   H="''${GFN_H:-''${dh:-${toString height}}}"
   R="''${GFN_R:-''${dr:-${toString refresh}}}"
 
-  if [ -n "''${WAYLAND_DISPLAY:-}" ]; then
-    BACKEND=wayland
-  else
-    BACKEND=sdl
-  fi
+  launch() {
+    ${gamescope}/bin/gamescope \
+      --backend "$1" \
+      -W "$W" -H "$H" -r "$R" -f \
+      -- ${flatpak}/bin/flatpak run com.nvidia.geforcenow
+  }
 
-  exec ${gamescope}/bin/gamescope \
-    --backend "$BACKEND" \
-    -W "$W" -H "$H" -r "$R" -f \
-    -- ${flatpak}/bin/flatpak run com.nvidia.geforcenow
+  if [ -n "''${WAYLAND_DISPLAY:-}" ]; then
+    # Wayland/sway: idle inhibition is declarative — an `inhibit_idle`
+    # window rule on the nested gamescope window (sway/config.nix) holds
+    # swayidle off while GFN is focused, so nothing to do here.
+    launch wayland
+  else
+    # i3/X11: gamescope nests via SDL, whose screensaver inhibition does
+    # NOT stop xss-lock's X-screensaver + DPMS idle timer (the X11 locker
+    # in modules/home/services.nix), so the screen locks/blanks mid-stream.
+    # i3 has no idle-inhibit protocol, so turn the saver + DPMS off for the
+    # run and restore the prior screensaver timeout on exit. The trap fires
+    # on a clean exit, a crash, or Ctrl-C, so locking is never left
+    # disabled. No `exec` above — the wrapper must outlive gamescope for
+    # the trap to run.
+    saver=$(${xset}/bin/xset q 2>/dev/null | ${gawk}/bin/awk '/timeout:/{print $2; exit}')
+    ${xset}/bin/xset s off -dpms
+    trap '${xset}/bin/xset s "''${saver:-300}" "''${saver:-300}"; ${xset}/bin/xset +dpms' EXIT INT TERM
+    launch sdl
+  fi
 ''
