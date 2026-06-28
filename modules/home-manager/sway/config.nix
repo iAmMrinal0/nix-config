@@ -655,6 +655,11 @@ in {
     swaySocket="''${XDG_RUNTIME_DIR:-/run/user/$UID}/sway-ipc.$UID.$(${pkgs.procps}/bin/pgrep --uid $UID -x sway | head -n1).sock"
     if [ -S "$swaySocket" ]; then
       ${pkgs.sway}/bin/swaymsg -s "$swaySocket" reload || true
+      # sway reload resets outputs to sway-config defaults, but mode/scale is
+      # owned by kanshi — and kanshi only re-applies on hotplug, not on reload.
+      # Without this the laptop panel stays on a default mode ("zoomed in")
+      # until kanshi is restarted by hand. Same re-apply as wakeOutputs.
+      ${pkgs.kanshi}/bin/kanshictl reload || true
     fi
   '';
 }
