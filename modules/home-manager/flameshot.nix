@@ -4,9 +4,10 @@
 #
 # useGrimAdapter=true switches flameshot from the xdg-desktop-portal D-Bus
 # capture path to calling `grim` directly. On sway/wlroots the grim
-# adapter is the upstream-recommended Wayland mode — fewer protocol hops,
-# more reliable multi-monitor handling, and no portal-prompt nag. We
-# already ship grim + slurp + wl-clipboard via wayland-session.nix.
+# adapter is the upstream-recommended Wayland mode — fewer protocol hops
+# and no portal-prompt nag. The grim it calls is the focused-output shim
+# from overlays/packages.nix (multi-monitor: the overlay can only cover
+# one output on Wayland, so the capture is restricted to match).
 #
 # This file is symlinked from /nix/store, so any setting flameshot tries
 # to write via its Configuration dialog will silently no-op. If you ever

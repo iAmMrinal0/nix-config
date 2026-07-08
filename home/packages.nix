@@ -77,8 +77,8 @@ with pkgs; [
   ffmpeg-full
   gnome-screenshot
   # flameshot is the Wayland-era replacement for gnome-screenshot's
-  # interactive picker. It uses xdg-desktop-portal (configured in
-  # modules/nixos/wayland-session.nix) to ask sway for the frames, then
+  # interactive picker. It captures the focused output via the grim shim
+  # in overlays/packages.nix (useGrimAdapter in flameshot.ini), then
   # opens its annotation editor for save-or-copy. Bound to Print in
   # modules/home-manager/sway/config.nix. gnome-screenshot stays for the
   # mordor (X11/i3) host where Print is bound to gnome-screenshot -i.

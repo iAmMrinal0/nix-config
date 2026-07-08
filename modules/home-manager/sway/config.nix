@@ -8,6 +8,42 @@ let
   rofiTailscaleExitNode = "${pkgs.my.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
   rofiKanshi = "${pkgs.my.scripts.rofi-kanshi}/bin/rofi-kanshi";
   micMuteToggle = "${pkgs.my.scripts.mic-mute-toggle}/bin/mic-mute-toggle";
+
+  # Print → flameshot, per-output. The grim shim in overlays/packages.nix
+  # restricts the capture to the focused output (flameshot's overlay can
+  # only cover one output on Wayland — see the comment there). Qt then
+  # fullscreens the overlay on whatever screen it considers primary, not
+  # necessarily the focused one, so retarget it once it maps. The overlay
+  # sets an empty app_id (Qt 6.11), so match on that + title; the swaymsg
+  # criteria command fails while no window matches, which is the wait
+  # condition. `focus` is required: move alone leaves keyboard focus on the
+  # previous window, and flameshot's shortcuts (Esc!) only work focused.
+  # 5s budget: the first Print cold-starts the flameshot daemon.
+  flameshotGui = pkgs.writeShellScript "flameshot-gui-focused" ''
+    out=$(${swaymsg} -t get_outputs --raw | ${pkgs.jq}/bin/jq -r '.[] | select(.focused).name')
+    ${pkgs.flameshot}/bin/flameshot gui &
+    i=0
+    while [ $i -lt 100 ]; do
+      if ${swaymsg} '[app_id="^$" title="^flameshot$"] move container to output '"$out"', focus, fullscreen enable' >/dev/null 2>&1; then
+        exit 0
+      fi
+      i=$((i + 1))
+      sleep 0.05
+    done
+  '';
+
+  # Shift+Print → Wayland-native region shot: slurp select (spans outputs,
+  # which flameshot's overlay can't), grim capture, satty annotate. Trialling
+  # as a flameshot replacement — if it sticks, the grim shim in
+  # overlays/packages.nix and flameshotGui above can go. slurp exits nonzero
+  # on Esc, so a cancelled selection captures nothing.
+  sattyShot = pkgs.writeShellScript "satty-region" ''
+    geom=$(${pkgs.slurp}/bin/slurp) || exit 0
+    mkdir -p "$HOME/Pictures/Screenshots"
+    ${pkgs.grim}/bin/grim -g "$geom" - | ${pkgs.satty}/bin/satty --filename - \
+      --output-filename "$HOME/Pictures/Screenshots/satty-%Y-%m-%d_%H-%M-%S.png" \
+      --early-exit
+  '';
   wallpaper = ../common/wallpapers/nix-glow-black.png;
 
   swaymsg = "${pkgs.sway}/bin/swaymsg";
@@ -619,11 +655,13 @@ in {
 
         "XF86AudioMicMute" = micMuteToggle;
 
-        # Wayland Print: flameshot opens an interactive picker / annotator,
-        # uses xdg-desktop-portal-wlr (see modules/nixos/wayland-session.nix)
-        # to grab the frame from sway. Replaces the older grim+slurp+wl-copy
-        # one-liner, which only did "region → clipboard" with no UI.
-        "Print" = "${pkgs.flameshot}/bin/flameshot gui";
+        # Wayland Print: flameshot picker/annotator on the focused output
+        # (via the grim shim + flameshotGui wrapper — see the let block).
+        # Replaces the older grim+slurp+wl-copy one-liner, which only did
+        # "region → clipboard" with no UI.
+        "Print" = "${flameshotGui}";
+
+        "Shift+Print" = "${sattyShot}";
 
         "Control+mod1+c" =
           "${pkgs.rofi}/bin/rofi -show calc -modi calc -no-show-match -no-sort";
