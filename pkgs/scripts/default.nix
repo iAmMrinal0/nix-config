@@ -9,6 +9,7 @@
   i3dunst-toggle = pkgs.callPackage ./i3dunst-toggle { };
   bluetooth-battery = pkgs.callPackage ./bluetooth-battery { };
   mic-mute-toggle = pkgs.callPackage ./mic-mute-toggle { };
+  kvm-switch = pkgs.callPackage ./kvm-switch { };
   i3lock-custom = pkgs.callPackage ./i3lock-custom { };
   gfn = pkgs.callPackage ./gfn { };
   garmin-sdk-manager = pkgs.callPackage ./garmin-sdk-container { };

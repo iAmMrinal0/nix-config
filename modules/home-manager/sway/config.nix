@@ -8,6 +8,7 @@ let
   rofiTailscaleExitNode = "${pkgs.my.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
   rofiKanshi = "${pkgs.my.scripts.rofi-kanshi}/bin/rofi-kanshi";
   micMuteToggle = "${pkgs.my.scripts.mic-mute-toggle}/bin/mic-mute-toggle";
+  kvmSwitch = "${pkgs.my.scripts.kvm-switch}/bin/kvm-switch";
 
   # Region screenshot: slurp select (spans outputs), grim capture, satty
   # annotate. Replaced flameshot, whose Wayland overlay can only cover one
@@ -620,6 +621,8 @@ in {
         "Shift+Right" = "move right";
         "Shift+space" = "floating toggle";
         "Shift+m" = "exec ${micMuteToggle}";
+        # Home desk: hand the U2724DE + KVM'd peripherals to the other laptop.
+        "o" = "exec ${kvmSwitch}";
         "s" = "layout stacking";
         "space" = "focus mode_toggle";
         "w" = "layout tabbed";

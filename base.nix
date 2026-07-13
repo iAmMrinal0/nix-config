@@ -390,6 +390,7 @@ in {
       # so the group is gone and listing it would warn.
       "audio"
       "docker"
+      "i2c"
       "keys"
       "networkmanager"
       "plugdev"
@@ -409,6 +410,10 @@ in {
 
   # for mounting NFS shares
   boot.supportedFilesystems = [ "nfs" ];
+
+  # DDC/CI monitor control (ddcutil): loads i2c-dev and grants the i2c
+  # group access to /dev/i2c-*, so no sudo needed (user is in i2c above).
+  hardware.i2c.enable = true;
 
   # Cap the systemd journal. Default is min(10% of disk, 4G) = 4G here,
   # which held ~41 days. After de-noising waybar + Docker logs the rate

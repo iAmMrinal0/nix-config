@@ -40,6 +40,7 @@ with pkgs; [
   lsof
   netcat-gnu
   nix-diff
+  ddcutil
   xkill
   nvd
   socat
