@@ -76,13 +76,11 @@ with pkgs; [
   imagemagick
   ffmpeg-full
   gnome-screenshot
-  # flameshot is the Wayland-era replacement for gnome-screenshot's
-  # interactive picker. It captures the focused output via the grim shim
-  # in overlays/packages.nix (useGrimAdapter in flameshot.ini), then
-  # opens its annotation editor for save-or-copy. Bound to Print in
-  # modules/home-manager/sway/config.nix. gnome-screenshot stays for the
-  # mordor (X11/i3) host where Print is bound to gnome-screenshot -i.
-  flameshot
+  # Wayland screenshots are grim+slurp+satty, script-pinned in
+  # modules/home-manager/sway/config.nix (Print binding) — no package
+  # entry needed. gnome-screenshot stays for the mordor (X11/i3) host
+  # where Print is bound to gnome-screenshot -i. flameshot was tried in
+  # between; its Wayland multi-monitor workaround lives in commit 2896832.
 
   # File Management
   xarchiver

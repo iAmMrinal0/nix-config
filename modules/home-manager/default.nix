@@ -10,7 +10,6 @@
     ./emacs.nix
     ./feh.nix
     ./firefox.nix
-    ./flameshot.nix
     ./git.nix
     ./gtk.nix
     ./home-manager.nix
