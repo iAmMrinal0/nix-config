@@ -1,4 +1,4 @@
-{ writeShellScriptBin, kanshi, rofi, gnugrep, libnotify, sway }:
+{ writeShellScriptBin, kanshi, rofi, gnugrep, libnotify, sway, jq }:
 
 # Sway equivalent of rofi-autorandr: lists kanshi profiles defined in
 # ~/.config/kanshi/config and switches via `kanshictl switch`. Profile
@@ -29,10 +29,19 @@ writeShellScriptBin "rofi-kanshi" ''
   selected=$(echo "$profiles" | ${rofi}/bin/rofi -dmenu -i -p "Layout")
   [ -z "$selected" ] && exit 0
 
-  if ${kanshi}/bin/kanshictl switch "$selected"; then
+  # On failure, show kanshictl's error plus each head's make/model/serial:
+  # kanshi 1.8+ fnmatch()es profile criteria against "make model serial", so a
+  # refused switch is almost always a criteria/description mismatch that is
+  # otherwise invisible.
+  if err=$(${kanshi}/bin/kanshictl switch "$selected" 2>&1); then
     ${sway}/bin/swaymsg 'output * power on' >/dev/null 2>&1 || true
     ${libnotify}/bin/notify-send "Kanshi" "Switched to $selected"
   else
-    ${libnotify}/bin/notify-send -u critical "Kanshi" "Failed to switch to $selected"
+    heads=$(${sway}/bin/swaymsg -t get_outputs 2>/dev/null |
+      ${jq}/bin/jq -r '.[] | "\(.name): \(.make) \(.model) \(.serial)"')
+    ${libnotify}/bin/notify-send -u critical "Kanshi" "Failed to switch to $selected
+$err
+heads:
+$heads"
   fi
 ''
