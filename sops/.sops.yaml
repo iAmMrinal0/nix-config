@@ -4,7 +4,20 @@ keys:
   - &age_mordor age1spq30m6hvgmcc37p9cte9xk90q09zzacs0xsm83p5huges5n490smncmy5
   - &age_cardassia age1pdkqghx2q8m6jlcjcvc5r034dnykacnqyatdw68xslrz8gxu5yls5f0k2q
   - &age_cardassia_iammrinal0 age1zyp80rudm4l9q32xma690ykzw2nu85d7rvcp6xcyeuhjjv4qjvgq0g9f3w
+  - &age_yggdrasil age1l3pl0wlkcw0wj07d9c00zfd7e9pfzwdl4h9y8jzmp4kgjs57z3gqxdcpcg
 creation_rules:
+  # yggdrasil's own secrets live in a scoped file, decryptable only by that
+  # host (+ the laptops, for editing). This keeps the headless, container-
+  # hosting services box OUT of the shared store below — a compromise of it
+  # must not expose other hosts' passwords / VPN / cloud creds. First-match
+  # wins, so this path_regex rule must precede the catch-all.
+  - path_regex: yggdrasil\.yaml$
+    key_groups:
+      - age:
+          - *age_yggdrasil
+          - *age_betazed_iammrinal0
+          - *age_cardassia_iammrinal0
+  # shared store — every host EXCEPT yggdrasil.
   - key_groups:
       - age:
           - *age_betazed_iammrinal0
