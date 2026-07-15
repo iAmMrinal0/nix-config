@@ -154,13 +154,15 @@
     };
   };
 
-  services.fprintd.enable = true;
-  security.pam.services = {
-    sudo.fprintAuth = true;
-    swaylock.fprintAuth = true;
-    i3lock.fprintAuth = true;
-    polkit-1.fprintAuth = true;
-  };
+  # TEMP(2026-07-14): fingerprint auth off — the sensor is out of reach when
+  # docked at home. Restore this block to re-enable.
+  # services.fprintd.enable = true;
+  # security.pam.services = {
+  #   sudo.fprintAuth = true;
+  #   swaylock.fprintAuth = true;
+  #   i3lock.fprintAuth = true;
+  #   polkit-1.fprintAuth = true;
+  # };
 
   # plugdev: fingerprint reader access (also used by openrazer).
   users.groups.plugdev.members = [ config.users.users.${username}.name ];
