@@ -235,7 +235,7 @@ in {
           # Scroll on the clock to step through months. To switch to a
           # full yearly view, change calendar.mode to "year" — readable
           # but the tooltip becomes much larger.
-          tooltip-format = "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>";
+          tooltip-format = "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>";
           # Pin locale so the calendar uses ISO week numbers (Monday-start,
           # %V) instead of US convention (Sunday-start, %U), which puts
           # the week boundary one day off and would show W17 for what is
@@ -299,6 +299,9 @@ in {
 
       tooltip label {
         color: ${colors.fg};
+        /* Larger than the 13px bar font — the calendar tooltip is the main
+           reader of this rule and was cramped at bar size. */
+        font-size: 16px;
       }
 
       #workspaces {
