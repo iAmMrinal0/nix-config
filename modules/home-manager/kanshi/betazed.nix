@@ -19,7 +19,9 @@ let
     # cramped (also bump laptop x position below — see the math).
     scale = 1.0;
   };
-  dellId = "Dell Inc. DELL U2724DE";
+  # Trailing glob: kanshi 1.8+ fnmatch()es criteria against
+  # "make model serial" with no substring fallback.
+  dellId = "Dell Inc. DELL U2724DE *";
   # Laptop's x in `home-right` is the Dell's logical width — i.e.
   # 2560 / dellU2724DE.scale, rounded to int. Computed inline so the
   # laptop butts right against the Dell's right edge with no overlap or

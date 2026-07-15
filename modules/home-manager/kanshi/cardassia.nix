@@ -7,13 +7,16 @@ let
     scale = 1.0;
     position = "0,0";
   };
-  dellP2720DId = "Dell Inc. DELL P2720D"; # Copenhagen office (current desk)
-  dellUP2716DId = "Dell Inc. DELL UP2716D"; # Copenhagen office (old desk)
-  dellU2724DEId = "Dell Inc. DELL U2724DE"; # home (same panel as mordor's)
-  samsungS34C65VId = "Samsung Electric Company S34C65xV"; # Copenhagen office (curved ultrawide)
+  # kanshi 1.8+ matches description criteria with fnmatch(3) against
+  # "make model serial" — no substring fallback, so without the trailing
+  # glob a criteria that omits the serial never matches.
+  dellP2720DId = "Dell Inc. DELL P2720D *"; # Copenhagen office (current desk)
+  dellUP2716DId = "Dell Inc. DELL UP2716D *"; # Copenhagen office (old desk)
+  dellU2724DEId = "Dell Inc. DELL U2724DE *"; # home (same panel as mordor's)
+  samsungS34C65VId = "Samsung Electric Company S34C65xV *"; # Copenhagen office (curved ultrawide)
   # Office DisplayLink dock (bzt-alt), same physical units as mordor's.
-  ls27a600nId = "Samsung Electric Company LS27A600N"; # centre
-  ls27a600uId = "Samsung Electric Company LS27A600U"; # left
+  ls27a600nId = "Samsung Electric Company LS27A600N *"; # centre
+  ls27a600uId = "Samsung Electric Company LS27A600U *"; # left
 in {
   profiles = {
     default = {

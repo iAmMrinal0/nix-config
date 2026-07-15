@@ -30,13 +30,15 @@ let
     scale = 1.5;
     position = "0,0";
   };
+  # Trailing globs: kanshi 1.8+ fnmatch()es criteria against
+  # "make model serial" with no substring fallback.
   # Office dock (bzt-alt): two Samsungs over DisplayLink/evdi.
-  ls27a600nId = "Samsung Electric Company LS27A600N"; # centre
-  ls27a600uId = "Samsung Electric Company LS27A600U"; # left
+  ls27a600nId = "Samsung Electric Company LS27A600N *"; # centre
+  ls27a600uId = "Samsung Electric Company LS27A600U *"; # left
   # Copenhagen office: Dell UP2716D over HDMI.
-  dellUP2716DId = "Dell Inc. DELL UP2716D";
+  dellUP2716DId = "Dell Inc. DELL UP2716D *";
   # Home: same Dell U2724DE as betazed's home-right.
-  dellU2724DEId = "Dell Inc. DELL U2724DE";
+  dellU2724DEId = "Dell Inc. DELL U2724DE *";
 in {
   profiles = {
     default = {
