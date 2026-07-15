@@ -52,8 +52,8 @@ with pkgs; [
   signing-party
   ssh-to-pgp
   openvpn
-  rbw
   rofi-rbw
+  wtype # rofi-rbw autotype under sway; xdotool covers i3
 
   # Development Environment
   sqlite

@@ -8,6 +8,8 @@ let
     "kronor-openvpn-staging"
     "kronor-openvpn-production"
     "bw-session-key"
+    "rbw-email"
+    "rbw-base-url"
     "cachix-auth-token"
     "atuin-key"
     "wifi-env"
@@ -48,6 +50,21 @@ in {
         # machine has its own password.
         "user-password-${hostname}".neededForUsers = true;
       };
+
+    # ~/.config/rbw/config.json (symlinked by modules/home-manager/rbw.nix).
+    # Rendered here because the account email and vault URL stay out of the
+    # public repo and the world-readable nix store.
+    templates."rbw-config.json" = {
+      owner = config.users.users.${username}.name;
+      content = builtins.toJSON {
+        email = config.sops.placeholder.rbw-email;
+        base_url = config.sops.placeholder.rbw-base-url;
+        # rbw-agent keeps the vault key in memory this long, so the master
+        # password is asked once per boot instead of on every invocation.
+        lock_timeout = 2592000; # 30 days
+        pinentry = "${pkgs.pinentry-qt}/bin/pinentry-qt";
+      };
+    };
   };
 
   nixpkgs.config = {
