@@ -8,6 +8,7 @@ let
   rofiTailscaleAccount = "${pkgs.my.scripts.rofi-tailscale-account}/bin/rofi-tailscale-account";
   rofiTailscaleExitNode = "${pkgs.my.scripts.rofi-tailscale-exit-node}/bin/rofi-tailscale-exit-node";
   micMuteToggle = "${pkgs.my.scripts.mic-mute-toggle}/bin/mic-mute-toggle";
+  kvmSwitch = "${pkgs.my.scripts.kvm-switch}/bin/kvm-switch";
 
   # i3's `move workspace to output <dir>` doesn't trigger mouse_warping, so
   # the cursor stays put. Warp it onto the focused workspace's rect after
@@ -283,6 +284,10 @@ in {
         "Shift+Right" = "move right";
         "Shift+space" = "floating toggle";
         "Shift+m" = "exec ${micMuteToggle}";
+        # Home desk: hand the U2724DE + KVM'd peripherals to the other laptop.
+        # No --locked equivalent here: i3lock grabs the keyboard outright, so
+        # while locked use SSH (kvm-switch is pure i2c, no session needed).
+        "o" = "exec ${kvmSwitch}";
         "s" = "layout stacking";
         "space" = "focus mode_toggle";
         "w" = "layout tabbed";

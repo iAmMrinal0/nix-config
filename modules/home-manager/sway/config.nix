@@ -625,8 +625,6 @@ in {
         "Shift+Right" = "move right";
         "Shift+space" = "floating toggle";
         "Shift+m" = "exec ${micMuteToggle}";
-        # Home desk: hand the U2724DE + KVM'd peripherals to the other laptop.
-        "o" = "exec ${kvmSwitch}";
         "s" = "layout stacking";
         "space" = "focus mode_toggle";
         "w" = "layout tabbed";
@@ -667,7 +665,12 @@ in {
         "Control+space" = "${pkgs.dunst}/bin/dunstctl close";
         "Control+Shift+space" = "${pkgs.dunst}/bin/dunstctl close-all";
         "Control+grave" = "${pkgs.dunst}/bin/dunstctl history-pop";
-      });
+      }) // {
+        # Home desk: hand the U2724DE + KVM'd peripherals to the other laptop.
+        # --locked so the switch also works from the swaylock screen (DDC needs
+        # no unlocked session, only the keybinding is normally suppressed).
+        "--locked ${modifier}+o" = "exec ${kvmSwitch}";
+      };
     };
   };
 
