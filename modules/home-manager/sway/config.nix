@@ -17,12 +17,16 @@ let
   # region and capturing it (select FIRST: slurp grabs input, so any open
   # menu/tooltip dies during selection; the delay is for re-opening it).
   # slurp exits nonzero on Esc, so a cancelled selection captures nothing.
+  # --copy-command: satty's built-in copy offers the clipboard itself, and a
+  # Wayland clipboard dies with its client — --early-exit dropped the copy.
+  # wl-copy forks a holder that outlives satty.
   sattyShot = pkgs.writeShellScript "satty-region" ''
     geom=$(${pkgs.slurp}/bin/slurp) || exit 0
     case "''${1:-}" in *[!0-9]*) ;; [1-9]*) sleep "$1" ;; esac
     mkdir -p "$HOME/Pictures/Screenshots"
     ${pkgs.grim}/bin/grim -g "$geom" - | ${pkgs.satty}/bin/satty --filename - \
       --output-filename "$HOME/Pictures/Screenshots/satty-%Y-%m-%d_%H-%M-%S.png" \
+      --copy-command ${pkgs.wl-clipboard}/bin/wl-copy \
       --early-exit
   '';
 
