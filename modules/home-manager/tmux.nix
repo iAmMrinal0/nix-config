@@ -144,7 +144,8 @@ in
       setw -g monitor-activity on
 
       # Reload Tmux configuration file with Prefix + r
-      bind r source-file ~/.tmux.conf \; display "Configuration reloaded."
+      # path derived from xdg.configHome so it can't drift from where HM writes it
+      bind r source-file ${config.xdg.configHome}/tmux/tmux.conf \; display "Configuration reloaded."
 
       # Getting interesting now, we use the vertical and horizontal
       # symbols to split the screen
@@ -158,7 +159,8 @@ in
 
       bind-key -n M-z resize-pane -Z
 
-      bind-key -n M-s split-window -v "${pkgs.tmux}/bin/tmux list-sessions | grep -v '(attached)$' | sed -E 's/:.*$//' | ${pkgs.fzf}/bin/fzf --reverse | ${pkgs.findutils}/bin/xargs ${pkgs.tmux}/bin/tmux switch-client -t"
+      # display-popup instead of split-window: a split changes the layout and unzooms a zoomed pane
+      bind-key -n M-s display-popup -E "${pkgs.tmux}/bin/tmux list-sessions | grep -v '(attached)$' | sed -E 's/:.*$//' | ${pkgs.fzf}/bin/fzf --reverse | ${pkgs.findutils}/bin/xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
 
       # Send the same command to all panes/windows/sessions
       bind E command-prompt -p "Command:" \
