@@ -37,7 +37,7 @@ in {
         `false` → known-good lightdm + i3 only (no greetd in the path). This
                   is the recovery/escape-hatch generation.
 
-        Recovery: keep `modules.boot.labelSuffix = "stable-i3"` on a generation
+        Recovery: keep `modules.systemLabel.suffix = "stable-i3"` on a generation
         with this set to `false`; if greetd or the picker misbehaves, pick that
         generation from the systemd-boot menu to return to lightdm + i3.
 

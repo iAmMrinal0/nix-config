@@ -187,6 +187,20 @@
             })
           ];
         };
+        yggdrasil = let hostname = "yggdrasil";
+        in nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs hostname username; };
+          # Lean headless server: no desktop overlays. sops-nix is included
+          # (the backup job pulls its borg passphrase + rclone creds from
+          # sops), but it still doesn't share the base.nix the desktop hosts
+          # use. See hosts/yggdrasil.nix.
+          modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
+            ./hosts/${hostname}.nix
+            ./cache.nix
+            sops-nix.nixosModules.sops
+          ];
+        };
       };
     };
 }

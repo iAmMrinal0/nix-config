@@ -20,6 +20,7 @@
     ./pgcli.nix
     ./printing.nix
     ./secret-dotfiles.nix
+    ./system-label.nix
     ./tailscale.nix
     ./touchegg.nix
     ./vscode.nix
