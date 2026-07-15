@@ -30,6 +30,22 @@ let
     printf '{"text":"%s%%","percentage":%s,"class":"%s","tooltip":"Root filesystem: %s%% used (df)"}\n' "$pct" "$pct" "$class" "$pct"
   '';
 
+  # Public egress IP, shown in the tooltip of a globe icon next to the
+  # network modules. It can't go in the network module's own tooltip:
+  # tooltip-format only interpolates the module's built-in placeholders
+  # ({ipaddr}, {essid}, …), it can't run a script. The fetched IP is
+  # cached in XDG_RUNTIME_DIR so on-click can copy it without a second
+  # fetch. Fetch failure (offline, captive portal) emits empty text,
+  # which hides the module — same trick as format-disconnected above.
+  publicIp = pkgs.writeShellScript "waybar-public-ip" ''
+    ip=$(${pkgs.curl}/bin/curl --fail --silent --show-error --max-time 3 https://ifconfig.me/ip 2>/dev/null) \
+      || ip=$(${pkgs.curl}/bin/curl --fail --silent --show-error --max-time 3 https://icanhazip.com 2>/dev/null) \
+      || { printf '{"text":""}\n'; exit 0; }
+    via=$(${pkgs.iproute2}/bin/ip route get 1.1.1.1 2>/dev/null | ${pkgs.gawk}/bin/awk '{for (i = 1; i < NF; i++) if ($i == "dev") { print $(i + 1); exit }}')
+    printf '%s\n' "$ip" > "''${XDG_RUNTIME_DIR:-/tmp}/waybar-public-ip"
+    printf '{"text":"󰖟","tooltip":"Public IP: %s\\negress via %s"}\n' "$ip" "''${via:-?}"
+  '';
+
   # Shared config for all separators — waybar does NOT auto-strip the
   # `#N` instance suffix when looking up module config, so each separator
   # in `modules-right` needs a distinct key. Keys are reused via this
@@ -66,7 +82,7 @@ in {
         modules-right = [
           "custom/current-track" "custom/sep1"
           "pulseaudio" "custom/sep2"
-          "network#ethernet" "network#wifi" "custom/sep3"
+          "network#ethernet" "network#wifi" "custom/public-ip" "custom/sep3"
           "cpu" "custom/sep4"
           "custom/disk" "custom/sep5"
           "battery" "custom/sep6"
@@ -155,6 +171,17 @@ in {
           format-wifi-alt = "󰖩 {signalStrength}% {essid} ↓{bandwidthDownBits} ↑{bandwidthUpBits}";
           tooltip-format-wifi = "{essid} ({signalStrength}%)\nIP: {ipaddr}/{cidr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}";
           interval = 5;
+        };
+
+        "custom/public-ip" = {
+          exec = "${publicIp}";
+          return-type = "json";
+          # 5-minute poll keeps the third-party lookups infrequent; a
+          # VPN toggle shouldn't have to wait that out, so clicking
+          # re-runs the fetch (exec-on-event default) after copying the
+          # cached IP to the clipboard.
+          interval = 300;
+          on-click = "${pkgs.wl-clipboard}/bin/wl-copy < \"\${XDG_RUNTIME_DIR:-/tmp}/waybar-public-ip\"";
         };
 
         cpu = {
@@ -316,6 +343,7 @@ in {
       #custom-current-track,
       #pulseaudio,
       #network,
+      #custom-public-ip,
       #cpu,
       #custom-disk,
       #battery,
@@ -340,6 +368,7 @@ in {
       #custom-current-track { color: ${colors.fg}; }
       #pulseaudio { color: ${colors.aqua}; }
       #network { color: ${colors.aqua}; }
+      #custom-public-ip { color: ${colors.aqua}; }
       #cpu { color: ${colors.aqua}; }
       #custom-disk { color: ${colors.aqua}; }
       #custom-disk.warning { color: ${colors.yellow}; }
