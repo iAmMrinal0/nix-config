@@ -1,5 +1,7 @@
 { pkgs, ... }:
 let
+  # Shared with hosts that configure git without home-manager (yggdrasil).
+  identity = import ../git-identity.nix;
   # Lets `git log --show-signature` verify our own ssh-signed commits
   # offline: maps the signing identity (committer email) to the
   # per-machine public keys (the same id_ed25519 keys registered on
@@ -9,15 +11,15 @@ let
   # work repos and aren't verified by this file — deliberately not
   # listing an org email in a public repo.
   allowedSigners = pkgs.writeText "git-allowed-signers" ''
-    github@mrinalpurohit.in ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF2VaKwjYmaBmrbVp14QFZBguI9ah8hC+sw91OYH6bg7 betazed
-    github@mrinalpurohit.in ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII4eqGHhyS/WC3vgY19Ij5ycL0gJmVt7EcWRgmKBUdbb mordor
+    ${identity.email} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF2VaKwjYmaBmrbVp14QFZBguI9ah8hC+sw91OYH6bg7 betazed
+    ${identity.email} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII4eqGHhyS/WC3vgY19Ij5ycL0gJmVt7EcWRgmKBUdbb mordor
   '';
 in {
   programs.git = {
     enable = true;
     settings = {
-      user.email = "github@mrinalpurohit.in";
-      user.name = "Mrinal Purohit";
+      user.email = identity.email;
+      user.name = identity.name;
       commit = { gpgSign = true; };
       # add to GitHub as a signing key
       # gh ssh-key add ~/.ssh/id_ed25519.pub - -type signing - -title ${hostname}

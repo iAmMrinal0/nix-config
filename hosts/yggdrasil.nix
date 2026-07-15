@@ -95,6 +95,18 @@
     rclone
   ];
 
+  # Git identity for committing in ~/apps. No home-manager on this host, so
+  # this renders a system-wide /etc/gitconfig; the identity is imported from
+  # the same file as modules/home-manager/git.nix so the two can't drift.
+  # Commits made on the VM are unsigned — the signing key stays on the
+  # laptops; push auth comes from the forwarded agent (Tailscale SSH).
+  programs.git = {
+    enable = true;
+    config = {
+      user = import ../modules/git-identity.nix;
+    };
+  };
+
   # Services are published over Tailscale (tsdproxy registers its own nodes),
   # so trust the tailscale interface; keep the LAN firewall on otherwise.
   networking.firewall = {
