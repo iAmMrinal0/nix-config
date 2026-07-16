@@ -42,15 +42,27 @@ in {
         };
       };
     };
-    "home-left" = {
+    # Manual-only alternate: laptop on the LEFT, Dell to its right. Mirrors
+    # kanshi's laptop-left (same name so the two backends stay in sync;
+    # renamed from home-left, which also dropped the old 0x360 bottom-align
+    # in favour of kanshi's top-align). Load it explicitly with
+    # `autorandr --load laptop-left` (i.e. rofi-autorandr); home-right stays
+    # the hotplug default. eDP-1 (1920 wide) sits at 0x0; Dell butts against
+    # its right edge at x=1920.
+    # Kept on DP-1 from the old home-left: the dock exposes the Dell on
+    # DP-1 or DP-2 depending on enumeration (cf. the connector-name note in
+    # kanshi/mordor.nix — kanshi globs by model so it doesn't care), and
+    # DP-1 is the enumeration this arrangement was saved under. If the load
+    # ever errors with DP-1 disconnected, swap it to DP-2.
+    "laptop-left" = {
       inherit fingerprint;
       config = {
+        eDP-1 = t480 // { position = "0x0"; };
         DP-1 = dellU2724DE // {
           enable = true;
           primary = true;
           position = "1920x0";
         };
-        eDP-1 = t480 // { position = "0x360"; };
       };
     };
   };

@@ -46,6 +46,19 @@ in {
         ({ criteria = "eDP-1"; } // t480 // { position = "${laptopXAfterDell},0"; })
       ];
     };
+    # Manual-only alternate: laptop on the LEFT, Dell to its right. Named
+    # `laptop-left` so it sorts AFTER `home-right` alphabetically — kanshi
+    # picks the first matching profile on hotplug (see the home-left note
+    # below), so `home-right` stays the auto-default and this one is only
+    # reachable via `kanshictl switch laptop-left` (i.e. rofi-kanshi).
+    # eDP-1 (1920 wide, scale 1.0) sits at 0,0; Dell butts against its
+    # right edge at x=1920.
+    laptop-left = {
+      outputs = [
+        ({ criteria = "eDP-1"; } // t480 // { position = "0,0"; })
+        ({ criteria = dellId; } // dellU2724DE // { position = "1920,0"; })
+      ];
+    };
     # NOTE: home-left removed because both home-left and home-right matched
     # the same hardware criteria (same Dell + same eDP, only positions
     # differ), and kanshi alphabetically picked `home-left` first. If you
