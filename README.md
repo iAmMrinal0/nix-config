@@ -21,7 +21,7 @@ to the recipient list:
    `ssh-keygen -t ed25519 -N "" -f ssh_host_ed25519_key`
 2. Convert the **public** key to an age key:
    `nix run nixpkgs#ssh-to-age -- -i ssh_host_ed25519_key.pub`
-3. Add it to `sops/.sops.yaml`: a `&age_<hostname>` anchor under `keys:`
+3. Add it to `.sops.yaml` (repo root): a `&age_<hostname>` anchor under `keys:`
    and a reference under `creation_rules:`.
 4. Re-encrypt the secrets to include the new recipient — run from a
    machine whose key is already in the recipient list:

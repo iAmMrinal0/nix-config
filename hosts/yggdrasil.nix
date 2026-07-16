@@ -122,8 +122,8 @@
   # shared gdrive-* secrets, rendered into a root-owned rclone.conf.
   sops = {
     # Scoped file — this host can ONLY decrypt its own 4 secrets, never the
-    # shared secrets.yaml (see sops/.sops.yaml creation_rules). Limits blast
-    # radius if this container-hosting box is compromised.
+    # shared secrets.yaml (see .sops.yaml creation_rules at the repo root).
+    # Limits blast radius if this container-hosting box is compromised.
     defaultSopsFile = ../sops/yggdrasil.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets = {
