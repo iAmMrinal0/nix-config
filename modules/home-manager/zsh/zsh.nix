@@ -111,7 +111,9 @@ in {
       # error out over ssh. `kitten ssh` installs it into the remote login
       # user's ~/.terminfo on connect (keeps TERM honest, unlike faking it).
       # Interactive-only, so git/rsync and scripts still use the real binary.
-      if [[ "$TERM" == xterm-kitty ]]; then
+      # KITTY_WINDOW_ID guard: TERM propagates over ssh but the kitty env vars
+      # don't, so on a jump host the kitten would error instead of ssh'ing.
+      if [[ "$TERM" == xterm-kitty && -n "$KITTY_WINDOW_ID" ]]; then
         function ssh {
           ${config.programs.kitty.package}/bin/kitten ssh "$@"
         }
