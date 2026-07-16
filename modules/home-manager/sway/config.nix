@@ -88,6 +88,13 @@ let
   #   before-sleep → lock before the system suspends
   #   lock         → lock when `loginctl lock-session` fires
   #
+  # -w makes swayidle wait for each command to exit. That is only safe
+  # because swaylock-custom daemonizes (returns at lock time, not unlock) —
+  # a foreground lock command here freezes swayidle's event loop for the
+  # whole locked stretch, idle-notify events queue in its Wayland socket,
+  # and the stale backlog replays as a serial relock cascade on unlock
+  # (bit us on 2026-07-16: 5 unlocks, ~8s apart).
+  #
   # The wrapper around it fixes two consequences of the direct-exec launch
   # that bit us in the "unlock N times" cascade (see swaylock-custom):
   #   1. Captured debug log. swayidle's stdout/stderr otherwise go nowhere,

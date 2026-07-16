@@ -22,32 +22,38 @@ in pkgs.writeShellScriptBin "swaylock-custom" ''
 
   # Single-instance guard via flock. This atomically replaces the old
   # `pgrep -x swaylock` check AND the 10-second cooldown that sat on top of
-  # it. We grab a non-blocking lock on fd 9 and hold it for the entire
-  # lifetime of swaylock; the kernel drops it when this process exits (even
-  # on SIGKILL), so there's no stale state and no time window to reason
-  # about. A lock trigger that arrives while the screen is already locked
-  # fails flock -n and exits cleanly — safe, the screen is locked. Crucially
-  # this NEVER silently drops a *wanted* lock the way the cooldown did: if no
-  # swaylock is running (manual Mod+Ctrl+l, before-sleep on lid close, idle
-  # timeout) flock succeeds and we lock. It only ever errs toward "locked".
+  # it. We grab a non-blocking lock on fd 9; the daemonized swaylock below
+  # inherits the fd (its daemonize() only redirects stdout/stderr, it closes
+  # nothing else — verified in swaylock main.c), so the lock stays held for
+  # the entire lifetime of swaylock even though this script exits as soon as
+  # the screen is locked. The kernel drops it when the last holder exits
+  # (even on SIGKILL), so there's no stale state and no time window to
+  # reason about. A lock trigger that arrives while the screen is already
+  # locked fails flock -n and exits cleanly — safe, the screen is locked.
+  # Crucially this NEVER silently drops a *wanted* lock the way the cooldown
+  # did: if no swaylock is running (manual Mod+Ctrl+l, before-sleep on lid
+  # close, idle timeout) flock succeeds and we lock. It only ever errs
+  # toward "locked".
   #
-  # Why this kills the "unlock N times" cascade: the bulk of a burst's
-  # triggers arrive while the screen sits locked waiting for the user, and
-  # the held lock absorbs all of them. Only a straggler in the brief window
-  # right after unlock could re-lock — and that re-locks (safe), it doesn't
-  # leave the session exposed.
+  # Why this kills *stacked* locks: the bulk of a burst's triggers arrive
+  # while the screen sits locked waiting for the user, and the held lock
+  # absorbs all of them. Only a straggler in the brief window right after
+  # unlock could re-lock — and that re-locks (safe), it doesn't leave the
+  # session exposed. (The *sequential* relock cascade had a different cause
+  # — see the --daemonize comment below.)
   exec 9>"$RUNTIME_DIR/swaylock-custom.lock"
   if ! ${pkgs.util-linux}/bin/flock -n 9; then
     exit 0
   fi
 
-  # Slim diagnostic log, kept while we confirm flock ends the cascades.
-  # If a cascade ever recurs WITH this guard in place it can't be stacking
-  # (flock prevents that) — it means swaylock is exiting and being respawned
-  # sequentially (e.g. dying on an evdi output modeset during the idle
-  # power-off/resume cycle), and parent= names whoever relaunched it. Lives
-  # in XDG_RUNTIME_DIR (per-user tmpfs, 0700) rather than a world-readable
-  # /tmp path. Safe to delete this block after a few weeks cascade-free.
+  # Slim diagnostic log. This caught the 2026-07-16 cascade: sequential
+  # relocks with parent=swayidle, ~8s apart — swayidle (running with -w) sat
+  # blocked on our foreground swaylock for 9h, idle-notify events queued in
+  # its Wayland socket, and the stale backlog replayed on unlock, relocking
+  # once per drained event. Fixed by --daemonize below; the log stays while
+  # we confirm the fix holds. Lives in XDG_RUNTIME_DIR (per-user tmpfs,
+  # 0700) rather than a world-readable /tmp path. Safe to delete this block
+  # after a few weeks cascade-free.
   LOG="$RUNTIME_DIR/swaylock-custom.log"
   PARENT_CMD=$(${pkgs.coreutils}/bin/cat /proc/$PPID/comm 2>/dev/null || echo unknown)
   ${pkgs.coreutils}/bin/printf '%s pid=%d ppid=%d parent=%s\n' \
@@ -126,7 +132,18 @@ in pkgs.writeShellScriptBin "swaylock-custom" ''
   # it shaves the sides and the left-anchored content disappears off-screen.
   # fit letterboxes instead of cropping; the bars are invisible on a pure-black
   # background, and the left edge is always preserved.
-  ${pkgs.swaylock}/bin/swaylock \
+  # --daemonize: the parent swaylock exits 0 only once the compositor has
+  # confirmed the session lock (daemonize() runs after the ext-session-lock
+  # "locked" event — verified in swaylock main.c), so this script — and
+  # therefore whoever spawned it — returns the moment the screen is actually
+  # locked. This is what ends the sequential "unlock N times" cascade:
+  # swayidle runs with -w and used to sit blocked in waitpid on our
+  # foreground swaylock for the whole locked stretch (9h on 2026-07-16);
+  # idle-notify events queued in its Wayland socket meanwhile and replayed
+  # as a burst of stale relocks on unlock. It also gives before-sleep its
+  # intended semantics: the sleep inhibitor is released exactly when the
+  # lock is drawn instead of via logind's 5s inhibit timeout.
+  if ${pkgs.swaylock}/bin/swaylock --daemonize \
     --image "$TMPDIR/lock.png" \
     --scaling fit \
     --color 000000 \
@@ -143,6 +160,34 @@ in pkgs.writeShellScriptBin "swaylock-custom" ''
     --line-wrong-color 00000000    --line-clear-color 00000000 \
     --line-caps-lock-color 00000000 \
     --separator-color 00000000     --key-hl-color 00000000 \
-    --bs-hl-color 00000000
-  ${pkgs.dunst}/bin/dunstctl set-paused false
+    --bs-hl-color 00000000; then
+    # Locked. Teardown (unpause dunst, delete the rendered image) must wait
+    # for unlock, but nothing may block here — hand it to a background
+    # waiter keyed on the same lockfile: the daemonized swaylock holds the
+    # fd-9 flock until it exits, so a blocking flock on a fresh fd wakes
+    # exactly at unlock. The waiter must first close its inherited fd 9 —
+    # it's the same open file description swaylock holds, and keeping it
+    # open would hold the lock forever (deadlocking the waiter and blocking
+    # every future lock). It drops fd 10 again before running the teardown
+    # commands, so the post-unlock window where a fresh lock attempt sees
+    # the file locked stays microseconds wide.
+    # Deleting TMPDIR here (not at unlock) would also be safe — swaylock
+    # caches the image in memory at startup — but the waiter has to exist
+    # for the dunst unpause anyway, so cleanup rides along with it and the
+    # EXIT trap (which would fire the moment this script returns, i.e. at
+    # lock time, not unlock) is cleared.
+    trap - EXIT
+    (
+      exec 9>&-
+      ${pkgs.util-linux}/bin/flock 10
+      exec 10>&-
+      ${pkgs.dunst}/bin/dunstctl set-paused false
+      ${pkgs.coreutils}/bin/rm -rf "$TMPDIR"
+    ) 10>"$RUNTIME_DIR/swaylock-custom.lock" &
+  else
+    # swaylock never locked — unpause dunst now; the EXIT trap cleans up.
+    rc=$?
+    ${pkgs.dunst}/bin/dunstctl set-paused false
+    exit $rc
+  fi
 ''
