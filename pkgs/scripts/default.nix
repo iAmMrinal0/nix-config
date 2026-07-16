@@ -14,4 +14,5 @@
   gfn = pkgs.callPackage ./gfn { };
   garmin-sdk-manager = pkgs.callPackage ./garmin-sdk-container { };
   swaylock-custom = pkgs.callPackage ./swaylock-custom { };
+  tnas-health = pkgs.callPackage ./tnas-health { };
 }

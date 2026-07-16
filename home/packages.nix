@@ -146,6 +146,7 @@ with pkgs; [
   # the maintained replacement.
   fastfetch
   nix-prefetch-github
+  my.scripts.tnas-health
 
   gemini-cli
   inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.rtk
