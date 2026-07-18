@@ -1,11 +1,12 @@
 { writeShellScriptBin, ddcutil, libnotify, gawk, gnugrep }:
 
 # Hand the home Dell U2724DE (and its KVM'd peripherals) to the other laptop
-# by toggling the monitor's input over DDC/CI: USB-C 0x19 = cardassia, DP
-# 0x0f = betazed. Run from whichever machine currently has the screen. 0x19
-# is Dell's USB-C code, missing from ddcutil's MCCS table — full getvcp
-# prints it as "Invalid value", but the terse form still carries the raw
-# value.
+# by toggling the monitor's input over DDC/CI: USB-C 0x19 = betazed, DP
+# 0x0f = cardassia (as of 2026-07-18; the toggle below doesn't depend on
+# which host sits on which input). Run from whichever machine currently has
+# the screen. 0x19 is Dell's USB-C code, missing from ddcutil's MCCS table —
+# full getvcp prints it as "Invalid value", but the terse form still carries
+# the raw value.
 #
 # The monitor's i2c bus is cached after the first full scan: `--model` walks
 # every /dev/i2c-* on each call (10s+ here — the iGPU exposes ~17 buses, and
@@ -49,10 +50,13 @@ writeShellScriptBin "kvm-switch" ''
   fi
 
   case "$cur" in
-    *x19) tgt=0x0f who=betazed ;;
-    *) tgt=0x19 who=cardassia ;;
+    *x19) tgt=0x0f ;;
+    *) tgt=0x19 ;;
   esac
-  notify -t 3000 "kvm-switch" "monitor → $who"
+  # Name the host we're leaving, not the guessed destination: $HOSTNAME is
+  # ground truth on the machine that currently has the screen, while the
+  # input→host mapping silently inverts whenever the cables are swapped.
+  notify -t 3000 "kvm-switch" "switching from $HOSTNAME"
   ${ddcutil}/bin/ddcutil --bus "$bus" --noverify setvcp 60 "$tgt" ||
     notify -u critical "kvm-switch" "setvcp failed (bus $bus)"
 ''
