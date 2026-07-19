@@ -25,6 +25,8 @@
 
     nfs.enable = true;
 
+    smb.enable = true;
+
     gfn.enable = true;
 
     connectiq.enable = true;

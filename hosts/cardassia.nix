@@ -51,6 +51,7 @@
     };
     nfs.enable = true;
     openrazer.enable = true;
+    smb.enable = true;
     tailscale.enable = true;
     touchegg.enable = true;
 

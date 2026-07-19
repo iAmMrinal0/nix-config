@@ -60,6 +60,7 @@
       "file:///home/${username}/play"
       "file:///home/${username}/work"
       "file:///home/${username}/tnas"
+      "file:///home/${username}/private"
     ];
   };
 
