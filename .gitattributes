@@ -1,0 +1,5 @@
+# Show sops-encrypted files decrypted in diffs (display only — blobs stay
+# encrypted). Inert without the per-machine half, diff.sops.textconv, which
+# home-manager sets declaratively (modules/home-manager/git.nix); machines
+# without it just see the normal ciphertext diff.
+sops/*.yaml diff=sops

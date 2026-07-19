@@ -38,6 +38,14 @@ in {
         tool = "ediff";
         renormalize = true;
       };
+      # Machine half of nix-config's .gitattributes `diff=sops` driver:
+      # renders sops files decrypted in `git diff` (display only — the
+      # stored blobs stay encrypted). Every home-manager host already
+      # holds a user age key for editing the shared secret store, so
+      # this adds no new decryption capability.
+      diff = {
+        sops = { textconv = "${pkgs.sops}/bin/sops --input-type yaml --output-type yaml -d"; };
+      };
       status = { showUntrackedFiles = "all"; };
       url = {
         "ssh://git@github.com/" = { insteadOf = "https://github.com/"; };
