@@ -80,18 +80,18 @@ in {
         ({ criteria = "eDP-1"; } // edp // { position = "0,1440"; })
       ];
     };
-    # Home: Dell U2724DE (over USB-C) on the left at its max 120 Hz, laptop on
-    # the right. Bottom edges aligned: eDP is 1600 tall vs the Dell's 1440.
-    # eDP runs 90 Hz (its only modes are 60/90).
+    # Home: laptop on the left, Dell U2724DE (video over DP, USB-C for power)
+    # on the right at its max 120 Hz. Bottom edges aligned: eDP is 1600 tall
+    # vs the Dell's 1440. eDP runs 90 Hz (its only modes are 60/90).
     home = {
       outputs = [
         {
           criteria = dellU2724DEId;
           status = "enable";
           mode = "2560x1440@120.000Hz";
-          position = "0,160";
+          position = "2560,160";
         }
-        ({ criteria = "eDP-1"; } // edp // { position = "2560,0"; })
+        ({ criteria = "eDP-1"; } // edp)
       ];
     };
   };

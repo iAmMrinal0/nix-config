@@ -108,7 +108,7 @@ in {
         eDP-1 = edp // { position = "0x1440"; };
       };
     };
-    # Home: Dell U2724DE primary on the left at 120 Hz, laptop on the right,
+    # Home: laptop on the left, Dell U2724DE primary on the right at 120 Hz,
     # bottom edges aligned.
     "home" = {
       inherit fingerprint;
@@ -117,10 +117,10 @@ in {
           enable = true;
           primary = true;
           mode = "2560x1440";
-          position = "0x160";
+          position = "2560x160";
           rate = "120.00";
         };
-        eDP-1 = edp // { position = "2560x0"; };
+        eDP-1 = edp;
       };
     };
   };
