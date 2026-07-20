@@ -235,7 +235,19 @@ in {
           # Scroll on the clock to step through months. To switch to a
           # full yearly view, change calendar.mode to "year" — readable
           # but the tooltip becomes much larger.
-          tooltip-format = "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>";
+          tooltip-format = "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>\n<tt>{tz_list}</tt>";
+          # World clocks in the tooltip (waybar port of the i3 gsimplecal
+          # popup). "" = local and must stay first: the bar renders
+          # tzList[0], and tz_up/tz_down are deliberately not bound in
+          # `actions` so scroll keeps stepping months and the bar never
+          # leaves local time. {tz_list} skips the local entry, so the
+          # tooltip shows only the foreign zones.
+          timezones = [ "" "UTC" "Asia/Kolkata" ];
+          # Waybar hardcodes '\n' between {tz_list} entries, so the zones
+          # can't share a line; right-pad to the tooltip width instead (24 =
+          # 4 week column + 20 day grid) so the times sit flush with the
+          # calendar's right edge rather than leaving dead space there.
+          timezone-tooltip-format = "{:>24%Z  %H:%M}";
           # Pin locale so the calendar uses ISO week numbers (Monday-start,
           # %V) instead of US convention (Sunday-start, %U), which puts
           # the week boundary one day off and would show W17 for what is
