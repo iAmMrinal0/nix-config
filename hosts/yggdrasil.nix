@@ -12,7 +12,19 @@
   imports = [
     ../hardware/${hostname}.nix
     ../modules/nixos/system-label.nix
+    # Headless shell niceties (zsh + atuin + tmux + CLI tools), enabled below.
+    ../modules/nixos/server-profile.nix
   ];
+
+  # Login shell + interactive tooling for operating the box over SSH.
+  modules.server.enable = true;
+  # Boot a tmux session rooted at the compose repo (~/apps, the folder name is
+  # kept even though the repo is "yggdrasil") so `tmux attach` drops straight
+  # into where the docker stacks are managed.
+  modules.server.tmux = {
+    sessionName = "apps";
+    workingDir = "/home/${username}/apps";
+  };
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

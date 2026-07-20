@@ -1,11 +1,9 @@
 { config, pkgs, lib, inputs, ... }:
 
 let
-  shellAliases = {
-    cal = "cal -w"; # show week numbers (Monday-start comes from en_GB locale)
-    tmuxnew = "tmux -u attach -t play || tmux -u new -s play";
-    tmuxdir = "new-tmux-from-dir-name";
-    proc = "ps aux | rg";
+  # Common aliases are shared with the NixOS server profile via
+  # modules/shell-aliases.nix; only the desktop/X11-specific ones live here.
+  shellAliases = (import ../../shell-aliases.nix) // {
     # DisplayLink renames DVI-I-* outputs between docks/reboots and saved
     # CRTC/gamma values go stale: match monitors by EDID and let X pick CRTCs.
     autorandr = "autorandr --match-edid --skip-options crtc,gamma";
