@@ -107,6 +107,27 @@ in {
         ${pkgs.tmux}/bin/tmux new-session -As $dir_name
       }
 
+      # tmux + Wayland: update-environment (tmux.nix) refreshes WAYLAND_DISPLAY/
+      # SWAYSOCK into the SESSION env on attach, but that only reaches NEWLY
+      # spawned panes. A shell already running — e.g. a continuum-restored pane
+      # born under the pre-warm server before sway imported the vars — keeps its
+      # stale/empty values, so hand-run Wayland tools (wl-copy, grim, awww/
+      # wallpaper-next) can't find the compositor. Re-import the volatile
+      # session vars into the live shell each prompt: one show-environment call,
+      # filtered to the ones that actually change per session (`-VAR` lines mean
+      # tmux unset it, so we unset too).
+      _tmux_env_sync() {
+        [[ -n "$TMUX" ]] || return 0
+        local line
+        while IFS= read -r line; do
+          case "$line" in
+            WAYLAND_DISPLAY=*|SWAYSOCK=*|DISPLAY=*|SSH_AUTH_SOCK=*) export "$line" ;;
+            -WAYLAND_DISPLAY|-SWAYSOCK|-DISPLAY|-SSH_AUTH_SOCK) unset "''${line#-}" ;;
+          esac
+        done < <(${pkgs.tmux}/bin/tmux show-environment 2>/dev/null)
+      }
+      add-zsh-hook precmd _tmux_env_sync
+
       # Remote hosts lack the xterm-kitty terminfo entry, so ncurses apps
       # error out over ssh. `kitten ssh` installs it into the remote login
       # user's ~/.terminfo on connect (keeps TERM honest, unlike faking it).
