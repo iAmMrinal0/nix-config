@@ -2,7 +2,8 @@
 
 let
   mkRcloneMountService = { name, description, remote, mountPath
-    , cacheDir ? "/home/${username}/.cache/rclone/${name}" }: {
+    , cacheDir ? "/home/${username}/.cache/rclone/${name}"
+    , memoryHigh ? null, memoryMax ? null }: {
       "rclone-${name}-mount" = {
         Unit = {
           Description = description;
@@ -56,6 +57,19 @@ let
           Restart = "on-failure";
           RestartSec = "10s";
           Environment = [ "PATH=/run/wrappers/bin/:$PATH" ];
+        } // lib.optionalAttrs (memoryHigh != null) {
+          # Soft ceiling: past this the kernel aggressively reclaims this
+          # unit's pages, throttling growth before it turns dangerous.
+          MemoryHigh = memoryHigh;
+        } // lib.optionalAttrs (memoryMax != null) {
+          # Hard ceiling: on breach the kernel OOM-kills a process INSIDE
+          # this cgroup (rclone), then Restart=on-failure brings the mount
+          # back. Contains the runaway to rclone's own scope so systemd-oomd
+          # never has to reap the whole tmux/session slice — see the tdrive
+          # taildrive recursion loop (mount is inside the shared home tree,
+          # so its VFS enumerates an infinitely nested share and RSS climbs
+          # unbounded; peaked at ~32G before this cap).
+          MemoryMax = memoryMax;
         };
       };
     };
@@ -75,6 +89,11 @@ in {
         description = "WebDAV tailscale taildrive mount";
         remote = "tdrive";
         mountPath = "/home/${username}/tdrive";
+        # Cap the taildrive mount: its VFS can walk a recursively nested
+        # share and balloon RSS to tens of GB. Contain it to rclone's own
+        # cgroup instead of letting it drive the session into oomd.
+        memoryHigh = "1500M";
+        memoryMax = "2G";
       })
 
       { # Start tmux server at login so continuum auto-restore runs in the
