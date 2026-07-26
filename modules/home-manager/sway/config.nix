@@ -311,6 +311,30 @@ in {
             command = "fullscreen enable, inhibit_idle focus";
             criteria = { title = "(?i)gamescope"; };
           }
+          # Native Steam games run as plain Xwayland windows (not gamescope),
+          # so the rule above misses them and swayidle locks/blanks mid-game.
+          # Steam launches many games with WM_CLASS `steam_app_<appid>`;
+          # inhibit idle while such a window is focused. `focus` (not
+          # `fullscreen`) so borderless-windowed games are covered too.
+          {
+            command = "inhibit_idle focus";
+            criteria = { class = "^steam_app_"; };
+          }
+          # Catch-all safety net: not every game reports the steam_app_
+          # class (custom engines, Proton), but they all run fullscreen.
+          # `inhibit_idle fullscreen` inhibits only while the window is
+          # actually fullscreen, so normal windows are unaffected and lock
+          # resumes the moment you exit fullscreen. Covers Hades II and any
+          # other game regardless of its window identity. Matched for both
+          # Xwayland (class) and native-Wayland (app_id) clients.
+          {
+            command = "inhibit_idle fullscreen";
+            criteria = { class = ".*"; };
+          }
+          {
+            command = "inhibit_idle fullscreen";
+            criteria = { app_id = ".*"; };
+          }
           {
             command = ''move to workspace "${workspacesByKey.music}"'';
             criteria = { class = "Spotify"; };
