@@ -177,7 +177,15 @@
     ACTION=="add", SUBSYSTEM=="leds", KERNEL=="platform::micmute", ATTR{trigger}="none", RUN+="${pkgs.coreutils}/bin/chgrp audio /sys/class/leds/platform::micmute/brightness", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/leds/platform::micmute/brightness"
   '';
 
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  # arm64 emulation for cross-arch Docker builds (e.g. the kronor dev-database
+  # rebuild, which builds the Postgres image for arm64 as well as amd64).
+  # preferStaticEmulators picks the statically-linked qemu with the F (fix-binary)
+  # flag so the interpreter is reachable inside a container's mount namespace;
+  # without it arm64 containers die with "exec ... no such file or directory".
+  boot.binfmt = {
+    emulatedSystems = [ "aarch64-linux" ];
+    preferStaticEmulators = true;
+  };
 
   environment.systemPackages = [ pkgs.android-studio pkgs.polkit_gnome ];
 

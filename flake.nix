@@ -131,6 +131,7 @@
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/${hostname}.nix
             ./cache.nix
+            ./kronor.nix
             sops-nix.nixosModules.sops
             # disko owns cardassia's partitioning (modules/nixos/disk-layout.nix).
             # Only this host enables it, so betazed evaluate unchanged.

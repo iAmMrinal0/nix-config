@@ -7,7 +7,6 @@ let
     "nixpkgs-review"
     "kronor-openvpn-staging"
     "kronor-openvpn-production"
-    "bw-session-key"
     "rbw-email"
     "rbw-base-url"
     "cachix-auth-token"
@@ -143,29 +142,6 @@ in {
       pkgs.bitwarden-cli
       pkgs.xpdf
       inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
-      (pkgs.writeShellApplication {
-        name = "connect-kronor-vpn";
-        runtimeInputs = [ pkgs.openvpn pkgs.bitwarden-cli ];
-        text = ''
-          # The auth file holds the VPN username + a live TOTP. Write it to
-          # a private temp file (mktemp creates 0600) with a cleanup trap so
-          # the secret never sits at a predictable, world-readable path and
-          # never lingers after the session — also correct under ephemeral /tmp.
-          pass="$(mktemp)"
-          trap 'rm -f "$pass"' EXIT
-          chmod 600 "$pass"
-
-          echo "mrinal@kronor.io" > "$pass"
-
-          if [[ "''${1:-staging}" == "staging" ]]; then
-              bw get totp "pritunl staging" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> "$pass"
-              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-staging.path} --auth-user-pass "$pass" --auth-nocache
-          elif [[ "$1" == "production" ]]; then
-              bw get totp "pritunl prod" --session "$(cat ${config.sops.secrets.bw-session-key.path})" >> "$pass"
-              sudo openvpn --config ${config.sops.secrets.kronor-openvpn-production.path} --auth-user-pass "$pass" --auth-nocache
-          fi
-        '';
-      })
     ];
     # Qt style is now configured per-session via the home-manager qt module
     # (modules/home-manager/qt.nix → Adwaita-Dark) and re-asserted at the
