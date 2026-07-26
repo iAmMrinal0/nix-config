@@ -193,11 +193,28 @@
 
   programs.steam.enable = true;
 
-  # DisplayLink/evdi dock support, carried over from mordor (cardassia uses a
-  # DisplayLink dock at the office). WLR_EVDI_RENDER_DEVICE below points at the
-  # Intel Arc iGPU at PCI 0000:00:02.0. The patches pin wlroots_0_19 + scenefx
-  # to 26.05 so they apply cleanly.
-  # See hosts/mordor.nix for the full history of why these patches exist.
+  # DisplayLink/evdi dock support (office dock). Without these patches,
+  # unpatched sway/wlroots lights up the dock outputs but flickers windows out
+  # to the wallpaper on every damage-heavy update (scrolling, typing) — silent
+  # frame corruption, nothing logged. The fix patches wlroots' DRM backend with
+  # evdi render-device support (NixOS wiki "DisplayLink").
+  #
+  # Why the local v3 patch and not the wiki's: the wiki's DisplayLink_v2 patch
+  # only accepts literal /dev/dri/card0..9 for WLR_EVDI_RENDER_DEVICE and
+  # silently falls back to card0 on anything else. evdi card numbering is
+  # dynamic (it can grab card0, bumping the iGPU to card1), so "card0" can mean
+  # evdi rendering on itself → EGL device match fails → corrupt software path
+  # (flicker-to-wallpaper, cursor trails). v3 accepts any absolute path, so the
+  # by-path symlink below works (open() resolves it).
+  #
+  # scenefx must carry the same patch: it vendors a copy of wlroots' render/
+  # egl.c and SwayFX renders through scenefx, so a wlroots-only patch never
+  # reaches it (the egl.c:506 error only exists in scenefx's copy).
+  #
+  # WLR_EVDI_RENDER_DEVICE names the iGPU (Intel Arc, PCI 0000:00:02.0) by-path
+  # rather than cardN because evdi numbering shuffles at dock-time; verify once
+  # with `ls -l /dev/dri/by-path/` if rendering lands on the wrong device. The
+  # overlay pins wlroots_0_19 + scenefx so the patches apply cleanly on 26.05.
   nixpkgs.overlays = [
     (final: prev: {
       wlroots_0_19 = prev.wlroots_0_19.overrideAttrs (old: {
