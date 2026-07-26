@@ -36,13 +36,14 @@ in {
       ];
     };
     # Copenhagen office (curved ultrawide): Samsung S34C65xV on top at its max
-    # 3440x1440@100 Hz, laptop centered below (ultrawide is 880 px wider).
+    # 3440x1440, laptop centered below (ultrawide is 880 px wider).
+    # Refresh left off on purpose: kanshi matches modes EXACTLY
     bzt-cph-curved = {
       outputs = [
         {
           criteria = samsungS34C65VId;
           status = "enable";
-          mode = "3440x1440@99.981Hz";
+          mode = "3440x1440";
           position = "0,0";
         }
         ({ criteria = "eDP-1"; } // edp // { position = "440,1440"; })
