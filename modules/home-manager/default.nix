@@ -25,6 +25,7 @@
     ./terminator.nix
     ./thunar.nix
     ./tmux.nix
+    ./wallpaper.nix
     ./xsession.nix
     ./wayland-session.nix
     ./kanshi.nix

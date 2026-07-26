@@ -38,8 +38,6 @@ let
       | ${pkgs.rofi}/bin/rofi -dmenu -p "delay (s)") || exit 0
     exec ${sattyShot} "$delay"
   '';
-  wallpaper = ../common/wallpapers/nix-glow-black.png;
-
   swaymsg = "${pkgs.sway}/bin/swaymsg";
   # DPMS wake helper for the resume hook. A wildcard `output * power on`
   # silently fails for evdi outputs: the all-outputs atomic commit gets
@@ -445,10 +443,12 @@ in {
           command =
             "${pkgs.systemd}/bin/systemctl --user stop redshift.service xss-lock.service picom.service";
         }
-        {
-          command = "${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill";
-          always = true;
-        }
+        # Wallpaper: awww (the renamed swww) owns the root surface now, managed
+        # by its systemd user units (awww-daemon.service + wallpaper.service/
+        # timer, all WantedBy sway-session.target — see
+        # modules/home-manager/wallpaper.nix). The old static
+        # `swaybg -i ${wallpaper} -m fill` exec is gone; awww rotates Bing +
+        # Wallhaven sceneries with a fade transition.
         # Waybar removed from sway exec: managed exclusively by its
         # systemd user unit now (programs.waybar.systemd.enable = true
         # in waybar.nix). Sway-exec launching couldn't enforce a
