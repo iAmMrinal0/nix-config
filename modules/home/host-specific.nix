@@ -9,22 +9,19 @@ in {
 
     isLaptop = mkOption {
       type = types.bool;
-      default = hostname == "mordor" || hostname == "betazed" || hostname
-        == "cardassia";
+      default = hostname == "betazed" || hostname == "cardassia";
       description = "Whether the current host is a laptop";
     };
 
     hasBluetooth = mkOption {
       type = types.bool;
-      default = hostname == "mordor" || hostname == "betazed" || hostname
-        == "cardassia";
+      default = hostname == "betazed" || hostname == "cardassia";
       description = "Whether the current host has bluetooth";
     };
 
     primaryMonitor = mkOption {
       type = types.str;
-      default = if (hostname == "mordor" || hostname == "betazed" || hostname
-        == "cardassia") then
+      default = if (hostname == "betazed" || hostname == "cardassia") then
         "eDP-1"
       else
         "DP-3";

@@ -30,6 +30,6 @@
   ]
   # disk-layout.nix defines config under the `disko` option, which is provided
   # only on cardassia (its flake output imports disko.nixosModules.disko).
-  # Import it only there so betazed/mordor don't fail on the undeclared option.
+  # Import it only there so betazed doesn't fail on the undeclared option.
   ++ lib.optional (hostname == "cardassia") ./disk-layout.nix;
 }

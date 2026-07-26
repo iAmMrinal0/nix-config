@@ -12,9 +12,9 @@ let
   # glob a criteria that omits the serial never matches.
   dellP2720DId = "Dell Inc. DELL P2720D *"; # Copenhagen office (current desk)
   dellUP2716DId = "Dell Inc. DELL UP2716D *"; # Copenhagen office (old desk)
-  dellU2724DEId = "Dell Inc. DELL U2724DE *"; # home (same panel as mordor's)
+  dellU2724DEId = "Dell Inc. DELL U2724DE *"; # home
   samsungS34C65VId = "Samsung Electric Company S34C65xV *"; # Copenhagen office (curved ultrawide)
-  # Office DisplayLink dock (bzt-alt), same physical units as mordor's.
+  # Office DisplayLink dock (bzt-alt).
   ls27a600nId = "Samsung Electric Company LS27A600N *"; # centre
   ls27a600uId = "Samsung Electric Company LS27A600U *"; # left
 in {
@@ -49,7 +49,7 @@ in {
       ];
     };
     # Office dock (bzt-alt): two Samsungs over DisplayLink/evdi, laptop under
-    # the centre monitor. Geometry mirrors kanshi/mordor.nix bzt-alt.
+    # the centre monitor.
     bzt-alt = {
       outputs = [
         # LS27A600N: centre

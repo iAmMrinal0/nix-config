@@ -1,7 +1,6 @@
 keys:
   - &age_betazed_iammrinal0 age1yk2lqwvacdnvce9phpks99yacrcd7vp49gtexnsskesntgh0pavsal6583
   - &age_betazed age1csat6txgrfmvxcxe0hzfpcv0lk8x4t50ah53jdst7xms0v9m6u6sg3hu8r
-  - &age_mordor age1spq30m6hvgmcc37p9cte9xk90q09zzacs0xsm83p5huges5n490smncmy5
   - &age_cardassia age1pdkqghx2q8m6jlcjcvc5r034dnykacnqyatdw68xslrz8gxu5yls5f0k2q
   - &age_cardassia_iammrinal0 age1zyp80rudm4l9q32xma690ykzw2nu85d7rvcp6xcyeuhjjv4qjvgq0g9f3w
   - &age_yggdrasil age1l3pl0wlkcw0wj07d9c00zfd7e9pfzwdl4h9y8jzmp4kgjs57z3gqxdcpcg
@@ -22,6 +21,5 @@ creation_rules:
       - age:
           - *age_betazed_iammrinal0
           - *age_betazed
-          - *age_mordor
           - *age_cardassia
           - *age_cardassia_iammrinal0

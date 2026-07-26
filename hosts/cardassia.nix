@@ -1,7 +1,7 @@
-# NixOS config for work laptop (mordor's successor — ThinkPad P14s Gen 6,
+# NixOS config for work laptop (ThinkPad P14s Gen 6,
 # Intel Core Ultra 9 285H, 16 cores / 64 GB).
 #
-# Derived from hosts/mordor.nix. Differences from mordor:
+# Notable points:
 #   - disko owns the disk (LUKS + btrfs + /persist + dormant @root-blank
 #     snapshot for staged impermanence) → modules.disk-layout.enable, and
 #     NO swapDevices here (the @swap subvolume provides it; zram backs up).
@@ -42,8 +42,8 @@
       enable = true;
       method = "nh";
     };
-    # GeForce NOW at the native panel res — the Arc iGPU handles it (unlike
-    # mordor's UHD 620, which is why the launcher defaults to 1080p).
+    # GeForce NOW at the native panel res — the Arc iGPU handles it (the
+    # launcher otherwise defaults to 1080p for weaker iGPUs).
     gfn = {
       enable = true;
       width = 2560;
@@ -55,7 +55,7 @@
     tailscale.enable = true;
     touchegg.enable = true;
 
-    # Greetd + tuigreet session picker (i3 + sway), same as mordor.
+    # Greetd + tuigreet session picker (i3 + sway).
     # Deploy with `nh os boot` + reboot, NOT a live switch (see
     # modules/nixos/wayland-session.nix). Recovery: pick the previous
     # generation from systemd-boot.
@@ -129,8 +129,7 @@
   };
 
   # No nix.settings override: on 16 cores / 64 GB the defaults (max-jobs =
-  # "auto", cores = 0) already use everything. mordor caps these to avoid OOM
-  # on its 4 cores; cardassia doesn't need to.
+  # "auto", cores = 0) already use everything without risking OOM.
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 

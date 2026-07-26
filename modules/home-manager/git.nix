@@ -6,12 +6,14 @@ let
   # offline: maps the signing identity (committer email) to the
   # per-machine public keys (the same id_ed25519 keys registered on
   # GitHub — public material, fine for a public repo; the email is
-  # already this repo's commit identity). Both keys listed so either
-  # machine verifies the other's commits. Work-email commits live in
+  # already this repo's commit identity). All hosts' keys listed so any
+  # machine verifies the others' commits; mordor is retired (2026-07) but
+  # kept here so its past signed commits stay verifiable. Work-email commits live in
   # work repos and aren't verified by this file — deliberately not
   # listing an org email in a public repo.
   allowedSigners = pkgs.writeText "git-allowed-signers" ''
     ${identity.email} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF2VaKwjYmaBmrbVp14QFZBguI9ah8hC+sw91OYH6bg7 betazed
+    ${identity.email} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGoWghjXVEMDtNMGjlKyUNXMj8QqaCSTnONn6Y/e66kG cardassia
     ${identity.email} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII4eqGHhyS/WC3vgY19Ij5ycL0gJmVt7EcWRgmKBUdbb mordor
   '';
 in {

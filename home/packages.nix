@@ -79,7 +79,7 @@ with pkgs; [
   gnome-screenshot
   # Wayland screenshots are grim+slurp+satty, script-pinned in
   # modules/home-manager/sway/config.nix (Print binding) — no package
-  # entry needed. gnome-screenshot stays for the mordor (X11/i3) host
+  # entry needed. gnome-screenshot stays for X11/i3
   # where Print is bound to gnome-screenshot -i. flameshot was tried in
   # between; its Wayland multi-monitor workaround lives in commit 2896832.
 

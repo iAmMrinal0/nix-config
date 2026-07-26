@@ -113,7 +113,7 @@ in {
       package = pkgs.swayfx;
       wrapperFeatures.gtk = true;
       # sway hard-exits at startup when the proprietary DisplayLink stack is
-      # in use (sway/server.c check; hit on mordor's first office TTY test).
+      # in use (sway/server.c check; hit on the first office TTY test).
       # --unsupported-gpu is the documented escape hatch. Conditioned on the
       # displaylink video driver (currently the xserver.nix default on BOTH
       # hosts, so in practice this lands everywhere; betazed's guard never
@@ -171,7 +171,6 @@ in {
       XCURSOR_THEME = "Bibata-Modern-Classic";
       XCURSOR_SIZE = "24";
       # Bitwarden's SSH agent socket. Duplicates home.sessionVariables
-      # (which still apply for mordor's lightdm + login-shell session)
       # because greetd → tuigreet → session exec's the WM directly without a
       # login shell, so home-manager session vars don't reach WM-launched
       # GUI apps. Bitwarden therefore starts without BITWARDEN_SSH_AUTH_SOCK

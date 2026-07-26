@@ -3,9 +3,9 @@
 # Mirrors kanshi/cardassia.nix profiles for X11/i3 fallback sessions. autorandr
 # runs with services.autorandr.matchEdid = true, so the output-name keys below
 # are just labels: profiles are matched (and outputs bound) by EDID content, not
-# by the X11 connector name. The Dell externals are the same physical units as
-# mordor (matching serials), so their EDIDs are byte-identical and reused from
-# autorandr/mordor.nix; eDP-1 was read from this laptop's panel.
+# by the X11 connector name. The Dell externals' EDIDs (matching serials, so
+# byte-identical across docks) are carried over here; eDP-1 was read from this
+# laptop's panel.
 let
   fingerprint = {
     eDP-1 =
@@ -20,7 +20,7 @@ let
       "00ffffffffffff004c2d6e71*";
     DVI-I-2-2 = # SAMSUNG LS27A600U — office DisplayLink dock (bzt-alt), left
       "00ffffffffffff004c2d7271*";
-    DP-3 = # DELL U2724DE  — home (same panel as mordor's)
+    DP-3 = # DELL U2724DE  — home
       "00ffffffffffff0010ace242*";
   };
   # eDP: 2560x1600 @ 90 Hz, mirroring kanshi (panel exposes only 60/90 Hz). If an
@@ -70,8 +70,8 @@ in {
       };
     };
     # Office DisplayLink dock (bzt-alt): two Samsungs, laptop under the centre
-    # monitor. Geometry mirrors autorandr/mordor.nix bzt-alt; the DVI-I-* keys
-    # are just labels (matchEdid), so either USB enumeration order works.
+    # monitor. The DVI-I-* keys are just labels (matchEdid), so either USB
+    # enumeration order works.
     "bzt-alt" = {
       inherit fingerprint;
       config = {

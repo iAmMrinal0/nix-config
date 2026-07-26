@@ -383,7 +383,7 @@ in {
       enable = true;
       # registerSession defaults to false here — that's the lightdm + i3
       # recovery generation. Each host opts into the greetd picker in its
-      # own file (both betazed and mordor now set it true). mkDefault lets
+      # own file. mkDefault lets
       # the host file override without needing mkForce there.
       registerSession = lib.mkDefault false;
     };
