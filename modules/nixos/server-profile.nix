@@ -57,7 +57,11 @@ in {
       enable = true;
       enableCompletion = true;
       autosuggestions.enable = true;
-      syntaxHighlighting.enable = true;
+      # This option would ship zsh-users' "zsh-syntax-highlighting"; the laptops
+      # use fast-syntax-highlighting (F-Sy-H), which colours differently. Keep
+      # it off and source F-Sy-H (the same package) in interactiveShellInit so
+      # the highlighting matches the desktops.
+      syntaxHighlighting.enable = false;
       shellAliases = import ../shell-aliases.nix;
       # oh-my-zsh supplies the interactive niceties (AUTO_CD, the completion
       # menu + colours, the git/sudo/extract plugins) and the prompt — the same
@@ -74,18 +78,27 @@ in {
         custom = "${pkgs.callPackage ../home-manager/zsh/modSteeefZsh.nix { }}";
         plugins = [ "extract" "git" "sudo" ];
       };
-      interactiveShellInit = ''
-        # Not in oh-my-zsh's history defaults; match the desktop shell.
-        setopt HIST_FIND_NO_DUPS
-        setopt HIST_IGNORE_ALL_DUPS
+      interactiveShellInit = lib.mkMerge [
+        ''
+          # Not in oh-my-zsh's history defaults; match the desktop shell.
+          setopt HIST_FIND_NO_DUPS
+          setopt HIST_IGNORE_ALL_DUPS
 
-        # Shared with the desktop shell: open/attach a tmux session named after
-        # the current directory (the `tmuxdir` alias calls this).
-        function new-tmux-from-dir-name {
-          dir_name=$(echo `basename $PWD` | tr '.' '-')
-          ${pkgs.tmux}/bin/tmux new-session -As $dir_name
-        }
-      '';
+          # Shared with the desktop shell: open/attach a tmux session named
+          # after the current directory (the `tmuxdir` alias calls this).
+          function new-tmux-from-dir-name {
+            dir_name=$(echo `basename $PWD` | tr '.' '-')
+            ${pkgs.tmux}/bin/tmux new-session -As $dir_name
+          }
+        ''
+        # fast-syntax-highlighting must load LAST so it wraps the other zle
+        # widgets; mkAfter puts it after oh-my-zsh and autosuggestions. Same
+        # plugin as the laptops (they defer + zcompile it for startup speed,
+        # which a rarely-launched server shell doesn't need).
+        (lib.mkAfter ''
+          source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+        '')
+      ];
     };
 
     # Shell-history search + up-arrow, running UNSYNCED here: syncing would land
