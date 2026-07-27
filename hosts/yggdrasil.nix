@@ -6,7 +6,7 @@
 # App secrets live in the compose repo's gitignored .env files (as on the old
 # Pi); sops-nix is wired in directly (not via base.nix) only for the backup
 # job's borg passphrase + rclone credentials.
-{ config, pkgs, hostname, username, ... }:
+{ config, pkgs, inputs, hostname, username, ... }:
 
 {
   imports = [
@@ -14,7 +14,14 @@
     ../modules/nixos/system-label.nix
     # Headless shell niceties (zsh + atuin + tmux + CLI tools), enabled below.
     ../modules/nixos/server-profile.nix
+    # `comma` (,) to run any tool once without installing it, backed by the
+    # prebuilt nix-index database (no local `nix-index` run needed).
+    inputs.nix-index-database.nixosModules.nix-index
   ];
+
+  # `,` <cmd> runs a program from nixpkgs without adding it to systemPackages —
+  # handy on a server for one-off tools. Uses the flake's prebuilt index.
+  programs.nix-index-database.comma.enable = true;
 
   # Login shell + interactive tooling for operating the box over SSH.
   modules.server.enable = true;
@@ -105,6 +112,7 @@
     vim
     borgbackup
     rclone
+    sqlite # sqlite3 CLI for poking the apps' databases (vaultwarden, etc.)
   ];
 
   # Git identity for committing in ~/apps. No home-manager on this host, so
