@@ -130,7 +130,12 @@ in {
         }
         { command = "${pkgs.xset}/bin/xset -b"; }
         {
-          command = "${pkgs.cryptomator}/bin/cryptomator &";
+          # Wrapper, not cryptomator directly: it sweeps FUSE mounts orphaned by
+          # a crashed session before starting, otherwise the first unlock after
+          # the session dies fails with FileAlreadyExistsException on the dead
+          # mountpoint.
+          command =
+            "${pkgs.my.scripts.cryptomator-launch}/bin/cryptomator-launch &";
         }
         {
           # Standby after 5 minutes, Suspend after 10 minutes, Off after 15 minutes

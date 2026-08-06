@@ -503,7 +503,10 @@ in {
         { command = sniWait "${pkgs.coreutils}/bin/env QT_QPA_PLATFORM=xcb ${pkgs.kdePackages.kdeconnect-kde}/bin/kdeconnect-indicator"; }
         { command = "${pkgs.udiskie}/bin/udiskie -t"; }
         { command = "${pkgs.cbatticon}/bin/cbatticon -c '${pkgs.libnotify}/bin/notify-send \"Battery critically low!\"' -l 20 -r 10"; }
-        { command = "${pkgs.cryptomator}/bin/cryptomator &"; }
+        # Wrapper, not cryptomator directly: it sweeps FUSE mounts orphaned by a
+        # crashed session before starting, otherwise the first unlock after a
+        # sway crash fails with FileAlreadyExistsException on the dead mountpoint.
+        { command = "${pkgs.my.scripts.cryptomator-launch}/bin/cryptomator-launch &"; }
         # gammastep replaces redshift on Wayland hosts (see modules/home/services.nix).
         { command = sniWait "${pkgs.gammastep}/bin/gammastep-indicator"; }
       ] ++ lib.optionals (role == "home") [
