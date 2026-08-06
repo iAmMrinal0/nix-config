@@ -97,6 +97,27 @@ in {
     };
   };
 
+  # Desktop overlay stack, shared by every host that imports base.nix
+  # (yggdrasil stays lean and doesn't; see flake.nix).
+  nixpkgs.overlays = [
+    inputs.nur.overlays.default
+    inputs.emacs-overlay.overlay
+    inputs.nix4vscode.overlays.forVscode
+    (import ./overlays)
+    (final: prev: {
+      unstable = import inputs.nixpkgs-unstable {
+        # Pass the bare system string, not pkgs.stdenv.hostPlatform:
+        # the latter is an already-elaborated platform attrset from
+        # our stable nixpkgs and still carries `linux-kernel`, which
+        # 26.11+ unstable removed — re-elaborating it there throws
+        # "lib.systems.elaborate: linux-kernel has been removed".
+        # The bare string lets unstable elaborate under its own schema.
+        localSystem = { inherit (pkgs.stdenv.hostPlatform) system; };
+        config = final.config;
+      };
+    })
+  ];
+
   nixpkgs.config = {
     allowUnfree = true;
     chromium = { enableWideVine = true; };

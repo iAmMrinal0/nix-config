@@ -102,26 +102,6 @@
             ./hosts/${hostname}.nix
             ./cache.nix
             sops-nix.nixosModules.sops
-            ({ pkgs, inputs, ... }: {
-              nixpkgs.overlays = [
-                nur.overlays.default
-                emacs-overlay.overlay
-                nix4vscode.overlays.forVscode
-                (import ./overlays)
-                (final: prev: {
-                  unstable = import nixpkgs-unstable {
-                    # Pass the bare system string, not pkgs.stdenv.hostPlatform:
-                    # the latter is an already-elaborated platform attrset from
-                    # our stable nixpkgs and still carries `linux-kernel`, which
-                    # 26.11+ unstable removed — re-elaborating it there throws
-                    # "lib.systems.elaborate: linux-kernel has been removed".
-                    # The bare string lets unstable elaborate under its own schema.
-                    localSystem = { inherit (pkgs.stdenv.hostPlatform) system; };
-                    config = final.config;
-                  };
-                })
-              ];
-            })
           ];
         };
         cardassia = let hostname = "cardassia";
@@ -136,26 +116,6 @@
             # disko owns cardassia's partitioning (modules/nixos/disk-layout.nix).
             # Only this host enables it, so betazed evaluate unchanged.
             disko.nixosModules.disko
-            ({ pkgs, inputs, ... }: {
-              nixpkgs.overlays = [
-                nur.overlays.default
-                emacs-overlay.overlay
-                nix4vscode.overlays.forVscode
-                (import ./overlays)
-                (final: prev: {
-                  unstable = import nixpkgs-unstable {
-                    # Pass the bare system string, not pkgs.stdenv.hostPlatform:
-                    # the latter is an already-elaborated platform attrset from
-                    # our stable nixpkgs and still carries `linux-kernel`, which
-                    # 26.11+ unstable removed — re-elaborating it there throws
-                    # "lib.systems.elaborate: linux-kernel has been removed".
-                    # The bare string lets unstable elaborate under its own schema.
-                    localSystem = { inherit (pkgs.stdenv.hostPlatform) system; };
-                    config = final.config;
-                  };
-                })
-              ];
-            })
           ];
         };
         yggdrasil = let hostname = "yggdrasil";
