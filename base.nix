@@ -30,6 +30,37 @@ let
     };
   };
 
+  # rbw-agent's pinentry. Serves the master password from the login keyring
+  # (PAM-unlocked at login, same mechanism gcr-ssh-agent relies on) so the
+  # vault unlocks without a prompt — including from display-less contexts
+  # like the kronor OTP agent (kronor-home.nix), whose spawned rbw-agent
+  # otherwise dies trying to open pinentry-qt with no WAYLAND_DISPLAY.
+  # Falls back to interactive pinentry-qt when the keyring has no entry.
+  # One-time setup per host:
+  #   secret-tool store --label='rbw master password' service rbw
+  rbwPinentry = pkgs.writeShellScript "pinentry-rbw" ''
+    # glib's bus fallback covers this, but only when XDG_RUNTIME_DIR is set;
+    # pin the address so keyring lookups also work from odd contexts.
+    export DBUS_SESSION_BUS_ADDRESS="''${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$(${pkgs.coreutils}/bin/id -u)/bus}"
+
+    if password=$(${pkgs.libsecret}/bin/secret-tool lookup service rbw) \
+      && [ -n "$password" ]; then
+      # Assuan wants %, CR, LF percent-escaped; % is the only one that can
+      # survive a secret-tool round-trip.
+      escaped=''${password//%/%25}
+      printf 'OK pinentry-rbw ready\n'
+      while IFS=' ' read -r command _; do
+        case $command in
+          GETPIN) printf 'D %s\nOK\n' "$escaped" ;;
+          BYE) printf 'OK\n'; exit 0 ;;
+          *) printf 'OK\n' ;;
+        esac
+      done
+    else
+      exec ${pkgs.pinentry-qt}/bin/pinentry-qt "$@"
+    fi
+  '';
+
 in {
 
   sops = {
@@ -59,9 +90,9 @@ in {
         email = config.sops.placeholder.rbw-email;
         base_url = config.sops.placeholder.rbw-base-url;
         # rbw-agent keeps the vault key in memory this long, so the master
-        # password is asked once per boot instead of on every invocation.
+        # password is fetched once per boot instead of on every invocation.
         lock_timeout = 2592000; # 30 days
-        pinentry = "${pkgs.pinentry-qt}/bin/pinentry-qt";
+        pinentry = "${rbwPinentry}";
       };
     };
   };

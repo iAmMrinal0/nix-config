@@ -30,6 +30,33 @@ let
     with open(sys.argv[1], encoding="utf-8") as commands_file:
         commands = json.load(commands_file)
 
+
+    # This service has no display vars, so a pinentry spawned by the OTP
+    # command (rbw's interactive fallback when the keyring path fails) dies
+    # instantly. Overlay them from the user manager per request rather than
+    # binding the unit to a graphical target: graphical-session.target goes
+    # sticky across the i3/sway picker (see sway/config.nix), and a fresh
+    # lookup also tracks WAYLAND_DISPLAY changing across sway restarts.
+    def session_environment():
+        env = dict(os.environ)
+        try:
+            shown = subprocess.run(
+                ["${pkgs.systemd}/bin/systemctl", "--user", "show-environment"],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+        except (OSError, subprocess.CalledProcessError):
+            return env
+
+        for line in shown.splitlines():
+            name, separator, value = line.partition("=")
+            if separator and name in ("DISPLAY", "WAYLAND_DISPLAY", "XAUTHORITY"):
+                env[name] = value
+
+        return env
+
+
     request_directory = Path(os.environ["XDG_RUNTIME_DIR"]) / "systemd/ask-password"
     handled = set()
 
@@ -52,11 +79,18 @@ let
                         continue
 
                     handled.add(request_key)
-                    result = subprocess.run(command, check=False, capture_output=True)
+                    result = subprocess.run(
+                        command,
+                        check=False,
+                        capture_output=True,
+                        env=session_environment(),
+                    )
                     if result.returncode != 0:
+                        detail = result.stderr.decode("utf-8", "replace").strip()
                         print(
                             f"OTP command failed for {request_id} with status "
-                            f"{result.returncode}",
+                            f"{result.returncode}"
+                            + (f": {detail}" if detail else ""),
                             file=sys.stderr,
                             flush=True,
                         )
