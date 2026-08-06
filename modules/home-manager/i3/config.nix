@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, role, ... }:
 
 let
   theme = config.personal.theming.colors;
@@ -153,7 +153,9 @@ in {
         # picom: X11 compositor, i3-only (WantedBy forced empty in
         # modules/home/services.nix so it doesn't leak into sway).
         { command = "${pkgs.systemd}/bin/systemctl --user start picom.service"; }
+      ] ++ lib.optionals (role == "home") [
         { command = "${pkgs.transmission_4-gtk}/bin/transmission-gtk --minimized"; }
+      ] ++ [
         {
           command =
             "${pkgs.kdePackages.kdeconnect-kde}/bin/kdeconnect-indicator";

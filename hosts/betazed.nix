@@ -86,7 +86,6 @@
     pkgs.handbrake
     pkgs.lm_sensors
     pkgs.smartmontools
-    pkgs.transmission_4-qt
     pkgs.xdg-utils
   ];
 }

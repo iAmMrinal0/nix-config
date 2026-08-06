@@ -93,10 +93,18 @@
     , llm-agents, nix-index-database, nix-flatpak }:
     let username = "iammrinal0";
     in {
+      # `role` (home | work | server) gates purpose-flavored config —
+      # torrenting on home hosts, kronor on work hosts — while hardware
+      # traits stay per-host (modules/home/host-specific.nix). The shared
+      # desktop overlay stack lives in base.nix, which both laptops import
+      # via their hosts/*.nix.
       nixosConfigurations = {
         betazed = let hostname = "betazed";
         in nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs hostname username; };
+          specialArgs = {
+            inherit inputs hostname username;
+            role = "home";
+          };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/${hostname}.nix
@@ -106,7 +114,10 @@
         };
         cardassia = let hostname = "cardassia";
         in nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs hostname username; };
+          specialArgs = {
+            inherit inputs hostname username;
+            role = "work";
+          };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/${hostname}.nix
@@ -120,7 +131,10 @@
         };
         yggdrasil = let hostname = "yggdrasil";
         in nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs hostname username; };
+          specialArgs = {
+            inherit inputs hostname username;
+            role = "server";
+          };
           # Lean headless server: no desktop overlays. sops-nix is included
           # (the backup job pulls its borg passphrase + rclone creds from
           # sops), but it still doesn't share the base.nix the desktop hosts

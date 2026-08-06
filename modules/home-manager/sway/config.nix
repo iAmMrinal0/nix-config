@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, osConfig, ... }:
+{ config, lib, pkgs, inputs, osConfig, role, ... }:
 
 let
   theme = config.personal.theming.colors;
@@ -506,6 +506,8 @@ in {
         { command = "${pkgs.cryptomator}/bin/cryptomator &"; }
         # gammastep replaces redshift on Wayland hosts (see modules/home/services.nix).
         { command = sniWait "${pkgs.gammastep}/bin/gammastep-indicator"; }
+      ] ++ lib.optionals (role == "home") [
+        # Torrenting is home-role-only (packages gated in home/packages.nix).
         # Qt build instead of GTK: GTK Status Icon API is X11-only and
         # silently does nothing on Wayland. Qt apps publish proper SNI
         # items, which waybar's tray module can render. Forced through
@@ -514,6 +516,7 @@ in {
         # they render as broken/missing because Qt's icon-theme lookup
         # path differs and our config doesn't supply a Qt-native theme.
         { command = sniWait "${pkgs.coreutils}/bin/env QT_QPA_PLATFORM=xcb ${pkgs.transmission_4-qt}/bin/transmission-qt --minimized"; }
+      ] ++ [
         {
           command =
             "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ 25%";

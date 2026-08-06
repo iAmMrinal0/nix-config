@@ -1,4 +1,4 @@
-{ config, osConfig, pkgs, ... }:
+{ config, lib, osConfig, pkgs, role, ... }:
 
 let
   # The "default browser" is a dispatcher, not a real browser: it routes by
@@ -134,13 +134,14 @@ in {
           "application/x-extension-shtml" = "browser-router.desktop";
           "application/x-extension-xhtml" = "browser-router.desktop";
           "application/x-extension-xht" = "browser-router.desktop";
-          "x-scheme-handler/magnet" = "transmission-gtk.desktop";
           "image/png" = "feh.desktop";
           "image/jpeg" = "feh.desktop";
           "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop";
           "application/zip" = "xarchiver.desktop";
           "text/plain" = "code.desktop";
           "application/x-zerosize" = "code.desktop";
+        } // lib.optionalAttrs (role == "home") {
+          "x-scheme-handler/magnet" = "transmission-gtk.desktop";
         };
       };
     };

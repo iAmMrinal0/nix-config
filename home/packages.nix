@@ -1,11 +1,13 @@
-{ pkgs, lib, inputs, osConfig }:
+{ pkgs, lib, inputs, osConfig, role }:
 
-# Both transmission GUIs are installed (see the transmission_4-* entries at
-# the end): transmission_4-qt is the sway choice — it publishes a proper SNI
-# tray item; the GTK build's StatusIcon API is X11-only — and transmission_4-gtk
-# is the i3 choice. The session picker means one generation can boot either WM,
-# so the GUI can't be chosen at build time; each WM's startup launches the right
-# one (modules/home-manager/i3/config.nix → gtk, .../sway/config.nix → qt).
+# Both transmission GUIs are installed on home-role hosts (see the
+# transmission_4-* entries at the end): transmission_4-qt is the sway choice —
+# it publishes a proper SNI tray item; the GTK build's StatusIcon API is
+# X11-only — and transmission_4-gtk is the i3 choice. The session picker means
+# one generation can boot either WM, so the GUI can't be chosen at build time;
+# each WM's startup launches the right one (modules/home-manager/i3/config.nix
+# → gtk, .../sway/config.nix → qt). Torrenting is home-only, so work hosts get
+# neither variant.
 with pkgs; [
   # Development Tools
   eza
@@ -153,9 +155,10 @@ with pkgs; [
   python3
   python3Packages.pip
 
+] ++ lib.optionals (role == "home") [
   # Transmission GUI for both stacks (see header) — gtk for i3, qt for sway.
-  # Installed unconditionally so PATH carries the right binary whichever WM
-  # the picker boots; each WM's startup execs its variant by full store path.
+  # Home-role hosts only; PATH carries the right binary whichever WM the
+  # picker boots, and each WM's startup execs its variant by full store path.
   #
   # Both variants are built from the same transmission core, so they ship
   # identical shared files (lib/systemd/system/transmission-daemon.service,

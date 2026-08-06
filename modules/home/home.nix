@@ -1,6 +1,6 @@
-{ config, pkgs, lib, inputs, osConfig, ... }:
+{ config, pkgs, lib, inputs, osConfig, role, ... }:
 
-let userPackages = import ../../home/packages.nix { inherit pkgs lib inputs osConfig; };
+let userPackages = import ../../home/packages.nix { inherit pkgs lib inputs osConfig role; };
 in {
   options = { };
 
