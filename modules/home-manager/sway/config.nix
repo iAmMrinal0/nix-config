@@ -140,8 +140,8 @@ let
   # registration lagged a few hundred ms behind, kdeconnect-indicator
   # registered into the gap, no host saw the item. Cap each step at 30s
   # so a misconfigured watcher can't hang sway exec forever.
-  # Apps not wrapped here (blueman, udiskie, cbatticon, cryptomator,
-  # bitwarden) already retry or use embedded pixmaps and show up reliably.
+  # Apps not wrapped here (blueman, udiskie, cbatticon, cryptomator)
+  # already retry or use embedded pixmaps and show up reliably.
   sniWait = cmd: ''
     ${pkgs.bash}/bin/bash -c '${pkgs.glib.bin}/bin/gdbus wait --session --timeout 30 org.kde.StatusNotifierWatcher; for i in $(seq 1 150); do reply=$(${pkgs.glib.bin}/bin/gdbus call --session --dest org.kde.StatusNotifierWatcher --object-path /StatusNotifierWatcher --method org.freedesktop.DBus.Properties.Get org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered 2>/dev/null); case "$reply" in *true*) break;; esac; sleep 0.2; done; exec ${cmd}'
   '';
@@ -518,7 +518,6 @@ in {
           command =
             "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ 25%";
         }
-        { command = "${pkgs.bitwarden-desktop}/bin/bitwarden"; }
         # numlockx is X11-only; sway uses the input config below for numlock.
         # xset DPMS/screensaver are X11-only; replaced by swayidle in Phase 2.
       ];

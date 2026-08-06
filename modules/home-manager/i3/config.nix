@@ -165,7 +165,6 @@ in {
         {
           command = "${pkgs.numlockx}/bin/numlockx on";
         }
-        { command = "${pkgs.bitwarden-desktop}/bin/bitwarden"; }
       ];
       modes = {
         resize = {
