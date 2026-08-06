@@ -51,9 +51,13 @@
       trusted-users = [ "root" username ];
       auto-optimise-store = true;
     };
+    # Daily rather than weekly so the store is trimmed a little at a time
+    # instead of in one big sweep; the randomized delay keeps it from landing
+    # exactly on top of the nightly backup job.
     gc = {
       automatic = true;
-      dates = "weekly";
+      dates = "daily";
+      randomizedDelaySec = "14m";
       options = "--delete-older-than 30d";
     };
   };
@@ -186,7 +190,12 @@
         ''cat ${config.sops.secrets."borg-passphrase-${hostname}".path}'';
       compression = "auto,zstd";
       archive_name_format = "archive-{hostname}-{utcnow}";
-      keep_daily = 1;
+      # A week of daily points, not one: keep_daily = 1 meant the only archive
+      # newer than a week was last night's, so any corruption or bad app write
+      # not caught the same day left nothing to fall back to but a week-old
+      # archive. Cheap in practice — borg dedups, and these stacks' data is
+      # mostly static between runs.
+      keep_daily = 7;
       keep_weekly = 2;
       keep_monthly = 6;
 
