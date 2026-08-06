@@ -9,6 +9,25 @@
 # wl-clipboard/xclip; a headless box just forwards OSC52 to the SSH client),
 # and the SSH_AUTH_SOCK pin (home-manager-specific).
 { pkgs }:
+let
+  # Session switcher body lives in a script rather than inline in the binding:
+  # display-popup format-expands its shell-command, so every literal #{...} /
+  # #S in an inline pipeline would need #-doubling that differs per nesting
+  # level. In a store script the formats are plain shell text tmux never sees.
+  sessionPicker = pkgs.writeShellScript "tmux-session-picker" ''
+    # Hide only THIS client's session. list-sessions stamps "(attached)" on any
+    # session holding a client ANYWHERE on the server, so the old
+    # `grep -v '(attached)$'` also hid sessions in use by a second client — a
+    # session live on the console stayed unreachable from an SSH client until
+    # the console one exited or switched away. Multi-client attach to one
+    # session is fine; only the current session is a pointless entry.
+    current=$(${pkgs.tmux}/bin/tmux display-message -p '#S')
+    ${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' \
+      | ${pkgs.gnugrep}/bin/grep -vxF "$current" \
+      | ${pkgs.fzf}/bin/fzf --reverse \
+      | ${pkgs.findutils}/bin/xargs -r ${pkgs.tmux}/bin/tmux switch-client -t
+  '';
+in
 ''
   ## COLORSCHEME: gruvbox dark
   set-option -g status "on"
@@ -104,7 +123,7 @@
   bind-key -n M-z resize-pane -Z
 
   # display-popup instead of split-window: a split changes the layout and unzooms a zoomed pane
-  bind-key -n M-s display-popup -E "${pkgs.tmux}/bin/tmux list-sessions | grep -v '(attached)$' | sed -E 's/:.*$//' | ${pkgs.fzf}/bin/fzf --reverse | ${pkgs.findutils}/bin/xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
+  bind-key -n M-s display-popup -E ${sessionPicker}
 
   # Send the same command to all panes/windows/sessions
   bind E command-prompt -p "Command:" \
