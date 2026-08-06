@@ -9,6 +9,8 @@ let
     profiles = { };
   };
 
+  wallpaperScripts = import ./wallpaper-scripts.nix { inherit pkgs; };
+
 in {
   services.kanshi = {
     enable = true;
@@ -27,6 +29,26 @@ in {
           # rofi-kanshi manual switcher (pkgs/scripts/rofi-kanshi).
           exec = (profile.exec or [ ]) ++ [
             "${pkgs.sway}/bin/swaymsg 'output * power on'"
+            # Re-assert the wallpaper on every output. awww keys its per-output
+            # cache by connector NAME, but a DP-MST/USB-C dock re-enumerates its
+            # monitor under a fresh name on each replug (betazed: DP-2 → DP-3 →
+            # DP-4 — the same instability the EDID criteria above exist to dodge).
+            # A name awww has never seen has no cache entry to restore, so that
+            # head comes up with no wallpaper at all ("failed to read cache file"
+            # in awww-daemon's log) and stays bare until wallpaper.timer's next 3h
+            # tick.
+            #
+            # No ordering assumed against the `power on` above — kanshi runs exec
+            # commands asynchronously and explicitly does not preserve their order
+            # (kanshi(5)), which is also why this needs no `&`. Harmless either
+            # way: a DPMS-off head is still an enabled wl_output that awww can
+            # paint, and the script's settle wait keys off sway's `.active`, not
+            # `.power`.
+            #
+            # wallpaper-apply, not wallpaper-next: this hook also fires on resume
+            # (wakeOutputs' kanshictl reload) and on manual rofi-kanshi switches,
+            # and rotating there would reshuffle the wallpaper constantly.
+            "${wallpaperScripts.apply}/bin/wallpaper-apply"
           ];
         };
       })
