@@ -117,6 +117,7 @@
     borgbackup
     rclone
     sqlite # sqlite3 CLI for poking the apps' databases (vaultwarden, etc.)
+    jq # compose/docker/tailscale all speak JSON; wanted often enough to install
   ];
 
   # Git identity for committing in ~/apps. No home-manager on this host, so
