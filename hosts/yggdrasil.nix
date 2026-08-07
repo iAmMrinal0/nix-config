@@ -145,7 +145,7 @@
   # borg passphrase and rclone token stay in /run/secrets. rclone reuses the
   # shared gdrive-* secrets, rendered into a root-owned rclone.conf.
   sops = {
-    # Scoped file — this host can ONLY decrypt its own 4 secrets, never the
+    # Scoped file — this host can ONLY decrypt its own 6 secrets, never the
     # shared secrets.yaml (see .sops.yaml creation_rules at the repo root).
     # Limits blast radius if this container-hosting box is compromised.
     defaultSopsFile = ../sops/yggdrasil.yaml;
@@ -158,6 +158,11 @@
       # Full uptime-kuma push URL (incl. token); read at runtime by borgmatic's
       # credential system so the token never enters the nix store.
       "uptime-kuma-borg-push" = { };
+      # Origin of the OIDC issuer (scheme + host, no trailing slash), e.g.
+      # https://<name>.<tailnet>.ts.net — read at runtime by idp-ready. Not
+      # secret in the credential sense; it lives here because this repo is
+      # public and the URL names both the tailnet and the IdP in use.
+      "oidc-issuer-url" = { };
     };
     templates."rclone.conf".content = ''
       [gdrive]
@@ -245,6 +250,95 @@
     # The unit's 1-minute pre-start sleep (boot/stagger delay) — pointless on a
     # single box and annoying on manual runs.
     ExecStartPre = "";
+  };
+
+  # --- Boot ordering for the OIDC client stacks ---
+  # Every compose stack in ~/apps carries `restart: unless-stopped`, so after a
+  # reboot it is *dockerd* — not compose — that starts the containers, and
+  # dockerd knows nothing about compose's `depends_on` (that is a compose-CLI
+  # construct applied only at `up` time). Container start order on boot is
+  # therefore arbitrary, and no amount of depends_on / priority / merging the
+  # per-app directories into one project can change that.
+  #
+  # The apps that authenticate against the IdP fetch its OIDC discovery
+  # document ONCE at process startup and cache the result — a failed fetch is
+  # never retried, so they come up with auth broken and stay that way until
+  # restarted. The precondition is not merely "the IdP container is running"
+  # either: the issuer is a tsnet node published by tsdproxy (its URL is a sops
+  # secret — this repo is public, and the URL names both the tailnet and which
+  # IdP is in use), so the real chain is tailscaled → tsdproxy → the issuer node
+  # registered with a TLS cert → the IdP healthy. That is a readiness *probe*,
+  # not an ordering constraint, which is why this gates on the discovery
+  # endpoint answering rather than on a unit ordering edge or a fixed sleep.
+  #
+  # Nothing here manages the containers: dockerd still owns their lifecycle and
+  # `docker compose` is still the interface. These units only add a one-shot
+  # correction pass that lets the race happen and then converges to the right
+  # state — far simpler than making ~26 independent compose projects order
+  # themselves. `systemctl start oidc-clients-reconcile` is the manual fix too.
+  systemd.services.idp-ready = {
+    description = "Gate: wait for the OIDC discovery document to answer";
+    after = [ "docker.service" "tailscaled.service" "network-online.target" ];
+    wants = [ "network-online.target" ];
+    requires = [ "docker.service" ];
+    # Pulled in as a dependency of oidc-clients-reconcile below, so no wantedBy.
+    # A rebuild that edits these units shouldn't bounce the apps as a side
+    # effect — this only ever needs to run at boot, or by hand.
+    restartIfChanged = false;
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      # A cold boot has to bring tailscaled up and let tsdproxy register (or
+      # renew the cert for) the `auth` node before this can ever succeed. On
+      # timeout the reconcile below is skipped via Requires= — restarting apps
+      # against an issuer that never came up would fix nothing.
+      TimeoutStartSec = "10min";
+    };
+    # Same approach as the borgmatic uptime-kuma hooks: curl a tailnet name
+    # directly from the host (works without accept-routes), with the URL read
+    # from sops at RUNTIME so the tailnet name never enters the nix store or
+    # this public repo. The secret holds the issuer origin only; the
+    # discovery path is a spec constant and stays visible here.
+    script = ''
+      url="$(cat ${
+        config.sops.secrets."oidc-issuer-url".path
+      })/.well-known/openid-configuration"
+      until ${pkgs.curl}/bin/curl -fsS -m 10 -o /dev/null "$url"; do
+        echo "issuer not ready, retrying in 10s"
+        sleep 10
+      done
+      echo "issuer ready"
+    '';
+  };
+
+  systemd.services.oidc-clients-reconcile = {
+    description = "Restart the OIDC client stacks once the issuer is reachable";
+    after = [ "idp-ready.service" ];
+    requires = [ "idp-ready.service" ];
+    wantedBy = [ "multi-user.target" ];
+    restartIfChanged = false;
+    serviceConfig.Type = "oneshot";
+    # Driven by an `oidc.client=true` compose label rather than a list of names
+    # kept in sync by hand — a new app that reads the issuer at startup only has
+    # to carry the label to be covered here, and this unit never needs editing.
+    # Plain `docker restart` rather than `docker compose restart` so the unit
+    # needs no compose file, .env or working directory: the containers already
+    # exist by the time this runs and only their processes need recycling.
+    script = ''
+      docker=${config.virtualisation.docker.package}/bin/docker
+      names="$($docker ps --filter label=oidc.client=true --format '{{.Names}}')"
+      if [ -z "$names" ]; then
+        # Not an error worth failing the unit over, but it does mean either the
+        # labels went missing or nothing is up yet — say so rather than exiting
+        # silently as if the work were done.
+        echo "no running containers labelled oidc.client=true — nothing to reconcile" >&2
+        exit 0
+      fi
+      for c in $names; do
+        echo "restarting $c"
+        $docker restart "$c" || true
+      done
+    '';
   };
 
   system.stateVersion = "26.05";
