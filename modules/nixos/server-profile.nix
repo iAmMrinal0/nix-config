@@ -56,7 +56,9 @@ in {
     programs.zsh = {
       enable = true;
       enableCompletion = true;
-      autosuggestions.enable = true;
+      # Sourced by hand at the end of interactiveShellInit instead of here: this
+      # option emits it too early, and atuin has to load first (see that block).
+      autosuggestions.enable = false;
       # This option would ship zsh-users' "zsh-syntax-highlighting"; the laptops
       # use fast-syntax-highlighting (F-Sy-H), which colours differently. Keep
       # it off and source F-Sy-H (the same package) in interactiveShellInit so
@@ -91,11 +93,27 @@ in {
             ${pkgs.tmux}/bin/tmux new-session -As $dir_name
           }
         ''
-        # fast-syntax-highlighting must load LAST so it wraps the other zle
-        # widgets; mkAfter puts it after oh-my-zsh and autosuggestions. Same
-        # plugin as the laptops (they defer + zcompile it for startup speed,
-        # which a rarely-launched server shell doesn't need).
+        # The heavy plugins, loaded in the SAME ORDER as the laptops
+        # (modules/home-manager/zsh/zsh.nix): atuin -> autosuggestions ->
+        # fast-syntax-highlighting. Sourced here rather than via the individual
+        # NixOS options because those options append to interactiveShellInit
+        # *unordered*, so their relative order falls out of nixpkgs module-list
+        # positions — atuin (171) lands before oh-my-zsh (383) before
+        # autosuggestions (387) — which is the wrong order twice over:
+        #   - oh-my-zsh's lib/key-bindings.zsh rebinds ^r and the up arrow, so
+        #     an atuin that loaded earlier silently loses both (^r fell back to
+        #     zsh's bck-i-search here, while the laptops were fine). mkAfter
+        #     puts this whole chain after oh-my-zsh, so atuin's own bindings
+        #     win — no re-binding by hand.
+        #   - atuin must precede autosuggestions: it prepends itself to
+        #     ZSH_AUTOSUGGEST_STRATEGY, which autosuggestions reads at init
+        #     time (the same constraint the laptops' comment calls out).
+        # fast-syntax-highlighting stays LAST so it wraps every widget the
+        # others define. No zsh-defer/zcompile: the laptops use those purely
+        # for startup speed, which doesn't matter on an occasional-SSH box.
         (lib.mkAfter ''
+          eval "$(${config.programs.atuin.package}/bin/atuin init zsh)"
+          source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
           source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
         '')
       ];
@@ -105,9 +123,13 @@ in {
     # the full cross-machine history (a plaintext sqlite db once synced) on a
     # services box, undoing the point of a lean, blast-radius-limited host. Add
     # `atuin login` + a sops key later if cross-machine history is wanted. The
-    # zsh integration and the user daemon default on automatically.
+    # user daemon defaults on automatically; the zsh integration does too, but
+    # it is turned off below because it injects `atuin init zsh` too early to
+    # survive oh-my-zsh's keybindings — interactiveShellInit sources it in the
+    # right place instead. Package + settings + daemon all still come from here.
     programs.atuin = {
       enable = true;
+      enableZshIntegration = false;
       settings = import ../atuin-settings.nix;
     };
 
