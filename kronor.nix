@@ -3,6 +3,10 @@
 let
   kronorUser = config.kronor.user;
   kronorHome = config.users.users.${kronorUser}.home;
+  # Both VPCs are the same 172.16.0.0/16, so this resolver serves both. Named
+  # once: a change reaching only some of its uses would fail quietly.
+  vpcResolver = "172.16.0.2";
+
   # Grouped with the SOCKS proxies below (11091/11092). The kronor dev stack
   # derives every host port as base+slot*10000 (slots 0-4, _dev/derive-ports.sh),
   # so any base it uses is occupied at +10000/+20000/... too. We sit on the 1090
@@ -61,6 +65,39 @@ let
       vpnConfig = config.sops.secrets.kronor-openvpn-production.path;
     };
   };
+
+  # The one privileged entry into a namespace, shared by nkp/nks and `kronor
+  # <env> shell`: it enters, then setpriv's straight back to the user.
+  namespaceRunner = pkgs.writeShellScript "kronor-netns-run" ''
+    set -euo pipefail
+    namespace=$1
+    shift
+    case "$namespace" in
+      ${lib.concatStringsSep "|" (lib.attrNames namespaces)}) ;;
+      *) echo "kronor-netns-run: unknown namespace: $namespace" >&2; exit 2 ;;
+    esac
+
+    exec ${pkgs.iproute2}/bin/ip netns exec "$namespace" ${
+      pkgs.writeShellScript "kronor-netns-drop" ''
+        # Keep glibc from sending namespace lookups to the host nscd; the mount
+        # is confined, ip netns exec having unshared the mount namespace.
+        # Warn rather than fail: silence would answer from the host resolver.
+        ${pkgs.util-linux}/bin/mount \
+          -t tmpfs -o mode=755,nosuid,nodev tmpfs /run/nscd \
+          || echo "kronor: warning: /run/nscd not shadowed; lookups may answer from the host resolver" >&2
+
+        # --regid needs the user's group, which is not named after the user
+        # here (primary group: users).
+        gid=$(${pkgs.coreutils}/bin/id -g ${kronorUser})
+
+        exec ${pkgs.util-linux}/bin/setpriv \
+          --reuid=${kronorUser} --regid="$gid" --init-groups \
+          ${pkgs.coreutils}/bin/env \
+            HOME=${kronorHome} USER=${kronorUser} LOGNAME=${kronorUser} \
+            "$@"
+      ''
+    } "$@"
+  '';
 
   mkNamespaceService = name: cfg: {
     description = "Network namespace ${name}";
@@ -140,10 +177,10 @@ let
     serviceConfig = {
       Type = "simple";
       NetworkNamespacePath = "/run/netns/${name}";
-      RuntimeDirectory = "kronor-vpn-${cfg.environment}";
+      RuntimeDirectory = "kronor-${cfg.environment}-vpn";
       RuntimeDirectoryMode = "0700";
       Restart = "no";
-      ExecStart = pkgs.writeShellScript "kronor-vpn-${cfg.environment}" ''
+      ExecStart = pkgs.writeShellScript "kronor-${cfg.environment}-vpn" ''
         # Fail at the ask-password step if the OTP can't be obtained, instead
         # of execing openvpn with a username-only credentials file.
         set -euo pipefail
@@ -165,10 +202,37 @@ let
               "Kronor ${cfg.environment} VPN OTP" \
           >> "$credentials"
 
+        # --inactive must exceed keepalives_idle in the pg DSNs (sops
+        # pgcli-alias-dsn / pg-service-conf), or the tunnel drops out from under
+        # an open psql/pgcli session before its first keepalive probe.
         exec ${pkgs.openvpn}/bin/openvpn \
           --config ${lib.escapeShellArg cfg.vpnConfig} \
           --auth-user-pass "$credentials" \
           --inactive 600
+      '';
+    };
+  };
+
+  # `kronor <env> start` starts this, not the VPN unit: --inactive would
+  # otherwise drop an explicitly started env after 10 idle minutes.
+  mkPinService = name: cfg: {
+    description = "Hold the Kronor ${cfg.environment} tunnel open";
+    requires = [ "kronor-${cfg.environment}-vpn.service" ];
+    bindsTo = [ "kronor-${cfg.environment}-vpn.service" ];
+    after = [ "kronor-${cfg.environment}-vpn.service" ];
+
+    path = [ pkgs.bash pkgs.coreutils ];
+
+    serviceConfig = {
+      NetworkNamespacePath = "/run/netns/${name}";
+      Restart = "on-failure";
+      RestartSec = 5;
+      ExecStart = pkgs.writeShellScript "kronor-${cfg.environment}-pin" ''
+        while :; do
+          # Subshell: a failed redirection must not take the loop with it.
+          ( timeout 5 bash -c 'exec 3<>/dev/tcp/${vpcResolver}/53' ) 2>/dev/null || true
+          sleep 240
+        done
       '';
     };
   };
@@ -190,19 +254,19 @@ let
 
   mkDnsProxyService = name: cfg: {
     description = "On-demand DNS proxy for Kronor ${cfg.environment}";
-    requires = [ "kronor-vpn-${cfg.environment}.service" ];
+    requires = [ "kronor-${cfg.environment}-vpn.service" ];
     # bindsTo, not just requires: the VPN exits on its own (--inactive), and
     # without stop propagation a client retrying DNS keeps the stale proxy
     # alive past exit-idle-time forever, wedging every lookup at 30s.
-    bindsTo = [ "kronor-vpn-${cfg.environment}.service" ];
-    after = [ "kronor-vpn-${cfg.environment}.service" ];
+    bindsTo = [ "kronor-${cfg.environment}-vpn.service" ];
+    after = [ "kronor-${cfg.environment}-vpn.service" ];
 
     serviceConfig = {
       NetworkNamespacePath = "/run/netns/${name}";
       TimeoutStartSec = 180;
       ExecStartPre = pkgs.writeShellScript "wait-for-kronor-${cfg.environment}-dns" ''
         for _ in $(${pkgs.coreutils}/bin/seq 1 120); do
-          if ${pkgs.iproute2}/bin/ip route get 172.16.0.2 \
+          if ${pkgs.iproute2}/bin/ip route get ${vpcResolver} \
             | ${pkgs.gnugrep}/bin/grep -qE ' dev (tun|tap)'; then
             exit 0
           fi
@@ -212,7 +276,7 @@ let
         echo "Timed out waiting for the ${cfg.environment} VPN route" >&2
         exit 1
       '';
-      ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=30s 172.16.0.2:53";
+      ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=30s ${vpcResolver}:53";
     };
   };
 
@@ -233,6 +297,9 @@ let
         clientmethod: none
         socksmethod: none
 
+        # The browser proxy runs on the host, not in here -- no
+        # NetworkNamespacePath, and its ExecStartPre has to say `ip netns exec`
+        # -- so it arrives across the veth sourced from ${cfg.hostAddress}.
         client pass {
           from: ${cfg.hostAddress}/32 to: 0.0.0.0/0
         }
@@ -256,8 +323,8 @@ let
           "/etc/netns/${name}/nsswitch.conf:/etc/nsswitch.conf"
         ];
         InaccessiblePaths = [ "/run/nscd/socket" ];
-        RuntimeDirectory = "kronor-socks-${cfg.environment}";
-        ExecStart = "${pkgs.dante}/bin/sockd -f ${sockdConfig} -p /run/kronor-socks-${cfg.environment}/sockd.pid";
+        RuntimeDirectory = "kronor-${cfg.environment}-socks";
+        ExecStart = "${pkgs.dante}/bin/sockd -f ${sockdConfig} -p /run/kronor-${cfg.environment}-socks/sockd.pid";
         Restart = "on-failure";
         RestartSec = 2;
 
@@ -280,13 +347,13 @@ let
   mkBrowserProxyService = name: cfg: {
     description = "On-demand browser proxy for Kronor ${cfg.environment}";
     requires = [
-      "kronor-vpn-${cfg.environment}.service"
-      "kronor-socks-${cfg.environment}.service"
+      "kronor-${cfg.environment}-vpn.service"
+      "kronor-${cfg.environment}-socks.service"
     ];
-    bindsTo = [ "kronor-vpn-${cfg.environment}.service" ];
+    bindsTo = [ "kronor-${cfg.environment}-vpn.service" ];
     after = [
-      "kronor-vpn-${cfg.environment}.service"
-      "kronor-socks-${cfg.environment}.service"
+      "kronor-${cfg.environment}-vpn.service"
+      "kronor-${cfg.environment}-socks.service"
     ];
 
     serviceConfig = {
@@ -294,7 +361,7 @@ let
       ExecStartPre = pkgs.writeShellScript "wait-for-kronor-${cfg.environment}-browser" ''
         for _ in $(${pkgs.coreutils}/bin/seq 1 120); do
           if ${pkgs.iproute2}/bin/ip netns exec ${name} \
-            ${pkgs.iproute2}/bin/ip route get 172.16.0.2 \
+            ${pkgs.iproute2}/bin/ip route get ${vpcResolver} \
             | ${pkgs.gnugrep}/bin/grep -qE ' dev (tun|tap)'; then
             exit 0
           fi
@@ -316,7 +383,70 @@ in
     description = "User whose Bitwarden vault (via rbw) holds the Kronor VPN OTP entries.";
   };
 
+  options.kronor.namespaceRunner = lib.mkOption {
+    type = lib.types.path;
+    readOnly = true;
+    description = ''
+      Privileged namespace entry point for kronor-home.nix, allowed
+      passwordless by the sudoers rule below.
+    '';
+  };
+
+  options.kronor.environments = lib.mkOption {
+    type = lib.types.attrsOf (lib.types.submodule {
+      options = {
+        socksPort = lib.mkOption {
+          type = lib.types.port;
+          description = "Loopback SOCKS5 gateway port for this environment.";
+        };
+        dnsAddress = lib.mkOption {
+          type = lib.types.str;
+          description = "Host-side veth address whose :53 socket proxies into this namespace.";
+        };
+      };
+    });
+    readOnly = true;
+    description = ''
+      Per-environment endpoints for the `kronor` CLI in kronor-home.nix. Read
+      from here rather than restated there, so the two halves cannot drift apart.
+    '';
+  };
+
   config = {
+  kronor.environments =
+    lib.mapAttrs'
+      (_: cfg: lib.nameValuePair cfg.environment {
+        socksPort = cfg.browserProxyPort;
+        dnsAddress = cfg.hostAddress;
+      })
+      namespaces;
+
+  kronor.namespaceRunner = namespaceRunner;
+
+  # Exact commands, never a trailing wildcard: sudo matches arguments with
+  # fnmatch(flags=0), where `*` spans whitespace, so `start kronor-*` would also
+  # permit `start kronor-x debug-shell.service`. Generated so they cannot drift.
+  #
+  # namespaceRunner gets no entry: it would need SETENV (both callers pass
+  # --preserve-env), and SETENV exempts command-line variables from env_delete,
+  # so `sudo BASH_ENV=... <runner>` would run as root before the setpriv drop.
+  security.sudo.extraRules = [{
+    users = [ kronorUser ];
+    commands =
+      map
+        (arguments: {
+          command = "/run/current-system/sw/bin/systemctl ${arguments}";
+          options = [ "NOPASSWD" ];
+        })
+        (lib.concatMap
+          (cfg: [
+            "start kronor-${cfg.environment}-pin.service"
+            "stop kronor-${cfg.environment}-pin.service"
+            "stop kronor-${cfg.environment}-vpn.service"
+          ])
+          (lib.attrValues namespaces));
+  }];
+
   # net.ipv4.ip_forward (needed for the netns NAT) is already set by
   # modules/nixos/tailscale.nix.
 
@@ -362,26 +492,32 @@ in
     // lib.mapAttrs'
       (_: cfg:
         lib.nameValuePair
-          "kronor-vpn-${cfg.environment}"
+          "kronor-${cfg.environment}-vpn"
           (mkVpnService "kronor-${cfg.environment}" cfg))
       namespaces
     // lib.mapAttrs'
       (_: cfg:
         lib.nameValuePair
-          "kronor-dns-${cfg.environment}"
+          "kronor-${cfg.environment}-dns"
           (mkDnsProxyService "kronor-${cfg.environment}" cfg))
       namespaces
     // lib.mapAttrs'
       (_: cfg:
         lib.nameValuePair
-          "kronor-socks-${cfg.environment}"
+          "kronor-${cfg.environment}-socks"
           (mkSocksService "kronor-${cfg.environment}" cfg))
       namespaces
     // lib.mapAttrs'
       (_: cfg:
         lib.nameValuePair
-          "kronor-browser-${cfg.environment}"
+          "kronor-${cfg.environment}-browser"
           (mkBrowserProxyService "kronor-${cfg.environment}" cfg))
+      namespaces
+    // lib.mapAttrs'
+      (_: cfg:
+        lib.nameValuePair
+          "kronor-${cfg.environment}-pin"
+          (mkPinService "kronor-${cfg.environment}" cfg))
       namespaces
     // {
       kronor-pac = {
@@ -406,25 +542,25 @@ in
     lib.mapAttrs'
       (_: cfg:
         lib.nameValuePair
-          "kronor-dns-${cfg.environment}"
+          "kronor-${cfg.environment}-dns"
           (mkDnsSocket "kronor-${cfg.environment}" cfg))
       namespaces
     // lib.mapAttrs'
       (_: cfg:
         lib.nameValuePair
-          "kronor-browser-${cfg.environment}"
+          "kronor-${cfg.environment}-browser"
           (mkBrowserSocket cfg))
       namespaces;
 
   environment.etc."netns/kronor-staging/resolv.conf".text = ''
     nameserver 10.200.1.1
-    nameserver 172.16.0.2
+    nameserver ${vpcResolver}
     options use-vc timeout:30 attempts:1
   '';
 
   environment.etc."netns/kronor-production/resolv.conf".text = ''
     nameserver 10.200.2.1
-    nameserver 172.16.0.2
+    nameserver ${vpcResolver}
     options use-vc timeout:30 attempts:1
   '';
 

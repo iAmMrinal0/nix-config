@@ -24,6 +24,15 @@ pkgs.writeTextDir "themes/mod_steeef.zsh-theme" ''
   function virtualenv_info {
       [ $VIRTUAL_ENV ] && echo ' ('%F{blue}`basename $VIRTUAL_ENV`%f')'
   }
+
+  # _kronor_shell_env is set by kronor-home.nix from KRONOR_ENV at shell
+  # startup; unexported, so direnv cannot drop it on a cd.
+  function kronor_env {
+    case $_kronor_shell_env in
+      production) echo ' (%B%F{red}kronor:production%f%b)' ;;
+      staging) echo ' (%F{yellow}kronor:staging%f)' ;;
+    esac
+  }
   PR_GIT_UPDATE=1
 
   setopt prompt_subst
@@ -94,7 +103,7 @@ pkgs.writeTextDir "themes/mod_steeef.zsh-theme" ''
   pr_24h_clock=' %*'
 
   PROMPT=$'
-  %{$purple%}%n''${PR_RST} at %{$orange%}%m''${PR_RST} in %{$limegreen%}%~''${PR_RST} at%{$hotpink%}$pr_24h_clock''${PR_RST}$vcs_info_msg_0_$(virtualenv_info)$(nix_shell)$(k8s_info)
+  %{$purple%}%n''${PR_RST} at %{$orange%}%m''${PR_RST} in %{$limegreen%}%~''${PR_RST} at%{$hotpink%}$pr_24h_clock''${PR_RST}$vcs_info_msg_0_$(virtualenv_info)$(nix_shell)$(k8s_info)$(kronor_env)
   $ '
 
 ''
