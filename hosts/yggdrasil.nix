@@ -118,6 +118,8 @@
     rclone
     sqlite # sqlite3 CLI for poking the apps' databases (vaultwarden, etc.)
     jq # compose/docker/tailscale all speak JSON; wanted often enough to install
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
+    openssl
   ];
 
   # Git identity for committing in ~/apps. No home-manager on this host, so
