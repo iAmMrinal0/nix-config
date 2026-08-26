@@ -20,6 +20,9 @@
   # Filter history to the whole git repo, not just the exact cwd, when using
   # the directory/workspace filter.
   workspaces = true;
-  # Open interactive search in a tmux popup (tmux >= 3.2).
+  # Open interactive search in a tmux popup (tmux >= 3.2). Only the server
+  # reads this one: the desktops bake `atuin init zsh` at build time under a
+  # throwaway HOME (modules/home-manager/zsh/zsh.nix), so it hard-codes
+  # ATUIN_TMUX_POPUP=false there and ^r stays inline whatever this says.
   tmux.enabled = true;
 }

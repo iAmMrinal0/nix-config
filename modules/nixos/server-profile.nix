@@ -178,16 +178,35 @@ in {
       description =
         "Boot a detached tmux session for ${username} so `tmux attach` just works";
       wantedBy = [ "multi-user.target" ];
+      # tmux resolves a `display-popup` argv with execvp against the SERVER's
+      # PATH, and NixOS's default service path (coreutils, findutils, gnugrep,
+      # gnused, systemd) ships no shell — so atuin's ^r popup
+      # (`... -E -E -- sh -c '... atuin search -i ...'`) could not find `sh`
+      # and left an empty popup on screen: the failed exec prints nothing, and
+      # two -E close a popup only on a ZERO exit. Via `path`, which merges with
+      # that default, and not a PATH= line in Environment, which is emitted
+      # later and would replace it.
+      path = [ "/run/current-system/sw" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
         User = username;
         # HOME is where continuum reads/writes its saved sessions; the socket
         # itself is UID-based so it does not depend on this.
-        Environment = [ "HOME=/home/${username}" ];
+        # ATUIN_CONFIG_DIR: the atuin module ships it in environment.variables,
+        # i.e. /etc/set-environment, which neither a system service nor the
+        # popup's non-interactive `sh -c` reads — so without it the atuin in
+        # the popup runs on stock defaults, not modules/atuin-settings.nix.
+        Environment = [
+          "HOME=/home/${username}"
+          "ATUIN_CONFIG_DIR=${config.environment.variables.ATUIN_CONFIG_DIR}"
+        ];
         # The tmux SERVER lives in this unit's cgroup; the default
         # KillMode=control-group would tear it down (and every session) when the
         # unit is stopped/restarted on rebuild. process leaves the server alone.
+        # The flip side: a surviving server keeps the environment it was born
+        # with, so the two settings above only reach it after a
+        # `tmux kill-server` (continuum restores) or a `tmux setenv -g`.
         KillMode = "process";
         ExecStart = pkgs.writeShellScript "tmux-boot" ''
           dir=${
