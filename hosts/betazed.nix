@@ -18,6 +18,8 @@
       defaultEditor = false;
     };
 
+    evolution.enable = true;
+
     gc = {
       enable = true;
       method = "nh";

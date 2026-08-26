@@ -50,6 +50,13 @@
       .thunar {
         -gtk-icon-style: regular;
       }
+      /* Pill selection in list/tree views: the gruvbox theme rounds nearly
+         everything to 12px but leaves treeview.view:selected at 0, which is
+         what makes Evolution's lists look boxy. Global because GTK3 has no
+         per-app stylesheet. */
+      treeview.view:selected {
+        border-radius: 8px;
+      }
     '';
     gtk3.bookmarks = [
       "file:///home/${username}/Documents"
