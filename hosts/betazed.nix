@@ -49,6 +49,14 @@
   # keep this in sync with swapDevices in hardware/${hostname}.nix
   boot.resumeDevice = "/dev/disk/by-uuid/34266fca-fc14-434a-bc58-fb50a883256b";
 
+  # 16G RAM with an 8G on-disk swap partition (hardware/betazed.nix), so
+  # zram doesn't have to carry swap on its own. At the nixpkgs default of
+  # 50% it added another 8G of RAM-resident swap, giving a 16G swap total
+  # on a 16G machine: oomd's SwapUsedLimit=90% then measures against a
+  # figure half of which IS the memory it is trying to protect. Quartering
+  # it leaves ~4G of zram in front of the disk partition.
+  modules.memorySafeguards.zramPercent = 25;
+
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
