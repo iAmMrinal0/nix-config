@@ -71,7 +71,26 @@ in {
     Unit = {
       Description = "Rotate the desktop wallpaper";
       PartOf = [ "sway-session.target" ];
-      After = [ "awww-daemon.service" ];
+      # sway-session.target must be listed here even though awww-daemon
+      # already orders after it. A target implicitly gains After= on
+      # everything it Wants= *unless that unit is already ordered against
+      # the target* (systemd.target(5)). Without this line the Install
+      # symlink below made sway-session.target order after
+      # wallpaper.service, closing a loop:
+      #   wallpaper.service → after awww-daemon.service
+      #   awww-daemon.service → after sway-session.target
+      #   sway-session.target → after wallpaper.service   (implicit)
+      # systemd breaks a cycle by deleting a job, and which one it drops
+      # depends on where the transaction started — betazed logged it both
+      # ways:
+      #   "Job awww-daemon.service/start deleted"  (2026-08-09, twice)
+      #     → daemon never starts, so wallpaper-apply and wallpaper-fetch
+      #       log "awww-daemon not reachable — is the sway session up?"
+      #   "Job wallpaper.service/start deleted"    (2026-08-04, 2026-08-12)
+      #     → no wallpaper is painted at login at all
+      # awww-daemon.service and waybar.service already declare this
+      # ordering and never cycled.
+      After = [ "sway-session.target" "awww-daemon.service" ];
       Requires = [ "awww-daemon.service" ];
     };
     Service = {
