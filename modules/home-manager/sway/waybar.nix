@@ -418,4 +418,26 @@ in {
   systemd.user.services.waybar.Service.RestartSec = lib.mkForce 2;
   systemd.user.services.waybar.Unit.StartLimitBurst = lib.mkForce 10;
   systemd.user.services.waybar.Unit.StartLimitIntervalSec = lib.mkForce 30;
+
+  # Memory ceilings. waybar 0.15.0 has a runaway allocation that fires on
+  # output reconfiguration (kanshi applying a profile at session start is
+  # the reliable trigger) and it is FAST — journal-recorded peaks on
+  # betazed: 11.9G in 6m56s (2026-08-04), 13.2G in 2m56s (2026-08-09),
+  # 12.6G (2026-07-27), 8.3G (2026-08-19), each ending in SIGABRT. On a
+  # 16G machine that fills RAM + swap before anything else reacts, and
+  # systemd-oomd then reaps the biggest cgroup — which is the session
+  # scope holding sway, so the whole desktop dies and greetd falls back
+  # to the greeter.
+  #
+  # Same containment pattern as the tdrive rclone mount (see
+  # ../systemd.nix): keep the runaway inside waybar's own cgroup so the
+  # kernel OOM-kills waybar and Restart=on-failure paints a new bar,
+  # instead of letting it drive the session into oomd.
+  #
+  # Sizing: normal peaks over a week of uptime run 95M–510M (the 510M
+  # figure is a genuine slow drift over 6d12h), so MemoryHigh sits above
+  # that to avoid throttling healthy runs, and MemoryMax is a hard stop
+  # roughly an order of magnitude below the dangerous range.
+  systemd.user.services.waybar.Service.MemoryHigh = "768M";
+  systemd.user.services.waybar.Service.MemoryMax = "1536M";
 }
