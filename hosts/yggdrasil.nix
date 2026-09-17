@@ -88,7 +88,15 @@
       # PAM password path open despite PasswordAuthentication=false. Close it.
       KbdInteractiveAuthentication = false;
       X11Forwarding = false;
-      AllowAgentForwarding = "no";
+      # ON deliberately: git in ~/apps pushes to GitHub with the agent
+      # forwarded from the laptop, so no private key ever sits on this box —
+      # lose the VM and there is nothing to revoke. The cost is that while a
+      # session is open, whoever can read the forwarded socket (root, and us)
+      # can authenticate as us; `ssh-add -c` on the laptop turns that into a
+      # per-use confirmation if it ever matters. Unrelated to
+      # AllowTcpForwarding, which stays off — agent forwarding is its own
+      # channel type, not a TCP tunnel.
+      AllowAgentForwarding = "yes";
       AllowTcpForwarding = "no"; # never a jump host
       MaxAuthTries = 3;
       LogLevel = "VERBOSE"; # logs key fingerprints for audit

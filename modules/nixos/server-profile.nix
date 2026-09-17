@@ -17,6 +17,24 @@
 let
   cfg = config.modules.server;
   adminUser = config.users.users.${username};
+
+  # A forwarded SSH agent is how a headless box gets a GitHub key without ever
+  # holding one at rest — but sshd plants the forwarded socket at a fresh
+  # /tmp/ssh-XXXXXX/agent.NNN per connection and unlinks it on disconnect. So
+  # the raw path is worthless to anything longer-lived than one session: a tmux
+  # pane that captured it is stranded on the next reattach, and the boot server
+  # below never had one at all. Republish it under ONE stable path that every
+  # login repoints, and hand that path to tmux + the shell instead.
+  agentSock = "${adminUser.home}/.ssh/agent.sock";
+
+  # Repoint the stable path at THIS connection's socket. Silent and non-fatal
+  # deliberately: it also runs from /etc/ssh/sshrc, whose stdout travels down
+  # the client's channel, where a stray byte corrupts scp/sftp.
+  linkAgentSock = ''
+    if [ -n "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "${agentSock}" ]; then
+      ln -sfn "$SSH_AUTH_SOCK" "${agentSock}" 2>/dev/null || :
+    fi
+  '';
 in {
   options.modules.server = {
     enable = lib.mkEnableOption
@@ -85,6 +103,18 @@ in {
           # Not in oh-my-zsh's history defaults; match the desktop shell.
           setopt HIST_FIND_NO_DUPS
           setopt HIST_IGNORE_ALL_DUPS
+
+          ${linkAgentSock}
+          # -S follows the symlink, so a dangling one (nothing forwarded, e.g.
+          # a console login) leaves SSH_AUTH_SOCK untouched rather than aiming
+          # ssh at a missing socket. This also overrides whatever tmux handed
+          # the pane — update-environment (modules/tmux-common.nix) copies the
+          # attaching client's raw /tmp path — so every pane, however old,
+          # agrees on the one path that survives a reattach. `if` rather than
+          # `&&` so a false test does not leave $? set at the first prompt.
+          if [ -S "${agentSock}" ]; then
+            export SSH_AUTH_SOCK="${agentSock}"
+          fi
 
           # Shared with the desktop shell: open/attach a tmux session named
           # after the current directory (the `tmuxdir` alias calls this).
@@ -166,6 +196,15 @@ in {
         # its environment, so panes would default to bash. Pin the login shell
         # so every pane (boot-started or interactive) is zsh.
         set -g default-shell ${pkgs.zsh}/bin/zsh
+
+        # Hand every pane the stable agent path. The boot session's own pane
+        # gets it too: the server sources this file when it starts, before it
+        # creates the session, so the pane you land on after `tmux attach` is
+        # born with it — which is the whole point, since that pane predates
+        # every SSH connection and update-environment only reaches panes
+        # created after an attach. Pinning the forwarded socket's real /tmp
+        # path here instead would be useless: it changes each connection.
+        set-environment -g SSH_AUTH_SOCK ${agentSock}
       '';
     };
 
@@ -239,7 +278,19 @@ in {
     # creates the file if absent, so a hand-written ~/.zshrc is never clobbered.
     systemd.tmpfiles.rules = [
       "f ${adminUser.home}/.zshrc 0644 ${username} ${adminUser.group} - -"
+      # openssh.authorizedKeys.keys renders to /etc/ssh/authorized_keys.d, so
+      # nothing else creates ~/.ssh on a key-only host — and the agent symlink
+      # above needs it to exist. `d` leaves an existing directory alone.
+      "d ${adminUser.home}/.ssh 0700 ${username} ${adminUser.group} - -"
     ];
+
+    # sshd runs this for EVERY openssh session, including `ssh <host> <cmd>`
+    # and `ssh -t <host> tmux attach`, neither of which sources an interactive
+    # zshrc — so the stable socket is current even when no login shell ran.
+    # Caveat: Tailscale SSH serves tailnet port 22 from tailscaled itself and
+    # does not run sshrc, so that path relies on the zshrc copy above (fine for
+    # an interactive login, which is how the tailnet route is used).
+    environment.etc."ssh/sshrc".text = linkAgentSock;
 
     environment.systemPackages = with pkgs; [
       ripgrep

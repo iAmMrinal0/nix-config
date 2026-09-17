@@ -7,7 +7,8 @@
 # NOT here (each consumer appends its own): the config-reload binding (the
 # path differs — ~/.config vs /etc), clipboard integration (desktops wrap
 # wl-clipboard/xclip; a headless box just forwards OSC52 to the SSH client),
-# and the SSH_AUTH_SOCK pin (home-manager-specific).
+# and the SSH_AUTH_SOCK pin (the path differs — a local agent socket on the
+# desktops, a per-login symlink to the forwarded one on a server).
 { pkgs }:
 let
   # Session switcher body lives in a script rather than inline in the binding:
