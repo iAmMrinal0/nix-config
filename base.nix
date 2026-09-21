@@ -194,6 +194,13 @@ in {
       pkgs.bitwarden-cli
       pkgs.xpdf
       inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
+      # The official Claude desktop app (Chat + Cowork + Claude Code), repacked
+      # from Anthropic's signed .deb. Not in nixpkgs — the init PR (#537215) has
+      # sat open since June — so it comes from the same input as claude-code.
+      # Cowork runs each session in a QEMU/KVM VM and so additionally wants
+      # qemu/ovmf/virtiofsd plus a user in the kvm group; the Chat and Claude
+      # Code tabs don't need any of that, so none of it is configured here.
+      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop
     ];
     # Qt style is now configured per-session via the home-manager qt module
     # (modules/home-manager/qt.nix → Adwaita-Dark) and re-asserted at the
