@@ -61,6 +61,34 @@ let
     fi
   '';
 
+  # Same Electron/os_crypt trap the obsidian wrapper documents at length in
+  # overlays/packages.nix: XDG_CURRENT_DESKTOP is "sway", so Chromium's
+  # desktop-environment detection returns OTHER and safeStorage silently falls
+  # back to the `basic` plaintext store — the app then reports no system
+  # keyring and refuses to persist the sign-in. Pinning the backend skips
+  # detection. libsecret-0.21.7 is already in the bundled Electron's RUNPATH
+  # and services.gnome.gnome-keyring (below) owns org.freedesktop.secrets, so
+  # the flag is all that's missing. Wrapped here rather than in the overlay
+  # because the package comes from a flake input, not from nixpkgs.
+  claudeDesktop = let
+    upstream =
+      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop;
+  in pkgs.symlinkJoin {
+    name = "claude-desktop-libsecret";
+    paths = [ upstream ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    # With a single input path symlinkJoin points $out/bin at the store
+    # directory wholesale, and wrapProgram can't mv the binary aside inside
+    # it. Rebuild bin as a real directory of symlinks first.
+    postBuild = ''
+      rm -rf $out/bin
+      mkdir -p $out/bin
+      ln -s ${upstream}/bin/* $out/bin/
+      wrapProgram $out/bin/claude-desktop \
+        --add-flags "--password-store=gnome-libsecret"
+    '';
+  };
+
 in {
 
   sops = {
@@ -200,7 +228,7 @@ in {
       # Cowork runs each session in a QEMU/KVM VM and so additionally wants
       # qemu/ovmf/virtiofsd plus a user in the kvm group; the Chat and Claude
       # Code tabs don't need any of that, so none of it is configured here.
-      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop
+      claudeDesktop
     ];
     # Qt style is now configured per-session via the home-manager qt module
     # (modules/home-manager/qt.nix → Adwaita-Dark) and re-asserted at the
