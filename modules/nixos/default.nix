@@ -10,7 +10,6 @@
     ./display-manager.nix
     ./docker.nix
     ./emacs.nix
-    ./evolution.nix
     ./fonts.nix
     ./gc.nix
     ./gfn.nix

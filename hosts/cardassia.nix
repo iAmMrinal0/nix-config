@@ -38,7 +38,6 @@
     # it up). The boot-time root wipe is NOT armed — impermanence is
     # adopted in stages.
     disk-layout.enable = true;
-    evolution.enable = true;
     gc = {
       enable = true;
       method = "nh";

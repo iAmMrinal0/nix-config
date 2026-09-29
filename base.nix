@@ -195,24 +195,20 @@ in {
 
   environment = {
     systemPackages = [
-      pkgs.atop
       pkgs.android-file-transfer
       pkgs.binutils
       pkgs.docker-compose
       pkgs.git
       pkgs.libsecret
       pkgs.ncdu
-      pkgs.nix-build-uncached
       pkgs.ntfs3g
       pkgs.openjdk
       pkgs.openssl
-      pkgs.pptp
       pkgs.sops
       pkgs.stow
       pkgs.tcpdump
       pkgs.traceroute
       pkgs.usbutils
-      pkgs.v4l-utils
       pkgs.vim
       pkgs.yubikey-personalization
       pkgs.bitwarden-desktop

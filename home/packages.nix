@@ -13,7 +13,6 @@ with pkgs; [
   eza
   cachix
   gnumake
-  nixpkgs-review
   nmap
   git-crypt
   pciutils
@@ -52,15 +51,13 @@ with pkgs; [
   # Security & Authentication
   keepassxc
   signing-party
-  ssh-to-pgp
   openvpn
   rofi-rbw
   wtype # rofi-rbw autotype under sway; xdotool covers i3
 
   # Development Environment
-  sqlite
+  sqlite-interactive
   pgcli
-  rlwrap
   nodejs
   (lib.hiPrio pkgs.unstable.insomnia)
 
@@ -97,10 +94,8 @@ with pkgs; [
 
   # System Appearance
   lxappearance
-  arc-theme
   adwaita-icon-theme
   papirus-icon-theme
-  paper-icon-theme
 
   # Clipboard & Input
   xclip
@@ -124,7 +119,6 @@ with pkgs; [
   dunst
 
   # Qt & Desktop Integration
-  libsForQt5.qtstyleplugins
   libsForQt5.qt5ct
   # Kirigami / KF6 styling so KDE apps render correctly outside Plasma:
   # qqc2-desktop-style is the QtQuick Controls QML plugin that lets
@@ -150,7 +144,6 @@ with pkgs; [
   nix-prefetch-github
   my.scripts.tnas-health
 
-  gemini-cli
   inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.rtk
   python3
   python3Packages.pip

@@ -8,7 +8,6 @@
     ../modules/nixos
     ../home.nix
     ../hardware/${hostname}.nix
-    # ../modules/nixos/nvidia.nix
   ];
 
   modules = {
@@ -17,8 +16,6 @@
       package = pkgs.emacs-unstable;
       defaultEditor = false;
     };
-
-    evolution.enable = true;
 
     gc = {
       enable = true;
