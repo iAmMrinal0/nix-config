@@ -21,6 +21,8 @@ let
     "rclone-gdrive-client-id"
     "rclone-gdrive-client-secret"
     "rclone-gdrive-token"
+    "mbient-url"
+    "mbient-token"
   ];
   defaultPermissions = secret: {
     ${secret} = {

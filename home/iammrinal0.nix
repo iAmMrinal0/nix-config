@@ -1,4 +1,4 @@
-{ pkgs, config, lib, inputs, ... }:
+{ pkgs, config, lib, inputs, hostname, ... }:
 
 {
   imports = [
@@ -8,6 +8,8 @@
     ../modules/home/host-specific.nix
     ../modules/home/workspaces.nix
   ];
+
+  personal.mbient.enable = true;
 
   modules.emacs = {
     enable = true;

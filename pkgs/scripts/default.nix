@@ -16,4 +16,5 @@
   swaylock-custom = pkgs.callPackage ./swaylock-custom { };
   tnas-health = pkgs.callPackage ./tnas-health { };
   cryptomator-launch = pkgs.callPackage ./cryptomator-launch { };
+  mbient-report = pkgs.callPackage ./mbient-report { };
 }

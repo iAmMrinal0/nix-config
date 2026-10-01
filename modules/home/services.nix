@@ -8,6 +8,8 @@
     # System services group
     ./services/system-services.nix
 
+    ./services/mbient.nix
+
   ];
 
   personal = {
