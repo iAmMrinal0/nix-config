@@ -146,6 +146,20 @@
             sops-nix.nixosModules.sops
           ];
         };
+        dvalinn = let hostname = "dvalinn";
+        in nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit inputs hostname username;
+            role = "server";
+          };
+          modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
+            ./hosts/${hostname}.nix
+            ./cache.nix
+            sops-nix.nixosModules.sops
+            disko.nixosModules.disko
+          ];
+        };
       };
     };
 }

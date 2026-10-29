@@ -4,6 +4,7 @@ keys:
   - &age_cardassia age1pdkqghx2q8m6jlcjcvc5r034dnykacnqyatdw68xslrz8gxu5yls5f0k2q
   - &age_cardassia_iammrinal0 age1zyp80rudm4l9q32xma690ykzw2nu85d7rvcp6xcyeuhjjv4qjvgq0g9f3w
   - &age_yggdrasil age1l3pl0wlkcw0wj07d9c00zfd7e9pfzwdl4h9y8jzmp4kgjs57z3gqxdcpcg
+  - &age_dvalinn age1d4lmq60t5vzgnuata5wzlemfng35pmxv74jqwfaqyqacn57j6elswkssy9
 creation_rules:
   # yggdrasil's own secrets live in a scoped file, decryptable only by that
   # host (+ the laptops, for editing). This keeps the headless, container-
@@ -16,6 +17,12 @@ creation_rules:
           - *age_yggdrasil
           - *age_betazed_iammrinal0
           - *age_cardassia_iammrinal0
+  # dvalinn (mimir's host): readable by that host and the laptop's user key only.
+  - path_regex: dvalinn\.yaml$
+    key_groups:
+      - age:
+          - *age_dvalinn
+          - *age_betazed_iammrinal0
   # shared store — every host EXCEPT yggdrasil.
   - key_groups:
       - age:
