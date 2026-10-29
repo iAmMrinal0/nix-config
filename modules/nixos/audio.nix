@@ -106,7 +106,5 @@ in {
     };
 
     security.rtkit.enable = cfg.rtkit;
-
-    nixpkgs.config.pulseaudio = cfg.pulseaudio;
   };
 }
