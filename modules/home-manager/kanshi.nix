@@ -49,6 +49,15 @@ in {
             # (wakeOutputs' kanshictl reload) and on manual rofi-kanshi switches,
             # and rotating there would reshuffle the wallpaper constantly.
             "${wallpaperScripts.apply}/bin/wallpaper-apply"
+            # Repaint waybar after every profile apply. waybar.service starts
+            # at sway-session.target alongside kanshi, so at login it can map
+            # its bars before kanshi enables the external head; waybar 0.15.0
+            # then never puts a bar on that output (betazed 2026-10-21: bar on
+            # eDP-1 only, Dell bare, process alive and healthy). A restart
+            # re-enumerates outputs and fixes it. try-restart is a no-op when
+            # waybar isn't running (e.g. under i3), so it never starts a stray
+            # bar on its own.
+            "${pkgs.systemd}/bin/systemctl --user try-restart waybar.service"
           ];
         };
       })
