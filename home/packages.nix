@@ -58,6 +58,7 @@ with pkgs; [
   # Development Environment
   sqlite-interactive
   pgcli
+  himalaya
   nodejs
   (lib.hiPrio pkgs.unstable.insomnia)
 
