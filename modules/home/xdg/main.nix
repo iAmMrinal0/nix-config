@@ -17,8 +17,8 @@ let
   # rather than spawning a phantom one.
   #
   # Registered as browser-router.desktop and wired as every http(s)/html
-  # handler below. Referencing the wrapped firefox (finalPackage) keeps the
-  # HM profile + extensions; Chrome comes from the google-chrome package.
+  # handler below. Going through the wrapped firefox keeps the HM profile +
+  # extensions; Chrome comes from the google-chrome package.
   # Routing keys off the first arg only (xdg-open and app links pass a single
   # URL); a bare launch falls through to the fallback browser.
   #
@@ -27,8 +27,11 @@ let
   # would break evaluation — so the fallback is computed at eval time and
   # degrades to Chrome's default profile when Firefox is absent (this branch
   # never forces finalPackage).
+  #
+  # The profile's bin/firefox rather than finalPackage directly: that is the
+  # wrapper from firefox.nix, which starts Firefox in its memory-capped slice.
   fallbackExec = if config.programs.firefox.enable then
-    ''exec "${config.programs.firefox.finalPackage}/bin/firefox" "$@"''
+    ''exec "${config.home.profileDirectory}/bin/firefox" "$@"''
   else
     ''exec "$chrome" "$@"'';
   browser-router = pkgs.writeShellScriptBin "browser-router" ''
