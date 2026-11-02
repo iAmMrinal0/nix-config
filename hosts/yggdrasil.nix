@@ -297,7 +297,7 @@
         let
           docker = "${config.virtualisation.docker.package}/bin/docker";
           kuma = status: msg:
-            ''${pkgs.curl}/bin/curl -fsS -m 10 "$(cat ${config.sops.secrets."uptime-kuma-borg-push".path})?status=${status}&msg=${msg}" || true'';
+            ''${pkgs.curl}/bin/curl -fsS -m 10 --retry 3 --retry-delay 15 --retry-all-errors "$(cat ${config.sops.secrets."uptime-kuma-borg-push".path})?status=${status}&msg=${msg}" || true'';
           unpause = "${docker} unpause $(${docker} ps -q --filter status=paused) || true";
         in
         [
@@ -381,7 +381,7 @@
     script = ''
       set -euo pipefail
       push="$(cat ${config.sops.secrets."uptime-kuma-borg-drive-push".path})"
-      trap '${pkgs.curl}/bin/curl -fsS -m 10 -o /dev/null "$push?status=down&msg=fail" || true' ERR
+      trap '${pkgs.curl}/bin/curl -fsS -m 10 --retry 3 --retry-delay 15 --retry-all-errors -o /dev/null "$push?status=down&msg=fail" || true' ERR
       while ${pkgs.systemd}/bin/systemctl is-active -q borgmatic.service; do
         echo "borgmatic is running, waiting"
         sleep 60
@@ -389,7 +389,7 @@
       ${pkgs.rclone}/bin/rclone check --download \
         /home/${username}/borg-repo gdrive:backups/${hostname} \
         --config ${config.sops.templates."rclone.conf".path}
-      ${pkgs.curl}/bin/curl -fsS -m 10 -o /dev/null "$push?status=up&msg=OK" || true
+      ${pkgs.curl}/bin/curl -fsS -m 10 --retry 3 --retry-delay 15 --retry-all-errors -o /dev/null "$push?status=up&msg=OK" || true
     '';
   };
   systemd.timers.borg-drive-check = {
@@ -437,7 +437,7 @@
       dest=/home/${username}/backups/memory-alpha
       ssh="ssh -F ${config.sops.templates."memory-alpha-ssh-config".path}"
       push="$(cat ${config.sops.secrets."uptime-kuma-memory-alpha-push".path})"
-      trap 'curl -fsS -m 10 -o /dev/null "$push?status=down&msg=fail" || true' ERR
+      trap 'curl -fsS -m 10 --retry 3 --retry-delay 15 --retry-all-errors -o /dev/null "$push?status=down&msg=fail" || true' ERR
       mkdir -p "$dest/db" "$dest/images"
 
       # The snapshot dir is pulled whole, so this never names the db file.
@@ -470,7 +470,7 @@
       rsync -a --partial --stats --exclude='*/' \
         -e "$ssh" memory-alpha:images/ "$dest/images/"
 
-      curl -fsS -m 10 -o /dev/null "$push?status=up&msg=OK" || true
+      curl -fsS -m 10 --retry 3 --retry-delay 15 --retry-all-errors -o /dev/null "$push?status=up&msg=OK" || true
     '';
   };
   systemd.timers.memory-alpha-pull = {
