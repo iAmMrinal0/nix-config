@@ -41,6 +41,7 @@ with pkgs; [
   lsof
   netcat-gnu
   nix-diff
+  deploy-rs
   ddcutil
   xkill
   nvd

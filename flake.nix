@@ -41,6 +41,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware = { url = "github:NixOS/nixos-hardware/master"; };
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -90,9 +94,50 @@
   outputs = inputs@{ self, nixpkgs, nur, home-manager, sops-nix, disko
     , emacs-overlay, nixos-hardware, emacsConfiguration, zsh-autosuggestions
     , zsh-nix-shell, haskell-yesod-quasiquotes, nixpkgs-unstable, nix4vscode
-    , llm-agents, nix-index-database, nix-flatpak }:
-    let username = "iammrinal0";
+    , llm-agents, nix-index-database, nix-flatpak, deploy-rs }:
+    let
+      username = "iammrinal0";
+      deployPkgs = import nixpkgs {
+        system = "x86_64-linux";
+        overlays = [
+          deploy-rs.overlays.default
+          (final: prev: {
+            deploy-rs = {
+              inherit (nixpkgs.legacyPackages.x86_64-linux) deploy-rs;
+              lib = prev.deploy-rs.lib;
+            };
+          })
+        ];
+      };
+      server = name: {
+        hostname = name;
+        # Never reuse a multiplexed connection from ~/.ssh/config: magic
+        # rollback's confirmation must prove a fresh SSH session works.
+        sshOpts = [ "-o" "ControlMaster=no" "-o" "ControlPath=none" ];
+        profiles.system = {
+          sshUser = username;
+          user = "root";
+          path = deployPkgs.deploy-rs.lib.activate.nixos
+            self.nixosConfigurations.${name};
+        };
+      };
     in {
+      # Servers only; the laptops still switch themselves with nixos-rebuild.
+      # Deploy with `deploy .#yggdrasil` / `deploy .#dvalinn`. Builds here,
+      # copies over, switches, then reconnects over a fresh SSH session; if
+      # that fails within confirmTimeout the host rolls itself back. 90s
+      # rather than the default 30 leaves room for tailscaled restarting.
+      deploy = {
+        confirmTimeout = 90;
+        nodes = {
+          yggdrasil = server "yggdrasil";
+          dvalinn = server "dvalinn";
+        };
+      };
+
+      checks.x86_64-linux =
+        deployPkgs.deploy-rs.lib.deployChecks self.deploy;
+
       # `role` (home | work | server) gates purpose-flavored config —
       # torrenting on home hosts, kronor on work hosts — while hardware
       # traits stay per-host (modules/home/host-specific.nix). The shared

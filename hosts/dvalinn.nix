@@ -4,8 +4,8 @@
 #
 # Installed with nixos-anywhere (disko lays out the disk):
 #   nix run github:nix-community/nixos-anywhere -- --flake .#dvalinn root@<installer-ip>
-# Then deployed from the laptop, never rebuilt on the box:
-#   nixos-rebuild switch --flake .#dvalinn --target-host iammrinal0@dvalinn --sudo
+# Then deployed from the laptop with deploy-rs, never rebuilt on the box:
+#   deploy .#dvalinn
 { config, pkgs, hostname, username, ... }:
 
 {
