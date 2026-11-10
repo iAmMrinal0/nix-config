@@ -190,6 +190,13 @@ in {
     flake = "${config.users.users.${username}.home}/nix-config";
   };
 
+  # The default ssh_config Includes systemd's ssh-proxy drop-in from the
+  # store. Inside claude-desktop's bubblewrap FHS env, root-owned store files
+  # show up as owned by nobody, so ssh rejects that include with "Bad owner or
+  # permissions" and the app's SSH connections fail. The proxy only serves
+  # `ssh unix/…`, `vsock/…` and `.host` targets, which nothing here uses.
+  programs.ssh.systemd-ssh-proxy.enable = false;
+
   time.timeZone = "Europe/Stockholm";
 
   # Select internationalisation properties.

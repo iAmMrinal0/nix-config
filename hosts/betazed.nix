@@ -95,4 +95,8 @@
     pkgs.smartmontools
     pkgs.xdg-utils
   ];
+
+  # Claude desktop's SSH connections push a generic-Linux Claude CLI to the
+  # host, which needs a real /lib64/ld-linux-x86-64.so.2 to start.
+  programs.nix-ld.enable = true;
 }
